@@ -19,6 +19,25 @@ inline double radian(const double degree)
 namespace ggl
 {
 
+void OpenGL::glLoadIdentity()
+{
+	// TODO: need to distinguish active matrix!!
+	_projection.setIdentity();
+}
+
+void OpenGL::glTranslated(double x, double y, double z)
+{
+	// TODO: check, whether we are not between glBegin glEnd, otherwise set some error
+
+	Matrix4d trMatrix;
+	trMatrix <<	1, 0, 0, x,
+					0, 1, 0, y,
+					0, 0, 1, z,
+					0, 0, 0, 1;
+
+	_projection *= trMatrix;
+}
+
 void OpenGL::glRotated(double angle, double x, double y, double z)
 {
 	/*
@@ -160,20 +179,6 @@ void OpenGL::init(int x, int y)
 	_activeColor = Color(1, 1, 1, 1);
 	_projection.setIdentity();
 
-	Matrix4d rotY;
-	rotY<< 	0.707106781, 0, 0.707106781, 0,
-						0, 1, 0, 0,
-						-0.707106781, 0, 0.707106781, 0,
-						0, 0, 0, 1;	// rotY 45deg
-	Matrix4d rotZ;
-	rotZ<<	0.707106781, -0.707106781, 0, 0,
-				0.707106781, 0.707106781, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1;
-//	_projection *= rotY;
-//	_projection *= rotZ;
-
-//	std::cout<<_projection<<std::endl;
 
 	_initialized = true;
 }

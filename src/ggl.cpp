@@ -26,6 +26,7 @@ void glTest()
 
    glRotatef(45, 1, 1, 0);
 //   glRotatef(45, 0, 0, 1);
+   glTranslatef(100, 100, 0);
 	glBegin(GL_LINES);
 
 		glColor3f(1, 0, 0);

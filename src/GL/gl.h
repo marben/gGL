@@ -33,6 +33,16 @@ typedef double GLclampd;
 
 SDL_Display display;	// used by glut so far..
 
+void glLoadIdentity()
+{
+	opengl.glLoadIdentity();
+}
+
+void glTranslatef(GLfloat x, GLfloat y, GLfloat z)
+{
+	opengl.glTranslated(x, y, z);
+}
+
 void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
 	opengl.glRotated(angle, x, y, z);

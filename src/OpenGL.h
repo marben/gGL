@@ -52,6 +52,8 @@ public:
 	void glColor(double r, double g, double b, double alpha = 1);
 	const Image2dRGB& glFlush();
 	void glRotated(double angle, double x, double y, double z);
+	void glTranslated(double x, double y, double z);
+	void glLoadIdentity();
 
 private:
 	void drawLines();
