@@ -10,6 +10,7 @@
 
 #include "PixelRGBA.h"
 #include "Image.h"
+#include "Vertex4.h"
 
 #include <vector>
 #include <Eigen/Core>
@@ -31,28 +32,9 @@ private:
 	double _r, _g, _b, _a;
 };
 */
+
 typedef PixelRGBA Color;
-
-template<typename T>
-class Vertex4
-{
-public:
-	Vertex4(T x, T y, T z, T w, const Color& color):_vertex(Matrix<T, 4, 1>(x, y, z, w)), _color(color){}
-	Vertex4(const Matrix<T, 4, 1>& vector, const Color& color):_vertex(vector), _color(color){}
-
-	T x()const {return _vertex[0];}
-	T y()const {return _vertex[1];}
-	T z()const {return _vertex[2];}
-	T w()const {return _vertex[3];}
-	const Color& color()const {return _color;}
-
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-private:
-	Matrix<T, 4, 1> _vertex;	// 4d vector
-	Color _color;
-};
-
-typedef Vertex4<double> Vertex4d;
+typedef Vertex4<double, Color> Vertex4d;
 
 class OpenGL
 {
