@@ -11,11 +11,9 @@
 #include <vector>
 #include <algorithm>
 
-using namespace std;
 
 namespace ggl
 {
-
 
 template<typename T>
 class Image2d
@@ -88,8 +86,8 @@ void Image2d<T>::line(int x0, int y0, int x1, int y1, const U& color)
 	int Dy = y1 - y0;
 	int steep = (abs(Dy) >= abs(Dx));
 	if (steep) {
-		swap(x0, y0);
-	   swap(x1, y1);
+		std::swap(x0, y0);	// TODO: maybe custom xored swap could be faster?
+	   std::swap(x1, y1);
 	   // recompute Dx, Dy after swap
 	   Dx = x1 - x0;
 	   Dy = y1 - y0;

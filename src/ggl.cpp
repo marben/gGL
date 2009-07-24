@@ -22,8 +22,7 @@ using namespace ggl;
 
 void glTest()
 {
-	glutInit(640, 480);
-
+	glLoadIdentity();
    glRotatef(45, 1, 1, 0);
 //   glRotatef(45, 0, 0, 1);
    glTranslatef(100, 100, 0);
@@ -69,9 +68,12 @@ int main()
 		std::cerr<<"Problem saving file:"<<error.what()<<std::endl;
 	}
 	*/
-	glTest();
+	glutInit(640, 480);
+	glutDisplayFunc(glTest);
+	glutMainLoop();
+	//glTest();
 
-	sleep(3);
+	//sleep(3);
 
 	return 0;
 }

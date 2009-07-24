@@ -107,12 +107,12 @@ void OpenGL::drawLines()
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		// TODO should probably round float values to int
+		// TODO should probably round float values to int .. doesn't need to be too precise
 
-		const Vertex4d* vertex1 = _linesVertexList[i];
-		const Vertex4d* vertex2 = _linesVertexList[++i];
-		const Color& color =	vertex1->color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
-		_outputBuffer.line(vertex1->x(), vertex1->y(), vertex2->x(), vertex2->y(), color);
+		const Vertex4d& vertex1 = _linesVertexList[i];
+		const Vertex4d& vertex2 = _linesVertexList[++i];
+		const Color& color =	vertex1.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
+		_outputBuffer.line(vertex1.x(), vertex1.y(), vertex2.x(), vertex2.y(), color);
 	}
 }
 
@@ -122,6 +122,8 @@ const Image2dRGB& OpenGL::glFlush()
 
 	drawLines();
 
+	_linesVertexList.clear();
+
 	return _outputBuffer;
 }
 
@@ -130,11 +132,12 @@ void OpenGL::glVertex4d(double x, double y, double z, double w)
 	assert(_initialized);
 	assert(_activeVertexList != NONE);
 
-	Vertex4d* vertex = new Vertex4d(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor);
+	//Vertex4d* vertex = new Vertex4d(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor);
 	switch (_activeVertexList)
 	{
 	case GL_LINES:
-		_linesVertexList.push_back(vertex);
+		//_linesVertexList.push_back(vertex);
+		_linesVertexList.push_back(Vertex4d(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case GL_POLYGON:
