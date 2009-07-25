@@ -24,7 +24,8 @@ public:
 	float	getAlpha()const {return _alpha;}
 	float	alpha()const {return _alpha;}
 	float	a()const {return getAlpha();}
-	//virtual void clear(const float& value = 0, const float& alpha = 1) {PixelRGB::clear(value); _alpha = alpha;}
+
+	virtual void clear(const float & value = 0) {_alpha = value; PixelRGB::clear(value);}
 	//virtual void clear(const float& value = 0, const float& alpha = 1) {PixelRGB::clear(value); _alpha = alpha;}
 
 

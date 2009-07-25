@@ -29,7 +29,7 @@ public:
 	float	g()const {return getG();}
 	float	b()const {return getB();}
 
-	virtual void clear(const float & value = 0) {_r = _g = _b = value;}
+	void clear(const float & value = 0) {_r = _g = _b = value;}	// should this be virtual? redefined in PixelRGBA?
 
 private:
 	virtual void normalize();

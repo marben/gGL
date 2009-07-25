@@ -16,7 +16,28 @@ namespace ggl
 {
 
 template<typename T>
-class Image2d
+class Canvas
+{
+public:
+	virtual void resize(size_t x, size_t y) = 0;
+
+	virtual const size_t & getX()const = 0;
+	virtual const size_t & getY()const = 0;
+
+	virtual void putPixel(const int & x, const int & y, const T & pixel) = 0;
+	virtual const T & getPixel(const int & x, const int & y)const = 0;
+	virtual void clean(const float& value = 0) = 0;
+	virtual void clean(const T& value) = 0;
+
+	const size_t& width()const {return getX();}
+	const size_t& height()const {return getY();}
+
+	void line(int x0, int y0, int x1, int y1, const T& color);
+	void hLine(int x0, int y, int x1, const T& color);
+};
+
+template<typename T>
+class Image2d : public Canvas<T>
 {
 public:
 	Image2d(size_t x = 0, size_t y = 0);
@@ -30,19 +51,11 @@ public:
 	const size_t& width()const {return getX();}
 	const size_t& height()const {return getY();}
 
-
-	template <typename U>
-	void putPixel(const int & x, const int & y, const U & pixel);//{_array[y*_x + x] = pixel;}
-
+	void putPixel(const int & x, const int & y, const T & pixel);
 	const T & getPixel(const int & x, const int & y)const {return _array[y*_x + x];}
+
 	void clean(const float& value = 0) {for(size_t i = 0; i < _array.size(); ++i) _array[i].clear(value);}
 	void clean(const T& value) {for(size_t i = 0; i < _array.size(); ++i) _array[i]=value;}
-
-
-	template <typename U>
-	void line(int x0, int y0, int x1, int y1, const U& color);
-	template <typename U>
-	void hLine(int x0, int y, int x1, const U& color);
 
 private:
 	std::vector<T> _array;
@@ -51,8 +64,7 @@ private:
 };
 
 template <typename T>
-template <typename U>
-void Image2d<T>::putPixel(const int & x, const int & y, const U & pixel)
+void Image2d<T>::putPixel(const int & x, const int & y, const T & pixel)
 {
 	// TODO: this should be using sane copy constructors and allow for copying parents <-> children pixel types
 	if( (x < 0) || (y < 0) || (x >= static_cast<int>(width())) || (y >= static_cast<int>(height())))
@@ -62,8 +74,7 @@ void Image2d<T>::putPixel(const int & x, const int & y, const U & pixel)
 }
 
 template <typename T>
-template <typename U>
-void Image2d<T>::hLine(int x0, int y, int x1, const U& color)
+void Canvas<T>::hLine(int x0, int y, int x1, const T& color)
 {
 	if(x0 > x1)
 		return hLine(x1, y, x0, color);
@@ -73,8 +84,7 @@ void Image2d<T>::hLine(int x0, int y, int x1, const U& color)
 }
 
 template <typename T>
-template <typename U>
-void Image2d<T>::line(int x0, int y0, int x1, int y1, const U& color)
+void Canvas<T>::line(int x0, int y0, int x1, int y1, const T& color)
 {
 	/*
 	 * bresenham's line algorithm directly copied from wikipedia

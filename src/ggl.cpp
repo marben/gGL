@@ -19,6 +19,7 @@ using namespace std;
 #include "PngWriter.h"
 
 using namespace ggl;
+using namespace std;
 
 void glTest()
 {
@@ -49,13 +50,14 @@ void glTest()
 	glFlush();
 }
 
+
 int main()
 {
 //	SDL_Display display;
 //	display.init(640, 480);
-	Image2dRGBA image(640,480);
-	image.clean(Black);
-	image.line(10, 10, 400, 200, Red);
+//	Image2dRGBA image(640,480);
+//	image.clean(Black);
+//	image.line(10, 10, 400, 200, Red);
 //	display.displayImage(image);
 //	display.redraw();
 	/*

@@ -20,19 +20,7 @@
 namespace ggl
 {
 
-USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff.... ?
-
-
-/*
-class Color
-{
-public:
-	Color():_r(1), _g(1), _b(1), _a(1){}
-	Color(double r, double g, double b, double alpha = 1):_r(r),_g(g), _b(b), _a(alpha){}
-private:
-	double _r, _g, _b, _a;
-};
-*/
+USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
 typedef PixelRGBA Color;
 typedef Vertex4<double, Color> Vertex4d;
@@ -43,6 +31,7 @@ public:
 	OpenGL();
 	void init(int x, int y);
 	virtual ~OpenGL();
+	void setColorBuffer(CanvasRGB* colorBuffer) {_colorBuffer = colorBuffer;}
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
@@ -50,7 +39,7 @@ public:
 	void glBegin(ActiveVertexList what);
 	void glEnd();
 	void glColor(double r, double g, double b, double alpha = 1);
-	const Image2dRGB& glFlush();
+	const CanvasRGB* glFlush();
 	void glRotated(double angle, double x, double y, double z);
 	void glTranslated(double x, double y, double z);
 	void glLoadIdentity();
@@ -66,8 +55,7 @@ private:
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
 	std::vector<Vertex4d> _linesVertexList;
 	Color _activeColor;
-	//Image2dRGBA _colorBuffer;	// the actual buffer we draw to
-	Image2dRGB _outputBuffer;
+	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix
 
 public:

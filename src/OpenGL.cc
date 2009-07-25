@@ -112,11 +112,11 @@ void OpenGL::drawLines()
 		const Vertex4d& vertex1 = _linesVertexList[i];
 		const Vertex4d& vertex2 = _linesVertexList[++i];
 		const Color& color =	vertex1.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
-		_outputBuffer.line(vertex1.x(), vertex1.y(), vertex2.x(), vertex2.y(), color);
+		_colorBuffer->line(vertex1.x(), vertex1.y(), vertex2.x(), vertex2.y(), color);
 	}
 }
 
-const Image2dRGB& OpenGL::glFlush()
+const CanvasRGB* OpenGL::glFlush()
 {
 	assert(_activeVertexList == NONE);
 
@@ -124,7 +124,7 @@ const Image2dRGB& OpenGL::glFlush()
 
 	_linesVertexList.clear();
 
-	return _outputBuffer;
+	return _colorBuffer;
 }
 
 void OpenGL::glVertex4d(double x, double y, double z, double w)
@@ -171,6 +171,7 @@ void OpenGL::glEnd()
 OpenGL::OpenGL()
 {
 	_initialized = false;
+	_colorBuffer = NULL;
 }
 
 void OpenGL::init(int x, int y)
@@ -178,7 +179,8 @@ void OpenGL::init(int x, int y)
 	_glClearColor.clear(0.0);
 	_activeVertexList = NONE;
 //	_colorBuffer.resize(x, y);
-	_outputBuffer.resize(x, y);
+//	_colorBuffer = new Image2dRGB;
+//	_colorBuffer->resize(x, y);
 	_activeColor = Color(1, 1, 1, 1);
 	_projection.setIdentity();
 

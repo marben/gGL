@@ -26,7 +26,7 @@ void SDL_Display::putPixel(const size_t & x, const size_t & y, const ggl::PixelR
 }
 
 SDL_Display::SDL_Display():
-	 _screen(NULL), _x(0), _y(0)
+	 _canvasRGB(this), _screen(NULL), _x(0), _y(0)
 {
 }
 

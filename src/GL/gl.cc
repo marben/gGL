@@ -1,11 +1,14 @@
 #include "../OpenGL.h"
 #include "gl.h"
 
+using namespace ggl;
+
 static ggl::OpenGL opengl;	// the default global opengl instance
 static SDL_Display display;	// used by glut so far..
 static void (*glutDisplayFunction)(void);
+static Image2dRGB colorBuffer;
 
-static unsigned int frames;	// used to measure fps .. should lock for thread safety...but who cares?
+//static unsigned int frames;	// used to measure fps .. should lock for thread safety...but who cares?
 
 
 void glLoadIdentity()
@@ -32,6 +35,8 @@ void glutInit(int x, int y)	// TODO: allright, this shouldn't be here and should
 {
 	opengl.init(x, y);
 	display.init(x, y);
+	colorBuffer.resize(x, y);
+	opengl.setColorBuffer(display.getRGBCanvas());
 }
 
 void glutDisplayFunc(void (*func)(void))
@@ -41,7 +46,7 @@ void glutDisplayFunc(void (*func)(void))
 
 void glutMainLoop(void)
 {
-	for(int i=0; i<20; ++i)
+	for(int i=0; i<200; ++i)
 		glutDisplayFunction();
 }
 
@@ -69,8 +74,9 @@ void glFlush()
 {
 	// should set GL_INVALID_OPERATION, if called between glBegin() and gEnd()
 
-	const ggl::Image2dRGB &image = opengl.glFlush();
-	display.displayImage(image);
+	display.beginWrite();
+		opengl.glFlush();
+	display.endWrite();
 
 	display.redraw();
 }

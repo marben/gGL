@@ -18,6 +18,9 @@ namespace ggl
 typedef Image2d<PixelRGB> Image2dRGB;
 typedef Image2d<PixelRGBA> Image2dRGBA;
 
+typedef Canvas<PixelRGB> CanvasRGB;
+typedef Canvas<PixelRGBA> CanvasRGBA;
+
 static const PixelRGB Red(1,0,0);
 static const PixelRGB Green(0,1,0);
 static const PixelRGB Blue(0,0,1);
