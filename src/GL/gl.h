@@ -41,6 +41,8 @@ void glutInit(int x, int y);	// TODO: allright, this shouldn't be here and shoul
 
 void glutDisplayFunc(void (*func)(void));
 
+void glutTimerFunc(unsigned int msec, void (*func)(int data), int data);
+
 void glutMainLoop(void);
 
 void glVertex2f(float x, float y);

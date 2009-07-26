@@ -21,35 +21,48 @@ using namespace std;
 using namespace ggl;
 using namespace std;
 
+int angle = 0;
+int delay = 50;
+
 void glTest()
 {
 	glLoadIdentity();
-   glRotatef(45, 1, 1, 0);
-//   glRotatef(45, 0, 0, 1);
-   glTranslatef(100, 100, 0);
-	glBegin(GL_LINES);
 
-		glColor3f(1, 0, 0);
-		glVertex3f(100, 100, 0); glVertex3f(200, 100, 0);
-		glVertex3f(200, 100, 0); glVertex3f(200, 200, 0);
-		glVertex3f(200, 200, 0); glVertex3f(100, 200, 0);
-		glVertex3f(100, 200, 0); glVertex3f(100, 100, 0);
+   glColor3f(1.0, 0.0, 0.0);
 
-		glColor3f(0, 1, 0);
-		glVertex3f(100, 100, 100); glVertex3f(200, 100, 100);
-		glVertex3f(200, 100, 100); glVertex3f(200, 200, 100);
-		glVertex3f(200, 200, 100); glVertex3f(100, 200, 100);
-		glVertex3f(100, 200, 100); glVertex3f(100, 100, 100);
+   glLoadIdentity();
+   glTranslatef(320+angle, 240, 0);
+   glRotatef(45+angle, 1, 0.7, 0);
+   //glRotatef(45, 1, 1, 0);
+   glBegin(GL_LINES);
 
-		glColor3f(0, 0, 1);
-		glVertex3f(100, 100, 0); glVertex3f(100, 100, 100);
-		glVertex3f(200, 100, 0); glVertex3f(200, 100, 100);
-		glVertex3f(200, 200, 0); glVertex3f(200, 200, 100);
-		glVertex3f(100, 200, 0); glVertex3f(100, 200, 100);
-	glEnd();
-	glFlush();
+   glColor3f(1, 0, 0);
+	glVertex3f(-50, 50, -50); glVertex3f(50, 50, -50);
+	glVertex3f(50, 50, -50); glVertex3f(50, -50, -50);
+	glVertex3f(50, -50, -50); glVertex3f(-50, -50, -50);
+	glVertex3f(-50, -50, -50); glVertex3f(-50, 50, -50);
+
+	glColor3f(0, 1, 0);
+	glVertex3f(-50, 50, 50); glVertex3f(50, 50, 50);
+	glVertex3f(50, 50, 50); glVertex3f(50, -50, 50);
+	glVertex3f(50, -50, 50); glVertex3f(-50, -50, 50);
+	glVertex3f(-50, -50, 50); glVertex3f(-50, 50, 50);
+
+	glColor3f(0, 0, 1);
+	glVertex3f(-50, 50, -50); glVertex3f(-50, 50, 50);
+	glVertex3f(50, 50, -50); glVertex3f(50, 50, 50);
+	glVertex3f(50, -50, -50); glVertex3f(50, -50, 50);
+	glVertex3f(-50, -50, -50); glVertex3f(-50, -50, 50);
+
+   glEnd();
+   glFlush();
 }
 
+void timerCallback(int data)
+{
+	angle += 1;
+	glutTimerFunc(delay, timerCallback, 0);
+}
 
 int main()
 {
@@ -72,6 +85,7 @@ int main()
 	*/
 	glutInit(640, 480);
 	glutDisplayFunc(glTest);
+	glutTimerFunc(delay, timerCallback, 0);
 	glutMainLoop();
 	//glTest();
 

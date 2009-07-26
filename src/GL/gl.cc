@@ -1,3 +1,5 @@
+#include <SDL/SDL.h>
+
 #include "../OpenGL.h"
 #include "gl.h"
 
@@ -7,9 +9,18 @@ static ggl::OpenGL opengl;	// the default global opengl instance
 static SDL_Display display;	// used by glut so far..
 static void (*glutDisplayFunction)(void);
 static Image2dRGB colorBuffer;
+static SDL_TimerID	timer_id;	// timer id used by glutTimerFunc
 
 //static unsigned int frames;	// used to measure fps .. should lock for thread safety...but who cares?
 
+void (*_glutTimerFuncPointer) (int data);
+
+Uint32 _glutTimerCallbackFunction(Uint32 interval, void* param)
+{
+	SDL_RemoveTimer(timer_id);	// should not be necessary
+	_glutTimerFuncPointer((int)param);
+	return 0;	// the timer is cancelled, if we return 0 -- doesn;t work(it seems)...need to call SDL_RemoveTimer
+}
 
 void glLoadIdentity()
 {
@@ -37,6 +48,13 @@ void glutInit(int x, int y)	// TODO: allright, this shouldn't be here and should
 	display.init(x, y);
 	colorBuffer.resize(x, y);
 	opengl.setColorBuffer(display.getRGBCanvas());
+	SDL_InitSubSystem(SDL_INIT_TIMER);	// whe should already have SDL initialized..
+}
+
+void glutTimerFunc(unsigned int msec, void (*func)(int data), int data)
+{
+	_glutTimerFuncPointer = func;
+	timer_id = SDL_AddTimer(msec, _glutTimerCallbackFunction, (void*)data);
 }
 
 void glutDisplayFunc(void (*func)(void))
@@ -46,7 +64,7 @@ void glutDisplayFunc(void (*func)(void))
 
 void glutMainLoop(void)
 {
-	for(int i=0; i<200; ++i)
+	for(int i=0; i<1000; ++i)
 		glutDisplayFunction();
 }
 
@@ -82,6 +100,7 @@ void glFlush()
 }
 
 void glBegin(GLenum mode){
+	// TODO: make some sane mapping between gl defines and ggl enum or whatever...
 	switch(mode)
 	{
 	case GLenum(ggl::GL_POINTS):
