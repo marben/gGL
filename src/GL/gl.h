@@ -34,6 +34,8 @@ typedef unsigned int GLbitfield;
 #define GL_COLOR_BUFFER_BIT ((GLbitfield) (1 << 0))
 #define GL_DEPTH_BUFFER_BIT ((GLbitfield) (1 << 1))
 
+void glutPostRedisplay();
+
 void glClear(GLbitfield bufferMask);
 
 void glLoadIdentity();

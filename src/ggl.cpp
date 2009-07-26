@@ -22,7 +22,7 @@ using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 50;
+int delay = 20;
 
 void glTest()
 {
@@ -31,8 +31,8 @@ void glTest()
    glColor3f(1.0, 0.0, 0.0);
 
    glLoadIdentity();
-   glTranslatef(320+angle, 240, 0);
-   glRotatef(45+angle, 1, 0.7, 0);
+   glTranslatef(320, 240, 0);
+   glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
 
@@ -60,19 +60,13 @@ void glTest()
 
 void timerCallback(int data)
 {
-	angle += 1;
+	angle += 2;
+	glutPostRedisplay();
 	glutTimerFunc(delay, timerCallback, 0);
 }
 
 int main()
 {
-//	SDL_Display display;
-//	display.init(640, 480);
-//	Image2dRGBA image(640,480);
-//	image.clean(Black);
-//	image.line(10, 10, 400, 200, Red);
-//	display.displayImage(image);
-//	display.redraw();
 	/*
 	PngWriter writer("test.png");
 
@@ -83,6 +77,7 @@ int main()
 		std::cerr<<"Problem saving file:"<<error.what()<<std::endl;
 	}
 	*/
+
 	glutInit(640, 480);
 	glutDisplayFunc(glTest);
 	glutTimerFunc(delay, timerCallback, 0);
