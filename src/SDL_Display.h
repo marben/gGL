@@ -48,7 +48,7 @@ private:
 		const size_t& getX()const {return _display->width();}
 		const size_t& getY()const {return _display->height();}
 
-		void putPixel(const int & x, const int & y, const T & pixel) {_display->putPixel(x, y, pixel);}
+		void putPixel(const int & x, const int & y, const T & pixel);
 		const T & getPixel(const int & x, const int & y)const {return ggl::Blue;}	// TODO: should do something sane here..
 		void clean(const float& value = 0) {}; // TODO: implement cleaning
 		void clean(const T& value) {};	// TODO: implement
@@ -64,6 +64,15 @@ private:
 	bool _surface_locked;
 	size_t _x, _y;
 };
+
+template <typename T>
+void SDL_Display::SDL_Canvas<T>::putPixel(const int & x, const int & y, const T & pixel)
+{
+	if( (x < 0) || (y < 0) || (x >= static_cast<int>(this->width())) || (y >= static_cast<int>(this->height())))
+		return;
+
+	_display->putPixel(x, y, pixel);
+}
 
 template <typename T>
 void SDL_Display::displayImage(const ggl::Canvas<T>* image)
