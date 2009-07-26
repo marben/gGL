@@ -33,6 +33,8 @@ public:
 	virtual ~OpenGL();
 	void setColorBuffer(CanvasRGB* colorBuffer) {_colorBuffer = colorBuffer;}
 
+	void clearColorBuffer();
+
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
 	void glVertex4d(double x, double y, double z = 0, double w = 1);

@@ -27,7 +27,14 @@ typedef float GLfloat;
 typedef float GLclampf;	// float in <0;1>
 typedef double	GLdouble;
 typedef double GLclampd;
+typedef unsigned int GLbitfield;
 
+// TODO: do something about these ugly definitions
+// maybe ogl standard defines the values? ... would make sense..
+#define GL_COLOR_BUFFER_BIT ((GLbitfield) (1 << 0))
+#define GL_DEPTH_BUFFER_BIT ((GLbitfield) (1 << 1))
+
+void glClear(GLbitfield bufferMask);
 
 void glLoadIdentity();
 

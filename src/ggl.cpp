@@ -26,7 +26,7 @@ int delay = 50;
 
 void glTest()
 {
-	glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glColor3f(1.0, 0.0, 0.0);
 
@@ -86,6 +86,7 @@ int main()
 	glutInit(640, 480);
 	glutDisplayFunc(glTest);
 	glutTimerFunc(delay, timerCallback, 0);
+	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();
 	//glTest();
 

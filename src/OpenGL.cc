@@ -19,6 +19,11 @@ inline double radian(const double degree)
 namespace ggl
 {
 
+void OpenGL::clearColorBuffer()
+{
+	_colorBuffer->clear(_glClearColor);
+}
+
 void OpenGL::glLoadIdentity()
 {
 	// TODO: need to distinguish active matrix!!

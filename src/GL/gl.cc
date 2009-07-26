@@ -22,6 +22,13 @@ Uint32 _glutTimerCallbackFunction(Uint32 interval, void* param)
 	return 0;	// the timer is cancelled, if we return 0 -- doesn;t work(it seems)...need to call SDL_RemoveTimer
 }
 
+void glClear(GLbitfield bufferMask)
+{
+	if(bufferMask & GL_COLOR_BUFFER_BIT)
+		opengl.clearColorBuffer();
+
+}
+
 void glLoadIdentity()
 {
 	opengl.glLoadIdentity();

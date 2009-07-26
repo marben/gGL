@@ -31,6 +31,7 @@ public:
 	const size_t& height() {return _y;}
 
 	void putPixel(const size_t & x, const size_t & y, const ggl::PixelRGB & pixel);	// can be called even without ::beginWrite(), but will be slower
+	void clearScreen(const ggl::PixelRGB & color);
 
 	void beginWrite();	// when beginning to write to surface it is locked
 	void endWrite();	// when end of writing to surface
@@ -50,8 +51,8 @@ private:
 
 		void putPixel(const int & x, const int & y, const T & pixel);
 		const T & getPixel(const int & x, const int & y)const {return ggl::Blue;}	// TODO: should do something sane here..
-		void clean(const float& value = 0) {}; // TODO: implement cleaning
-		void clean(const T& value) {};	// TODO: implement
+		void clear(const float& value = 0) {}; // TODO: implement cleaning
+		void clear(const T& value) {_display->clearScreen(value);}	// TODO: implement
 
 	private:
 		SDL_Display* _display;

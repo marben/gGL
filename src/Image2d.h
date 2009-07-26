@@ -26,8 +26,8 @@ public:
 
 	virtual void putPixel(const int & x, const int & y, const T & pixel) = 0;
 	virtual const T & getPixel(const int & x, const int & y)const = 0;
-	virtual void clean(const float& value = 0) = 0;
-	virtual void clean(const T& value) = 0;
+	virtual void clear(const float& value = 0) = 0;
+	virtual void clear(const T& value) = 0;
 
 	const size_t& width()const {return getX();}
 	const size_t& height()const {return getY();}
@@ -54,8 +54,8 @@ public:
 	void putPixel(const int & x, const int & y, const T & pixel);
 	const T & getPixel(const int & x, const int & y)const {return _array[y*_x + x];}
 
-	void clean(const float& value = 0) {for(size_t i = 0; i < _array.size(); ++i) _array[i].clear(value);}
-	void clean(const T& value) {for(size_t i = 0; i < _array.size(); ++i) _array[i]=value;}
+	void clear(const float& value = 0) {for(size_t i = 0; i < _array.size(); ++i) _array[i].clear(value);}
+	void clear(const T& value) {for(size_t i = 0; i < _array.size(); ++i) _array[i]=value;}
 
 private:
 	std::vector<T> _array;
