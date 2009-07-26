@@ -15,12 +15,14 @@ void SDL_Display::putPixel(const size_t & x, const size_t & y, const ggl::PixelR
 {
 	if(_surface_locked)
 	{
-		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, (pixel.r()>1)?255:(pixel.r()<0)?0:pixel.r()*255, (pixel.g()>1)?255:(pixel.g()<0)?0:pixel.g()*255, (pixel.b()>1)?255:(pixel.b()<0)?0:pixel.b()*255));
+//		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, (pixel.r()>1)?255:(pixel.r()<0)?0:pixel.r()*255, (pixel.g()>1)?255:(pixel.g()<0)?0:pixel.g()*255, (pixel.b()>1)?255:(pixel.b()<0)?0:pixel.b()*255));
+		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, pixel.r_int_norm(), pixel.g_int_norm(), pixel.b_int_norm()));
 	}
 	else
 	{
 		beginWrite();
-		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, (pixel.r()>1)?255:(pixel.r()<0)?0:pixel.r()*255, (pixel.g()>1)?255:(pixel.g()<0)?0:pixel.g()*255, (pixel.b()>1)?255:(pixel.b()<0)?0:pixel.b()*255));
+//		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, (pixel.r()>1)?255:(pixel.r()<0)?0:pixel.r()*255, (pixel.g()>1)?255:(pixel.g()<0)?0:pixel.g()*255, (pixel.b()>1)?255:(pixel.b()<0)?0:pixel.b()*255));
+		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, pixel.r_int_norm(), pixel.g_int_norm(), pixel.b_int_norm()));
 		endWrite();
 	}
 }
