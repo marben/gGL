@@ -32,8 +32,8 @@ public:
 	const size_t& width()const {return getX();}
 	const size_t& height()const {return getY();}
 
-	void line(int x0, int y0, int x1, int y1, const T& color);
-	void hLine(int x0, int y, int x1, const T& color);
+	virtual void line(int x0, int y0, int x1, int y1, const T& color);
+	virtual void hLine(int x0, int y, int x1, const T& color);
 };
 
 template<typename T>
