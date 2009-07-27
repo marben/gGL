@@ -117,7 +117,7 @@ void OpenGL::drawLines()
 		const Vertex4& vertex1 = _linesVertexList[i];
 		const Vertex4& vertex2 = _linesVertexList[++i];
 		const Color& color =	vertex1.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
-		_colorBuffer->line(vertex1.x(), vertex1.y(), vertex2.x(), vertex2.y(), color);
+		_colorBuffer->line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
 	}
 }
 

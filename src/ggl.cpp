@@ -22,7 +22,7 @@ using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 20;
+int delay = 100;
 
 void glTest()
 {
@@ -31,7 +31,7 @@ void glTest()
    glColor3f(1.0, 0.0, 0.0);
 
    glLoadIdentity();
-   glTranslatef(320, 240, 0);
+   glTranslatef(150+angle, 240, 0);
    glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
@@ -60,7 +60,7 @@ void glTest()
 
 void timerCallback(int data)
 {
-	angle += 2;
+	angle += 1;
 	if(angle >= 360)
 		angle -= 360;
 

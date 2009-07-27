@@ -20,7 +20,15 @@
 namespace ggl
 {
 
+
 typedef double Real;	// this is the default floating type, we will use in opengl
+
+inline int round(Real x){
+	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
+}
+inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function ..
+	return round(x);
+}
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
