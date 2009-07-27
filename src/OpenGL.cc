@@ -30,7 +30,7 @@ void OpenGL::glLoadIdentity()
 	_projection.setIdentity();
 }
 
-void OpenGL::glTranslated(double x, double y, double z)
+void OpenGL::glTranslate(Real x, Real y, Real z)
 {
 	// TODO: check, whether we are not between glBegin glEnd, otherwise set some error
 
@@ -43,7 +43,7 @@ void OpenGL::glTranslated(double x, double y, double z)
 	_projection *= trMatrix;
 }
 
-void OpenGL::glRotated(double angle, double x, double y, double z)
+void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 {
 	/*
 	 * form man page:
@@ -114,8 +114,8 @@ void OpenGL::drawLines()
 	{
 		// TODO should probably round float values to int .. doesn't need to be too precise
 
-		const Vertex4d& vertex1 = _linesVertexList[i];
-		const Vertex4d& vertex2 = _linesVertexList[++i];
+		const Vertex4& vertex1 = _linesVertexList[i];
+		const Vertex4& vertex2 = _linesVertexList[++i];
 		const Color& color =	vertex1.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
 		_colorBuffer->line(vertex1.x(), vertex1.y(), vertex2.x(), vertex2.y(), color);
 	}
@@ -132,7 +132,7 @@ const CanvasRGB* OpenGL::glFlush()
 	return _colorBuffer;
 }
 
-void OpenGL::glVertex4d(double x, double y, double z, double w)
+void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 {
 	assert(_initialized);
 	assert(_activeVertexList != NONE);
@@ -142,7 +142,7 @@ void OpenGL::glVertex4d(double x, double y, double z, double w)
 	{
 	case GL_LINES:
 		//_linesVertexList.push_back(vertex);
-		_linesVertexList.push_back(Vertex4d(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+		_linesVertexList.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case GL_POLYGON:
@@ -155,7 +155,7 @@ void OpenGL::glVertex4d(double x, double y, double z, double w)
 	}
 }
 
-void OpenGL::glColor(double r, double g, double b, double alpha)
+void OpenGL::glColor(float r, float g, float b, float alpha)
 {
 	_activeColor= Color(r, g, b, alpha);
 }

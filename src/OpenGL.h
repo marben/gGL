@@ -20,10 +20,12 @@
 namespace ggl
 {
 
+typedef double Real;	// this is the default floating type, we will use in opengl
+
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
 typedef PixelRGBA Color;
-typedef Vertex4<double, Color> Vertex4d;
+typedef Vertex4_<double, Color> Vertex4;
 
 class OpenGL
 {
@@ -37,13 +39,13 @@ public:
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
-	void glVertex4d(double x, double y, double z = 0, double w = 1);
+	void glVertex4(Real x, Real y, Real z = 0, Real w = 1);
 	void glBegin(ActiveVertexList what);
 	void glEnd();
-	void glColor(double r, double g, double b, double alpha = 1);
+	void glColor(float r, float g, float b, float alpha = 1);
 	const CanvasRGB* glFlush();
-	void glRotated(double angle, double x, double y, double z);
-	void glTranslated(double x, double y, double z);
+	void glRotate(Real angle, Real x, Real y, Real z);
+	void glTranslate(Real x, Real y, Real z);
 	void glLoadIdentity();
 
 private:
@@ -55,7 +57,7 @@ private:
 private:
 	PixelRGBA _glClearColor;
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
-	std::vector<Vertex4d> _linesVertexList;
+	std::vector<Vertex4> _linesVertexList;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix

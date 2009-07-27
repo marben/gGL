@@ -36,17 +36,17 @@ void glLoadIdentity()
 
 void glTranslatef(GLfloat x, GLfloat y, GLfloat z)
 {
-	opengl.glTranslated(x, y, z);
+	opengl.glTranslate(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
 void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
-	opengl.glRotated(angle, x, y, z);
+	opengl.glRotate(static_cast<Real>(angle), static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
 void glRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
 {
-	opengl.glRotated(angle, x, y, z);
+	opengl.glRotate(static_cast<Real>(angle), static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
 void glutInit(int x, int y)	// TODO: allright, this shouldn't be here and should have different prototype
@@ -94,15 +94,15 @@ void glutMainLoop(void)
 }
 
 void glVertex2f(float x, float y){
-	opengl.glVertex4d(double(x), double(y));
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y));
 }
 
 void glVertex3f(float x, float y, float z){
-	opengl.glVertex4d(double(x), double(y), double(z));
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
 void glVertex4f(float x, float y, float z, float w){
-	opengl.glVertex4d(double(x), double(y), double(z), double(w));
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z), static_cast<Real>(w));
 }
 
 void glColor3f(GLfloat r, GLfloat g, GLfloat b)

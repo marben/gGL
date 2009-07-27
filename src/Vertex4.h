@@ -17,11 +17,11 @@ namespace ggl{
 USING_PART_OF_NAMESPACE_EIGEN
 
 template<typename T, typename Color_t>
-class Vertex4
+class Vertex4_
 {
 public:
-	Vertex4(T x, T y, T z, T w, const Color_t& color):_vertex(Matrix<T, 4, 1>(x, y, z, w)), _color(color){}
-	Vertex4(const Matrix<T, 4, 1>& vector, const Color_t& color):_vertex(vector), _color(color){}
+	Vertex4_(T x, T y, T z, T w, const Color_t& color):_vertex(Matrix<T, 4, 1>(x, y, z, w)), _color(color){}
+	Vertex4_(const Matrix<T, 4, 1>& vector, const Color_t& color):_vertex(vector), _color(color){}
 	//Vertex4(const Vertex4& vertex){std::cerr<<"Vertex4 copy constructor called"<<std::endl;}
 
 	T x()const {return _vertex[0];}

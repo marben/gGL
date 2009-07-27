@@ -61,6 +61,12 @@ void glTest()
 void timerCallback(int data)
 {
 	angle += 2;
+	if(angle >= 360)
+		angle -= 360;
+
+	if(angle < 0)
+		angle += 360;
+
 	glutPostRedisplay();
 	glutTimerFunc(delay, timerCallback, 0);
 }
