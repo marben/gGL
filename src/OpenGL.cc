@@ -112,8 +112,6 @@ void OpenGL::drawLines()
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		// TODO should probably round float values to int .. doesn't need to be too precise
-
 		const Vertex4& vertex1 = _linesVertexList[i];
 		const Vertex4& vertex2 = _linesVertexList[++i];
 		const Color& color =	vertex1.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
@@ -126,8 +124,10 @@ const CanvasRGB* OpenGL::glFlush()
 	assert(_activeVertexList == NONE);
 
 	drawLines();
+	drawTriangles();
 
 	_linesVertexList.clear();
+	_trianglesVertexList.clear();
 
 	return _colorBuffer;
 }
@@ -141,11 +141,14 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	switch (_activeVertexList)
 	{
 	case GL_LINES:
-		//_linesVertexList.push_back(vertex);
 		_linesVertexList.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case GL_POLYGON:
+		break;
+
+	case GL_TRIANGLES:
+		_trianglesVertexList.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case NONE:
@@ -171,6 +174,27 @@ void OpenGL::glEnd()
 {
 	assert(_initialized);
 	_activeVertexList = NONE;
+}
+
+void OpenGL::drawTriangles()
+{
+	size_t top;
+	if((_trianglesVertexList.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
+		top = _trianglesVertexList.size() - 1;
+	if((_trianglesVertexList.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
+			top = _trianglesVertexList.size() - 1;
+	else
+		top = _trianglesVertexList.size();
+
+	for(size_t i = 0; i < top; i += 3)
+		drawTriangle_wired(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2]);
+}
+
+void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
+{
+	_colorBuffer->line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.color());
+	_colorBuffer->line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.color());
+	_colorBuffer->line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.color());
 }
 
 OpenGL::OpenGL()

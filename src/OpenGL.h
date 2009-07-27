@@ -21,13 +21,14 @@ namespace ggl
 {
 
 
-typedef double Real;	// this is the default floating type, we will use in opengl
+typedef float Real;	// this is the default floating type, we will use in opengl
 
 inline int round(Real x){
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
 }
 inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function ..
 	return round(x);
+	//return static_cast<int>(x);
 }
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
@@ -58,6 +59,9 @@ public:
 
 private:
 	void drawLines();
+	void drawTriangles();
+
+	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 
 private:
 	bool _initialized;
@@ -65,7 +69,7 @@ private:
 private:
 	PixelRGBA _glClearColor;
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
-	std::vector<Vertex4> _linesVertexList;
+	std::vector<Vertex4> _linesVertexList, _trianglesVertexList;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix

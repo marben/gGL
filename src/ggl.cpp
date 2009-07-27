@@ -22,7 +22,7 @@ using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 100;
+int delay = 20;
 
 void glTest()
 {
@@ -32,6 +32,13 @@ void glTest()
 
    glLoadIdentity();
    glTranslatef(150+angle, 240, 0);
+
+   glBegin(GL_TRIANGLES);
+		glVertex3f(10, 10, 0);
+		glVertex3f(50, 50, 0);
+		glVertex3f(50, 25, 0);
+   glEnd();
+
    glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
@@ -89,9 +96,6 @@ int main()
 	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();
-	//glTest();
-
-	//sleep(3);
 
 	return 0;
 }
