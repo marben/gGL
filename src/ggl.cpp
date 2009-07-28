@@ -31,15 +31,15 @@ void glTest()
    glColor3f(1.0, 0.0, 0.0);
 
    glLoadIdentity();
-   glTranslatef(150+angle, 240, 0);
+   glTranslatef(320, 240, 0);
 
+   glRotatef(45+angle, 1, 0.7, 0.4);
    glBegin(GL_TRIANGLES);
 		glVertex3f(10, 10, 0);
 		glVertex3f(50, 50, 0);
 		glVertex3f(50, 25, 0);
    glEnd();
 
-   glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
 

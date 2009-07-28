@@ -24,7 +24,7 @@ typedef unsigned short GLushort;
 typedef unsigned int GLuint;
 typedef int sizei;
 typedef float GLfloat;
-typedef float GLclampf;	// float in <0;1>
+typedef float GLclampf;	// float clamped in <0;1>
 typedef double	GLdouble;
 typedef double GLclampd;
 typedef unsigned int GLbitfield;

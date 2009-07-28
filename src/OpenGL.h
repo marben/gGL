@@ -22,6 +22,12 @@ namespace ggl
 
 
 typedef float Real;	// this is the default floating type, we will use in opengl
+// TODO: write a type defining all basic operators on integer, using fixed point precision... something like:
+// template<typename Int_t, int precision>
+//	class Fixed_t{
+//		Fixed_t operator+(const Fixed_t a){return ( (this->_value * a->value) >> precision ) ;}
+//		Int_t _value;
+//}
 
 inline int round(Real x){
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
@@ -62,6 +68,7 @@ private:
 	void drawTriangles();
 
 	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
+	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
 
 private:
 	bool _initialized;

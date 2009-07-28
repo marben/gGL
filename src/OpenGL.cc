@@ -9,6 +9,7 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 
 #define PI 3.1415926535897932384626433832795	// tell me of a better way...
 inline double radian(const double degree)
@@ -178,6 +179,16 @@ void OpenGL::glEnd()
 
 void OpenGL::drawTriangles()
 {
+	/*
+	 * TODO
+	 * some info about advanced triangle rasterization:
+	 * 1
+	 * http://www.devmaster.net/forums/showthread.php?t=1094
+	 * http://www.cs.unc.edu/~olano/papers/2dh-tri/
+	 *
+	 */
+
+
 	size_t top;
 	if((_trianglesVertexList.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
 		top = _trianglesVertexList.size() - 1;
@@ -187,7 +198,8 @@ void OpenGL::drawTriangles()
 		top = _trianglesVertexList.size();
 
 	for(size_t i = 0; i < top; i += 3)
-		drawTriangle_wired(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2]);
+		//drawTriangle_wired(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2]);
+		drawTriangle_flat(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2], Cyan);
 }
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -195,6 +207,101 @@ void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Ve
 	_colorBuffer->line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.color());
 	_colorBuffer->line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.color());
 	_colorBuffer->line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.color());
+}
+
+void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color)
+{
+	// it would make sense to use fixed point arithmetics...but...
+	// and incorporate bresenham algorithm, but...who will ever call this function?
+
+	// first we sort vertices by y
+
+	/*
+	const Vertex4 *top, *middle, *bottom;
+
+	if(v1.y() > v2.y()) {
+		if( v1.y() > v3.y()) {
+			top = &v1;
+			if( v2.y() > v3.y()) {
+				middle = &v2;
+				bottom = &v3;
+			}
+			else {
+				middle = &v3;
+				bottom = &v2;
+			}
+		}
+		else {
+			top = &v3;
+			middle = &v1;
+			bottom = &v2;
+		}
+	}
+	else {
+		if(v2.y() > v3.y()) {
+			top = &v2;
+			if(v1.y() > v3.y()) {
+				middle = &v1;
+				bottom = &v3;
+			}
+			else {
+				middle = &v3;
+				bottom = &v1;
+			}
+		}
+		else {
+			top = &v3;
+			middle = &v2;
+			bottom = &v1;
+		}
+	}
+	*/
+	// might be better to sort using swap
+	const Vertex4 *top = &v1;
+	const Vertex4 *middle = &v2;
+	const Vertex4 *bottom = &v3;
+
+	if(bottom->y() > middle->y())
+		std::swap(bottom, middle);
+	if(bottom->y() > top->y())
+		std::swap(bottom, top);
+	if(middle->y() > top->y())
+		std::swap(middle, top);
+
+
+	// lets iterate from bottom to top
+	// we count the float x difference for both lines we iterate
+	// line 1 should be the longer (from top to bottom)
+
+	// TODO: check, for impossible triangles etc...
+	assert(bottom->y() != top->y());	// get rid of this
+	Real dx1 = (top->x() - bottom->x()) / (top->y() - bottom->y());
+
+	assert(middle->y() != bottom->y());	// get rid of this
+	Real dx2 = (middle->x() - bottom->x()) / (middle->y() - bottom->y());
+
+	Real x1 = bottom->x();
+	Real x2 = bottom->x();
+
+	int y = round_quick(bottom->y());
+	while(y < middle->y())
+	{
+		_colorBuffer->hLine(round_quick(x1), y, round_quick(x2), color);
+		x1 += dx1;
+		x2 += dx2;
+		++y;
+	}
+	// and now for the other 'half' of the triangle
+	assert(middle->y() != top->y());	// get rid of this
+	dx2 = (top->x() - middle->x()) / (top->y() - middle->y());
+	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
+	while(y <= top->y())
+	{
+		_colorBuffer->hLine(round_quick(x1), y, round_quick(x2), color);
+		x1 += dx1;
+		x2 += dx2;
+		++y;
+	}
 }
 
 OpenGL::OpenGL()
