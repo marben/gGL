@@ -18,11 +18,11 @@ using namespace std;
 #include "GL/gl.h"
 #include "PngWriter.h"
 
-using namespace ggl;
+//using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 20;
+int delay = 200;
 
 void glTest()
 {
@@ -33,32 +33,37 @@ void glTest()
    glLoadIdentity();
    glTranslatef(320, 240, 0);
 
-   glRotatef(45+angle, 1, 0.7, 0.4);
    glBegin(GL_TRIANGLES);
+		glColor3f(1.0, 0.0, 0.0);
 		glVertex3f(10, 10, 0);
-		glVertex3f(50, 50, 0);
-		glVertex3f(50, 25, 0);
+		glColor3f(0.0, 1.0, 0.0);
+		glVertex3f(200, 200, 0);
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex3f(50, 205, 0);
    glEnd();
 
+   glShadeModel(GL_FLAT);
+   glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
-
    glColor3f(1, 0, 0);
 	glVertex3f(-50, 50, -50); glVertex3f(50, 50, -50);
+	glColor3f(0, 1, 0);
 	glVertex3f(50, 50, -50); glVertex3f(50, -50, -50);
 	glVertex3f(50, -50, -50); glVertex3f(-50, -50, -50);
 	glVertex3f(-50, -50, -50); glVertex3f(-50, 50, -50);
 
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(-50, 50, 50); glVertex3f(50, 50, 50);
 	glVertex3f(50, 50, 50); glVertex3f(50, -50, 50);
 	glVertex3f(50, -50, 50); glVertex3f(-50, -50, 50);
 	glVertex3f(-50, -50, 50); glVertex3f(-50, 50, 50);
 
-	glColor3f(0, 0, 1);
+	//glColor3f(0, 0, 1);
 	glVertex3f(-50, 50, -50); glVertex3f(-50, 50, 50);
 	glVertex3f(50, 50, -50); glVertex3f(50, 50, 50);
 	glVertex3f(50, -50, -50); glVertex3f(50, -50, 50);
+	glColor3f(0, 0, 1);
 	glVertex3f(-50, -50, -50); glVertex3f(-50, -50, 50);
 
    glEnd();

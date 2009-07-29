@@ -128,49 +128,66 @@ void glBegin(GLenum mode){
 	// TODO: make some sane mapping between gl defines and ggl enum or whatever...
 	switch(mode)
 	{
-	case GLenum(ggl::GL_POINTS):
+	case ::GL_POINTS:
 		opengl.glBegin(ggl::GL_POINTS);
 		break;
 
-	case GLenum(ggl::GL_LINES):
+	case ::GL_LINES:
 		opengl.glBegin(ggl::GL_LINES);
 		break;
 
-	case GLenum(ggl::GL_POLYGON):
+	case GLenum(::GL_POLYGON):
 		opengl.glBegin(ggl::GL_POLYGON);
 		break;
 
-	case GLenum(ggl::GL_TRIANGLES):
+	case GLenum(::GL_TRIANGLES):
 		opengl.glBegin(ggl::GL_TRIANGLES);
 		break;
 
-	case GLenum(ggl::GL_QUADS):
+	case GLenum(::GL_QUADS):
 		opengl.glBegin(ggl::GL_QUADS);
 		break;
 
-	case GLenum(ggl::GL_LINE_STRIP):
+	case GLenum(::GL_LINE_STRIP):
 		opengl.glBegin(ggl::GL_LINE_STRIP);
 		break;
 
-	case GLenum(ggl::GL_LINE_LOOP):
+	case GLenum(::GL_LINE_LOOP):
 		opengl.glBegin(ggl::GL_LINE_LOOP);
 		break;
 
-	case GLenum(ggl::GL_TRIANGLE_STRIP):
+	case GLenum(::GL_TRIANGLE_STRIP):
 		opengl.glBegin(ggl::GL_TRIANGLE_STRIP);
 		break;
 
-	case GLenum(ggl::GL_TRIANGLE_FAN):
+	case GLenum(::GL_TRIANGLE_FAN):
 		opengl.glBegin(ggl::GL_TRIANGLE_FAN);
 		break;
 
-	case GLenum(ggl::GL_QUAD_STRIP):
+	case GLenum(::GL_QUAD_STRIP):
 		opengl.glBegin(ggl::GL_QUAD_STRIP);
 		break;
 
 	default:
 		break;
 	}
+}
+
+void glShadeModel(GLenum mode)
+{
+	switch(mode){
+	case ::GL_SMOOTH:
+		opengl.glShadeModel(ggl::GL_SMOOTH);
+		break;
+
+	case ::GL_FLAT:
+		opengl.glShadeModel(ggl::GL_FLAT);
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 void glutPostRedisplay()

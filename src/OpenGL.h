@@ -62,24 +62,30 @@ public:
 	void glRotate(Real angle, Real x, Real y, Real z);
 	void glTranslate(Real x, Real y, Real z);
 	void glLoadIdentity();
+	void glShadeModel(const ShadeModel& model);
+
 
 private:
 	void drawLines();
 	void drawTriangles();
+	void drawTriangles_smooth();
+	void drawTriangles_flat();
 
 	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
 
+	bool inBetweenBeginEnd(){return _activeVertexList != NONE;}
 private:
 	bool _initialized;
 
 private:
 	PixelRGBA _glClearColor;
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
-	std::vector<Vertex4> _linesVertexList, _trianglesVertexList;
+	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix
+	ShadeModel _shadeModel;
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

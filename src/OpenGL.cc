@@ -105,17 +105,28 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 
 void OpenGL::drawLines()
 {
+
+	drawTriangles_smooth();
+	drawTriangles_flat();
+}
+void OpenGL::drawTriangles_smooth()
+{
+
+}
+
+void OpenGL::drawTriangles_flat()
+{
 	size_t top;
-	if((_linesVertexList.size() % 2) != 0)	// check if we have correct number of vertices for our lines
-		top = _linesVertexList.size() - 1;
+	if((_linesVertexList_flat.size() % 2) != 0)	// check if we have correct number of vertices for our lines
+		top = _linesVertexList_flat.size() - 1;
 	else
-		top = _linesVertexList.size();
+		top = _linesVertexList_flat.size();
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		const Vertex4& vertex1 = _linesVertexList[i];
-		const Vertex4& vertex2 = _linesVertexList[++i];
-		const Color& color =	vertex1.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
+		const Vertex4& vertex1 = _linesVertexList_flat[i];
+		const Vertex4& vertex2 = _linesVertexList_flat[++i];
+		const Color& color =	vertex2.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
 		_colorBuffer->line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
 	}
 }
@@ -127,7 +138,8 @@ const CanvasRGB* OpenGL::glFlush()
 	drawLines();
 	drawTriangles();
 
-	_linesVertexList.clear();
+	_linesVertexList_smooth.clear();
+	_linesVertexList_flat.clear();
 	_trianglesVertexList.clear();
 
 	return _colorBuffer;
@@ -142,7 +154,10 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	switch (_activeVertexList)
 	{
 	case GL_LINES:
-		_linesVertexList.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+		if(_shadeModel == GL_SMOOTH)
+			_linesVertexList_smooth.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+		else
+			_linesVertexList_flat.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case GL_POLYGON:
@@ -199,7 +214,7 @@ void OpenGL::drawTriangles()
 
 	for(size_t i = 0; i < top; i += 3)
 		//drawTriangle_wired(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2]);
-		drawTriangle_flat(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2], Cyan);
+		drawTriangle_flat(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2], _trianglesVertexList[i+2].color());
 }
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -304,6 +319,13 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	}
 }
 
+void OpenGL::glShadeModel(const ShadeModel& model)
+{
+		if(inBetweenBeginEnd())
+			return;	// TODO: should return some error
+		_shadeModel = model;
+}
+
 OpenGL::OpenGL()
 {
 	_initialized = false;
@@ -319,6 +341,7 @@ void OpenGL::init(int x, int y)
 //	_colorBuffer->resize(x, y);
 	_activeColor = Color(1, 1, 1, 1);
 	_projection.setIdentity();
+	_shadeModel = GL_SMOOTH;	// default mode according to ogl specification
 
 
 	_initialized = true;

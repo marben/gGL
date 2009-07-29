@@ -34,9 +34,24 @@ typedef unsigned int GLbitfield;
 #define GL_COLOR_BUFFER_BIT ((GLbitfield) (1 << 0))
 #define GL_DEPTH_BUFFER_BIT ((GLbitfield) (1 << 1))
 
+const GLenum GL_SMOOTH = 1;
+const GLenum GL_FLAT = 2;
+const GLenum GL_TRIANGLES = 3;
+const GLenum GL_LINES = 4;
+const GLenum GL_POINTS = 5;
+const GLenum GL_POLYGON = 6;
+const GLenum GL_QUADS = 7;
+const GLenum GL_LINE_STRIP = 8;
+const GLenum GL_LINE_LOOP = 9;
+const GLenum GL_TRIANGLE_STRIP = 10;
+const GLenum GL_TRIANGLE_FAN = 11;
+const GLenum GL_QUAD_STRIP = 12;
+
 void glutPostRedisplay();
 
 void glClear(GLbitfield bufferMask);
+
+void glShadeModel(GLenum mode);
 
 void glLoadIdentity();
 
