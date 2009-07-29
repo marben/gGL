@@ -106,15 +106,15 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 void OpenGL::drawLines()
 {
 
-	drawTriangles_smooth();
-	drawTriangles_flat();
+	drawLines_smooth();
+	drawLines_flat();
 }
-void OpenGL::drawTriangles_smooth()
+void OpenGL::drawLines_smooth()
 {
 
 }
 
-void OpenGL::drawTriangles_flat()
+void OpenGL::drawLines_flat()
 {
 	size_t top;
 	if((_linesVertexList_flat.size() % 2) != 0)	// check if we have correct number of vertices for our lines

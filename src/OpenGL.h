@@ -68,8 +68,8 @@ public:
 private:
 	void drawLines();
 	void drawTriangles();
-	void drawTriangles_smooth();
-	void drawTriangles_flat();
+	void drawLines_smooth();
+	void drawLines_flat();
 
 	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
