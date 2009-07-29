@@ -74,6 +74,9 @@ private:
 	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
 
+	void line(int x0, int y0, int x1, int y1, const Color& color);	// 2D line on a drawing surface
+	void hLine(int x0, int y, int x1, const Color& color); //	2D hline on a drawing surface
+
 	bool inBetweenBeginEnd(){return _activeVertexList != NONE;}
 private:
 	bool _initialized;

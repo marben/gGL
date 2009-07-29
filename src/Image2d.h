@@ -44,7 +44,6 @@ public:
 
 	void resize(size_t x, size_t y);
 
-
 	const size_t & getX()const {return _x;}
 	const size_t & getY()const {return _y;}
 
@@ -60,7 +59,6 @@ public:
 private:
 	std::vector<T> _array;
 	size_t _x, _y;
-
 };
 
 template <typename T>

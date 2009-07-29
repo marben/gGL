@@ -126,8 +126,8 @@ void OpenGL::drawLines_flat()
 	{
 		const Vertex4& vertex1 = _linesVertexList_flat[i];
 		const Vertex4& vertex2 = _linesVertexList_flat[++i];
-		const Color& color =	vertex2.color();	// FIXME: allright, we should check, whether colors of both vertices are the same and if not.....
-		_colorBuffer->line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
+		const Color& color =	vertex2.color();
+		line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
 	}
 }
 
@@ -219,9 +219,9 @@ void OpenGL::drawTriangles()
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
-	_colorBuffer->line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.color());
-	_colorBuffer->line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.color());
-	_colorBuffer->line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.color());
+	line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.color());
+	line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.color());
+	line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.color());
 }
 
 void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color)
@@ -301,7 +301,7 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	int y = round_quick(bottom->y());
 	while(y < middle->y())
 	{
-		_colorBuffer->hLine(round_quick(x1), y, round_quick(x2), color);
+		hLine(round_quick(x1), y, round_quick(x2), color);
 		x1 += dx1;
 		x2 += dx2;
 		++y;
@@ -312,11 +312,21 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
 	while(y <= top->y())
 	{
-		_colorBuffer->hLine(round_quick(x1), y, round_quick(x2), color);
+		hLine(round_quick(x1), y, round_quick(x2), color);
 		x1 += dx1;
 		x2 += dx2;
 		++y;
 	}
+}
+
+void OpenGL::line(int x0, int y0, int x1, int y1, const Color& color)
+{
+	_colorBuffer->line(x0, y0, x1, y1, color);
+}
+
+void OpenGL::hLine(int x0, int y, int x1, const Color& color)
+{
+	_colorBuffer->hLine(x0, y, x1, color);
 }
 
 void OpenGL::glShadeModel(const ShadeModel& model)
