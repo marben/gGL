@@ -28,10 +28,16 @@ public:
 	virtual void clear(const float & value = 0) {_alpha = value; PixelRGB::clear(value);}
 	//virtual void clear(const float& value = 0, const float& alpha = 1) {PixelRGB::clear(value); _alpha = alpha;}
 
+	virtual PixelRGBA operator-(const PixelRGBA& p2)const {return PixelRGBA(this->r() - p2.r(), this->g() - p2.g(), this->b() - p2.b(), this->a() - p2.a());}
+	virtual PixelRGBA& operator+=(const PixelRGBA& p2){_r += p2.r(); _g += p2.g(); _b += p2.b(); _alpha += p2.a();return *this;}
 
-private:
+protected:
 	float _alpha;
 };
+
+inline PixelRGBA operator/(const PixelRGBA& p, const float f) {
+	return PixelRGBA(p.r()/f, p.g()/f, p.b()/f, p.alpha()/f);
+}
 
 }
 

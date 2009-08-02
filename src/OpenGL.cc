@@ -105,13 +105,83 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 
 void OpenGL::drawLines()
 {
-
 	drawLines_smooth();
 	drawLines_flat();
 }
 void OpenGL::drawLines_smooth()
 {
+	size_t top;
+	if((_linesVertexList_smooth.size() % 2) != 0)	// check if we have correct number of vertices for our lines
+		top = _linesVertexList_smooth.size() - 1;
+	else
+		top = _linesVertexList_smooth.size();
 
+	for(size_t i = 0; i < top; ++i)
+	{
+		const Vertex4& vertex1 = _linesVertexList_smooth[i];
+		const Vertex4& vertex2 = _linesVertexList_smooth[++i];
+//		const Color& color =	vertex2.color();
+//		line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
+		drawLine_smooth(vertex1, vertex2);
+	}
+}
+
+void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
+{
+	// TODO: use some sane algorithm (bresenham with interpolation along z axis, or fixed point floating values or something like that
+	Real dx = vertex1.x() - vertex2.x();
+	Real adx = abs(dx);
+	Real dy = vertex1.y() - vertex2.y();
+	Real ady = abs(dy);
+	if(adx > ady)	// lets iterate along the x axis..
+	{
+		const Vertex4 *v1, *v2;
+		if(vertex1.x() > vertex2.x()){
+			v1 = &vertex2;
+			v2 = &vertex1;
+		}
+		else{
+			v1 = &vertex1;
+			v2 = &vertex2;
+		}
+
+		Color dcolor = (v2->color() - v1->color()) / adx;
+		Color color = v1->color();
+
+		Real y = v1->y();
+		dy = (v2->y() - v1->y()) / adx;
+		for(int x = round_quick(v1->x()); round_quick(x < v2->x()); x++)
+		{
+			_colorBuffer->putPixel(x, round_quick(y), color);
+			color += dcolor;
+			y += dy;
+		}
+	}
+	else	// let's iterate along y
+	{
+		const Vertex4 *v1, *v2;
+		if(vertex1.y() > vertex2.y()){
+			v1 = &vertex2;
+			v2 = &vertex1;
+		}
+		else{
+			v1 = &vertex1;
+			v2 = &vertex2;
+		}
+
+		Color dcolor = (v2->color() - v1->color()) / ady;
+		Color color = v1->color();
+
+		Real x = v1->x();
+		dx = (v2->x() - v1->x()) / ady;
+		for(int y = round_quick(v1->y()); y < round_quick(v2->y()); y++)
+		{
+			_colorBuffer->putPixel(round_quick(x), y, color);
+			color += dcolor;
+			x += dx;
+		}
+	}
+	//	line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), Cyan);
 }
 
 void OpenGL::drawLines_flat()
