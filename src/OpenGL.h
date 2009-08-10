@@ -29,7 +29,7 @@ typedef float Real;	// this is the default floating type, we will use in opengl
 //		Int_t _value;
 //}
 
-inline int round(Real x){
+inline int round(Real x){	// TODO: put this in some global header
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
 }
 inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function ..
@@ -73,6 +73,9 @@ private:
 
 	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
+	void drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
+
+	void drawHLine_smooth(int x0, int y, int x1, const Color& c1, const Color& c2);
 
 	void line(int x0, int y0, int x1, int y1, const Color& color);	// 2D line on a drawing surface
 	void hLine(int x0, int y, int x1, const Color& color); //	2D hline on a drawing surface
@@ -86,7 +89,7 @@ private:
 private:
 	PixelRGBA _glClearColor;
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
-	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList;
+	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList_flat, _trianglesVertexList_smooth;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix

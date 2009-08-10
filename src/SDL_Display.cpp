@@ -43,7 +43,7 @@ void SDL_Display::init(size_t x, size_t y)
 	_x = x;
 	_y = y;
 
-	_screen = SDL_SetVideoMode(x, y, 8, SDL_SWSURFACE);
+	_screen = SDL_SetVideoMode(x, y, 32, SDL_SWSURFACE);
 	_surface_locked = false;
 
 }

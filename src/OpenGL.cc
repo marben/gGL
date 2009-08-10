@@ -210,7 +210,8 @@ const CanvasRGB* OpenGL::glFlush()
 
 	_linesVertexList_smooth.clear();
 	_linesVertexList_flat.clear();
-	_trianglesVertexList.clear();
+	_trianglesVertexList_flat.clear();
+	_trianglesVertexList_smooth.clear();
 
 	return _colorBuffer;
 }
@@ -234,7 +235,10 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 		break;
 
 	case GL_TRIANGLES:
-		_trianglesVertexList.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+		if(_shadeModel == GL_SMOOTH)
+			_trianglesVertexList_smooth.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+		else
+			_trianglesVertexList_flat.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case NONE:
@@ -274,17 +278,134 @@ void OpenGL::drawTriangles()
 	 */
 
 
+	// draw flat triangles:
 	size_t top;
-	if((_trianglesVertexList.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
-		top = _trianglesVertexList.size() - 1;
-	if((_trianglesVertexList.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
-			top = _trianglesVertexList.size() - 1;
+	if((_trianglesVertexList_flat.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
+		top = _trianglesVertexList_flat.size() - 1;
+	if((_trianglesVertexList_flat.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
+			top = _trianglesVertexList_flat.size() - 1;
 	else
-		top = _trianglesVertexList.size();
+		top = _trianglesVertexList_flat.size();
 
 	for(size_t i = 0; i < top; i += 3)
-		//drawTriangle_wired(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2]);
-		drawTriangle_flat(_trianglesVertexList[i+0], _trianglesVertexList[i+1], _trianglesVertexList[i+2], _trianglesVertexList[i+2].color());
+		drawTriangle_flat(_trianglesVertexList_flat[i+0], _trianglesVertexList_flat[i+1], _trianglesVertexList_flat[i+2], _trianglesVertexList_flat[i+2].color());
+
+
+	// draw smooth triangles:
+	if((_trianglesVertexList_smooth.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
+		top = _trianglesVertexList_smooth.size() - 1;
+	if((_trianglesVertexList_smooth.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
+			top = _trianglesVertexList_smooth.size() - 1;
+	else
+		top = _trianglesVertexList_smooth.size();
+
+	for(size_t i = 0; i < top; i += 3)
+	{
+		//drawTriangle_flat(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2], _trianglesVertexList_smooth[i+2].color());
+		drawTriangle_smooth(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
+	}
+}
+
+void OpenGL::drawHLine_smooth(int x0, int y, int x1, const Color& c1, const Color& c2)
+{
+	if(x0 == x1)
+	{
+		_colorBuffer->putPixel(x0, y, c1);	// TODO rethink this. probably shouldn't draw anything and if, the color should be (c1+c2)/2
+		return;
+	}
+
+	int x, xmax;
+	Color color, dcolor;
+	if(x0 < x1)
+	{
+		x = x0;
+		xmax = x1;
+		color = c1;
+		dcolor = (c2 - c1) / (x1 - x0);
+	}
+	else
+	{
+		x = x1;
+		xmax = x0;
+		color = c2;
+		dcolor = (c1 - c2) / (x0 - x1);
+	}
+
+	while(x <= xmax)
+	{
+		_colorBuffer->putPixel(x, y, color);
+		color += dcolor;
+		x++;
+	}
+}
+
+void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
+{
+
+	const Vertex4 *top = &v1;
+	const Vertex4 *middle = &v2;
+	const Vertex4 *bottom = &v3;
+
+	if(bottom->y() > middle->y())
+		std::swap(bottom, middle);
+	if(bottom->y() > top->y())
+		std::swap(bottom, top);
+	if(middle->y() > top->y())
+		std::swap(middle, top);
+
+
+	// lets iterate from bottom to top
+	// we count the float x difference for both lines we iterate
+	// line 1 should be the longer (from top to bottom)
+
+	// TODO: check, for impossible triangles etc...
+
+	assert(bottom->y() != top->y());	// get rid of this
+	Real dx1 = (top->x() - bottom->x()) / (top->y() - bottom->y());
+
+	assert(middle->y() != bottom->y());	// get rid of this
+	Real dx2 = (middle->x() - bottom->x()) / (middle->y() - bottom->y());
+
+	Real x1 = bottom->x();
+	Real x2 = bottom->x();
+
+	Color startColor1(bottom->color());
+	Color startColor2(bottom->color());
+
+	Color colorDy1;	// color change along the top->bottom line
+	Color colorDy2;	// color change along the other line
+
+	colorDy1 = (top->color() - bottom->color()) / (top->y() - bottom->y());
+	colorDy2 = (middle->color() - bottom->color()) / (middle->y() - bottom->y());
+
+	int y = round_quick(bottom->y());
+	while(y < middle->y())
+	{
+		drawHLine_smooth(round_quick(x1), y, round_quick(x2), startColor1, startColor2);
+		startColor1 += colorDy1;
+		startColor2 += colorDy2;
+		x1 += dx1;
+		x2 += dx2;
+		++y;
+	}
+
+	// now for the top 'half' of a triangle
+	assert(middle->y() != top->y());	// get rid of this
+	dx2 = (top->x() - middle->x()) / (top->y() - middle->y());
+	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
+	startColor2 = middle->color();
+	colorDy2 = (top->color() - middle->color()) / (top->y() - middle->y());
+
+	while(y <= top->y())
+	{
+		drawHLine_smooth(round_quick(x1), y, round_quick(x2), startColor1, startColor2);
+		startColor1 += colorDy1;
+		startColor2 += colorDy2;
+		x1 += dx1;
+		x2 += dx2;
+		++y;
+	}
+
 }
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)

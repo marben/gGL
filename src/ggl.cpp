@@ -33,18 +33,19 @@ void glTest()
    glLoadIdentity();
    glTranslatef(320, 240, 0);
 
-   glShadeModel(GL_FLAT);
+   glRotatef(45+angle, 1, 0.7, 0.4);
+   glShadeModel(GL_SMOOTH);
    glBegin(GL_TRIANGLES);
 		glColor3f(1.0, 0.0, 0.0);
 		glVertex3f(10, 10, 0);
 		glColor3f(0.0, 1.0, 0.0);
 		glVertex3f(200, 200, 0);
 		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(50, 205, 0);
+		glVertex3f(150, 220, 0);
    glEnd();
 
-   glShadeModel(GL_FLAT);
-   glRotatef(45+angle, 1, 0.7, 0.4);
+   //glShadeModel(GL_FLAT);
+   //glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
 		glColor3f(1, 0, 0);
