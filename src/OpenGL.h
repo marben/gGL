@@ -64,6 +64,7 @@ public:
 	void glTranslate(Real x, Real y, Real z);
 	void glLoadIdentity();
 	void glShadeModel(const ShadeModel& model);
+	void glMatrixMode(MatrixMode mode) {_matrixMode = mode;}
 
 
 private:
@@ -97,6 +98,7 @@ private:
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix
 	ShadeModel _shadeModel;
+	MatrixMode _matrixMode;
 	double* _zBuffer;
 	int _x, _y;	// resolution we are working with
 

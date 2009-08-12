@@ -46,6 +46,9 @@ const GLenum GL_LINE_LOOP = 9;
 const GLenum GL_TRIANGLE_STRIP = 10;
 const GLenum GL_TRIANGLE_FAN = 11;
 const GLenum GL_QUAD_STRIP = 12;
+const GLenum GL_MODELVIEW = 13;
+const GLenum GL_PROJECTION = 14;
+const GLenum GL_TEXTURE = 15;
 
 void glutPostRedisplay();
 
@@ -83,6 +86,8 @@ void glColor3f(GLfloat r, GLfloat g, GLfloat b);
 void glFlush();
 
 void glBegin(GLenum mode);
+
+void glMatrixMode(GLenum mode);
 
 void glEnd();
 

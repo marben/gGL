@@ -10,7 +10,6 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm>
-#include <cstdio>
 
 #define PI 3.1415926535897932384626433832795	// tell me of a better way...
 inline double radian(const double degree)
@@ -672,6 +671,7 @@ void OpenGL::init(int x, int y)
 	_zBuffer = new double[x*y];
 
 	_initialized = true;
+	_matrixMode = GL_MODELVIEW;
 }
 
 void OpenGL::glClearColor(float red, float green, float blue, float alpha)

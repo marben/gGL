@@ -22,6 +22,23 @@ Uint32 _glutTimerCallbackFunction(Uint32 interval, void* param)
 	return 0;	// the timer is cancelled, if we return 0 -- doesn;t work(it seems)...need to call SDL_RemoveTimer
 }
 
+void glMatrixMode(GLenum mode)
+{
+	switch(mode) {
+	case ::GL_PROJECTION:
+		opengl.glMatrixMode(ggl::GL_PROJECTION);
+		break;
+	case ::GL_MODELVIEW:
+		opengl.glMatrixMode(ggl::GL_MODELVIEW);
+		break;
+	case ::GL_TEXTURE:
+		opengl.glMatrixMode(ggl::GL_TEXTURE);
+		break;
+	default:
+		break;
+	}
+}
+
 void glClear(GLbitfield bufferMask)
 {
 	if(bufferMask & GL_COLOR_BUFFER_BIT)
