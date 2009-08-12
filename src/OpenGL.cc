@@ -27,8 +27,7 @@ void OpenGL::clearColorBuffer()
 
 void OpenGL::glLoadIdentity()
 {
-	// TODO: need to distinguish active matrix!!
-	_projection.setIdentity();
+	_activeMatrix->setIdentity();
 }
 
 void OpenGL::glTranslate(Real x, Real y, Real z)
@@ -41,7 +40,7 @@ void OpenGL::glTranslate(Real x, Real y, Real z)
 					0, 0, 1, z,
 					0, 0, 0, 1;
 
-	_projection *= trMatrix;
+	*_activeMatrix *= trMatrix;
 }
 
 void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
@@ -100,7 +99,7 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 					xzc1-y*s, yzc1+x*s, z*z*c1+c, 0,
 					0, 0, 0, 1;
 
-	_projection *= matrix;
+	*_activeMatrix *= matrix;
 }
 
 void OpenGL::drawLines()
@@ -188,7 +187,6 @@ void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
 			z += dz;
 			color += dcolor;
 		}
-
 	}
 }
 
@@ -292,14 +290,14 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	assert(_initialized);
 	assert(_activeVertexList != NONE);
 
-	//Vertex4d* vertex = new Vertex4d(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor);
+	//Vertex4d* vertex = new Vertex4d(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor);
 	switch (_activeVertexList)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_linesVertexList_smooth.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_linesVertexList_flat.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case GL_POLYGON:
@@ -307,9 +305,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 
 	case GL_TRIANGLES:
 		if(_shadeModel == GL_SMOOTH)
-			_trianglesVertexList_smooth.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_trianglesVertexList_smooth.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		else
-			_trianglesVertexList_flat.push_back(Vertex4(_projection * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_trianglesVertexList_flat.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case NONE:
@@ -649,6 +647,27 @@ void OpenGL::glShadeModel(const ShadeModel& model)
 		_shadeModel = model;
 }
 
+void OpenGL::glMatrixMode(MatrixMode mode)
+{
+	_matrixMode = mode;
+	switch (mode)
+	{
+	case GL_PROJECTION:
+		_activeMatrix = &_projectionMatrix;
+		break;
+
+	case GL_MODELVIEW:
+		_activeMatrix = &_modelViewMatrix;
+		break;
+
+	case GL_TEXTURE:
+		_activeMatrix = &_textureMatrix;
+
+	default:
+		break;
+	}
+}
+
 OpenGL::OpenGL()
 {
 	_initialized = false;
@@ -665,13 +684,15 @@ void OpenGL::init(int x, int y)
 //	_colorBuffer = new Image2dRGB;
 //	_colorBuffer->resize(x, y);
 	_activeColor = Color(1, 1, 1, 1);
-	_projection.setIdentity();
+	_modelViewMatrix.setIdentity();
+	_projectionMatrix.setIdentity();
+	_textureMatrix.setIdentity();
 	_shadeModel = GL_SMOOTH;	// default mode according to ogl specification
 
 	_zBuffer = new double[x*y];
 
 	_initialized = true;
-	_matrixMode = GL_MODELVIEW;
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void OpenGL::glClearColor(float red, float green, float blue, float alpha)

@@ -64,7 +64,7 @@ public:
 	void glTranslate(Real x, Real y, Real z);
 	void glLoadIdentity();
 	void glShadeModel(const ShadeModel& model);
-	void glMatrixMode(MatrixMode mode) {_matrixMode = mode;}
+	void glMatrixMode(MatrixMode mode);
 
 
 private:
@@ -96,7 +96,8 @@ private:
 	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList_flat, _trianglesVertexList_smooth;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
-	Matrix4d _projection;	// projection matrix
+	Matrix4d _projectionMatrix, _modelViewMatrix, _textureMatrix;	// projection matrix
+	Matrix4d* _activeMatrix;	// pointer to active matrix
 	ShadeModel _shadeModel;
 	MatrixMode _matrixMode;
 	double* _zBuffer;
