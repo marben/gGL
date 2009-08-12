@@ -21,7 +21,7 @@ void SDL_Display::putPixel(const size_t & x, const size_t & y, const ggl::PixelR
 	{
 		beginWrite();
 		putpixel(_screen, x, y, SDL_MapRGB(_screen->format, pixel.r_int_norm(), pixel.g_int_norm(), pixel.b_int_norm()));
-		endWrite();
+		//endWrite(); // TODO: probably uncomment this one...surface should stay locked?
 	}
 }
 

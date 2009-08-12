@@ -51,6 +51,7 @@ public:
 	void setColorBuffer(CanvasRGB* colorBuffer) {_colorBuffer = colorBuffer;}
 
 	void clearColorBuffer();
+	void clearZBuffer();
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
@@ -75,12 +76,14 @@ private:
 	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
 	void drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 
-	void drawHLine_smooth(int x0, int y, int x1, const Color& c1, const Color& c2);
+	void drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const Color& c1, const Color& c2);
+	void drawHLine_flat(int x0, int y, double z0, int x1, double z1, const Color& color);
 
 	void line(int x0, int y0, int x1, int y1, const Color& color);	// 2D line on a drawing surface
-	void hLine(int x0, int y, int x1, const Color& color); //	2D hline on a drawing surface
+	void putPixel(int x, int y, double z, const ggl::PixelRGB& color);	// puts pixel on color buffer and sets z buffer
 
 	void drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2);
+	void drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const Color& color);
 
 	bool inBetweenBeginEnd(){return _activeVertexList != NONE;}
 private:
@@ -94,6 +97,8 @@ private:
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projection;	// projection matrix
 	ShadeModel _shadeModel;
+	double* _zBuffer;
+	int _x, _y;	// resolution we are working with
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

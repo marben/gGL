@@ -26,7 +26,8 @@ void glClear(GLbitfield bufferMask)
 {
 	if(bufferMask & GL_COLOR_BUFFER_BIT)
 		opengl.clearColorBuffer();
-
+	if(bufferMask & GL_DEPTH_BUFFER_BIT)
+		opengl.clearZBuffer();
 }
 
 void glLoadIdentity()

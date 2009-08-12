@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm>
+#include <cstdio>
 
 #define PI 3.1415926535897932384626433832795	// tell me of a better way...
 inline double radian(const double degree)
@@ -120,68 +121,76 @@ void OpenGL::drawLines_smooth()
 	{
 		const Vertex4& vertex1 = _linesVertexList_smooth[i];
 		const Vertex4& vertex2 = _linesVertexList_smooth[++i];
-//		const Color& color =	vertex2.color();
-//		line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
 		drawLine_smooth(vertex1, vertex2);
 	}
 }
 
 void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
-{
-	// TODO: use some sane algorithm (bresenham with interpolation along z axis, or fixed point floating values or something like that
-	Real dx = vertex1.x() - vertex2.x();
+{	// TODO: shlod be using some bresenham implementation or something like that..
+
+	Real dx = vertex2.x() - vertex1.x();
+	Real dy = vertex2.y() - vertex1.y();
 	Real adx = abs(dx);
-	Real dy = vertex1.y() - vertex2.y();
 	Real ady = abs(dy);
-	if(adx > ady)	// lets iterate along the x axis..
+	const Vertex4* v1;
+	const Vertex4* v2;
+	if(adx>ady)	// we will iterate along the x axis
 	{
-		const Vertex4 *v1, *v2;
-		if(vertex1.x() > vertex2.x()){
-			v1 = &vertex2;
-			v2 = &vertex1;
-		}
-		else{
+		if(vertex1.x() < vertex2.x())
+		{
 			v1 = &vertex1;
 			v2 = &vertex2;
 		}
+		else{
+			v1 = &vertex2;
+			v2 = &vertex1;
+		}
 
-		Color dcolor = (v2->color() - v1->color()) / adx;
-		Color color = v1->color();
+		Real y( v1->y() );
+		Real z( v1->z() );
+		Color color( v1->color() );
 
-		Real y = v1->y();
-		dy = (v2->y() - v1->y()) / adx;
-		for(int x = round_quick(v1->x()); round_quick(x < v2->x()); x++)
+		Color dcolor( (v2->color() - v1->color()) / (v2->x()-v1->x()) );
+		Real dy( (v2->y()- v1->y()) / (v2->x() - v1->x()) );
+		Real dz( (v2->z() - v1->z()) / (v2->x() - v1->x()) );
+
+		for(int x = v1->x(); x <= v2->x(); ++x)
 		{
-			_colorBuffer->putPixel(x, round_quick(y), color);
-			color += dcolor;
+			putPixel(x, round_quick(y), z, color);
+			z += dz;
 			y += dy;
+			color += dcolor;
 		}
 	}
-	else	// let's iterate along y
+	else	// we will iterate along y axis
 	{
-		const Vertex4 *v1, *v2;
-		if(vertex1.y() > vertex2.y()){
-			v1 = &vertex2;
-			v2 = &vertex1;
-		}
-		else{
+		if(vertex1.y() < vertex2.y())
+		{
 			v1 = &vertex1;
 			v2 = &vertex2;
 		}
-
-		Color dcolor = (v2->color() - v1->color()) / ady;
-		Color color = v1->color();
-
-		Real x = v1->x();
-		dx = (v2->x() - v1->x()) / ady;
-		for(int y = round_quick(v1->y()); y < round_quick(v2->y()); y++)
-		{
-			_colorBuffer->putPixel(round_quick(x), y, color);
-			color += dcolor;
-			x += dx;
+		else {
+			v1 = &vertex2;
+			v2 = &vertex1;
 		}
+
+		Real x( v1->x() );
+		Real z( v1->z() );
+		Color color( v1->color() );
+
+		Color dcolor( (v2->color() - v1->color()) / (v2->y() - v1->y()) );
+		Real dx( (v2->x() - v1->x()) / (v2->y() - v1->y()) );
+		Real dz( (v2->z() - v1->z()) / (v2->y() - v1->y()) );
+
+		for(int y = v1->y(); y <= v2->y(); ++y)
+		{
+			putPixel(round_quick(x), y, z, color);
+			x += dx;
+			z += dz;
+			color += dcolor;
+		}
+
 	}
-	//	line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), Cyan);
 }
 
 void OpenGL::drawLines_flat()
@@ -196,8 +205,71 @@ void OpenGL::drawLines_flat()
 	{
 		const Vertex4& vertex1 = _linesVertexList_flat[i];
 		const Vertex4& vertex2 = _linesVertexList_flat[++i];
-		const Color& color =	vertex2.color();
-		line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
+		//const Color& color =	vertex2.color();
+		//line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
+		drawLine_flat(vertex1, vertex2, vertex2.color());
+	}
+}
+
+void OpenGL::drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const Color& color)
+{
+	Real dx = vertex2.x() - vertex1.x();
+	Real dy = vertex2.y() - vertex1.y();
+	Real adx = abs(dx);
+	Real ady = abs(dy);
+	const Vertex4* v1;
+	const Vertex4* v2;
+
+	if(adx>ady)	// we will iterate along the x axis
+	{
+		if(vertex1.x() < vertex2.x())
+		{
+			v1 = &vertex1;
+			v2 = &vertex2;
+		}
+		else{
+			v1 = &vertex2;
+			v2 = &vertex1;
+		}
+
+		Real y( v1->y() );
+		Real z( v1->z() );
+
+		Real dy( (v2->y()- v1->y()) / (v2->x() - v1->x()) );
+		Real dz( (v2->z() - v1->z()) / (v2->x() - v1->x()) );
+
+		for(int x = v1->x(); x <= v2->x(); ++x)
+		{
+			putPixel(x, round_quick(y), z, color);
+			z += dz;
+			y += dy;
+		}
+	}
+	else	// we will iterate along y axis
+	{
+		if(vertex1.y() < vertex2.y())
+		{
+			v1 = &vertex1;
+			v2 = &vertex2;
+		}
+		else {
+			v1 = &vertex2;
+			v2 = &vertex1;
+		}
+
+		Real x( v1->x() );
+		Real z( v1->z() );
+
+		Real dx( (v2->x() - v1->x()) / (v2->y() - v1->y()) );
+		Real dz( (v2->z() - v1->z()) / (v2->y() - v1->y()) );
+
+		for(int y = v1->y(); y <= v2->y(); ++y)
+		{
+			putPixel(round_quick(x), y, z, color);
+			x += dx;
+			z += dz;
+		}
+
 	}
 }
 
@@ -300,41 +372,50 @@ void OpenGL::drawTriangles()
 		top = _trianglesVertexList_smooth.size();
 
 	for(size_t i = 0; i < top; i += 3)
-	{
-		//drawTriangle_flat(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2], _trianglesVertexList_smooth[i+2].color());
 		drawTriangle_smooth(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
-	}
 }
 
-void OpenGL::drawHLine_smooth(int x0, int y, int x1, const Color& c1, const Color& c2)
+void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const Color& c1, const Color& c2)
 {
 	if(x0 == x1)
 	{
-		_colorBuffer->putPixel(x0, y, c1);	// TODO rethink this. probably shouldn't draw anything and if, the color should be (c1+c2)/2
+		//_colorBuffer->putPixel(x0, y, c1);	// TODO rethink this. probably shouldn't draw anything and if, the color should be (c1+c2)/2
+		putPixel(x0, y, z1, c1);
 		return;
 	}
 
 	int x, xmax;
+	double z;
 	Color color, dcolor;
+	double dz;
+
+	// TODO: why did i put here the if else ??
+
 	if(x0 < x1)
 	{
 		x = x0;
+		z = z0;
 		xmax = x1;
 		color = c1;
 		dcolor = (c2 - c1) / (x1 - x0);
+		dz = (z1 - z0) / (x1 - x0);
 	}
 	else
 	{
 		x = x1;
+		z = z1;
 		xmax = x0;
 		color = c2;
 		dcolor = (c1 - c2) / (x0 - x1);
+		dz = (z0 - z1) / (x0 - x1);
 	}
 
 	while(x <= xmax)
 	{
-		_colorBuffer->putPixel(x, y, color);
+		//_colorBuffer->putPixel(x, y, color);
+		putPixel(x, y, z, color);
 		color += dcolor;
+		z += dz;
 		x++;
 	}
 }
@@ -372,37 +453,46 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	Color startColor1(bottom->color());
 	Color startColor2(bottom->color());
 
-	Color colorDy1;	// color change along the top->bottom line
-	Color colorDy2;	// color change along the other line
+	Color colorDy1 = (top->color() - bottom->color()) / (top->y() - bottom->y());	// color change along the top->bottom line
+	Color colorDy2 = (middle->color() - bottom->color()) / (middle->y() - bottom->y());	// color change along the other line
 
-	colorDy1 = (top->color() - bottom->color()) / (top->y() - bottom->y());
-	colorDy2 = (middle->color() - bottom->color()) / (middle->y() - bottom->y());
+	double z1 = bottom->z();
+	double z2 = bottom->z();
+
+	double dz1 = (top->z() - bottom->z()) / (top->y() - bottom->y());
+	double dz2 = (middle->z() - bottom->z()) / (middle->y() - bottom->y());
 
 	int y = round_quick(bottom->y());
 	while(y < middle->y())
 	{
-		drawHLine_smooth(round_quick(x1), y, round_quick(x2), startColor1, startColor2);
+		drawHLine_smooth(round_quick(x1), y, z1, round_quick(x2), z2, startColor1, startColor2);
 		startColor1 += colorDy1;
 		startColor2 += colorDy2;
 		x1 += dx1;
 		x2 += dx2;
+		z1 += dz1;
+		z2 += dz2;
 		++y;
 	}
-
 	// now for the top 'half' of a triangle
 	assert(middle->y() != top->y());	// get rid of this
 	dx2 = (top->x() - middle->x()) / (top->y() - middle->y());
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
+	z2 = middle->z();
 	startColor2 = middle->color();
 	colorDy2 = (top->color() - middle->color()) / (top->y() - middle->y());
+	dz2 = (top->z() - middle->z()) / (top->y() - middle->y());
+
 
 	while(y <= top->y())
 	{
-		drawHLine_smooth(round_quick(x1), y, round_quick(x2), startColor1, startColor2);
+		drawHLine_smooth(round_quick(x1), y, z1, round_quick(x2), z2, startColor1, startColor2);
 		startColor1 += colorDy1;
 		startColor2 += colorDy2;
 		x1 += dx1;
 		x2 += dx2;
+		z1 += dz1;
+		z2 += dz2;
 		++y;
 	}
 
@@ -489,25 +579,62 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	Real x1 = bottom->x();
 	Real x2 = bottom->x();
 
+	double z1 = bottom->z();
+	double z2 = bottom->z();
+
+	double dz1 = (top->z() - bottom->z()) / (top->y() - bottom->y());
+	double dz2 = (middle->z() - bottom->z()) / (middle->y() - bottom->y());
+
 	int y = round_quick(bottom->y());
 	while(y < middle->y())
 	{
-		hLine(round_quick(x1), y, round_quick(x2), color);
+		drawHLine_flat(round_quick(x1), y, z1, round_quick(x2), z2, color);
 		x1 += dx1;
 		x2 += dx2;
+		z1 += dz1;
+		z2 += dz2;
 		++y;
 	}
 	// and now for the other 'half' of the triangle
 	assert(middle->y() != top->y());	// get rid of this
 	dx2 = (top->x() - middle->x()) / (top->y() - middle->y());
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
+	z2 = middle->z();
+	dz2 = (top->z() - middle->z()) / (top->y() - middle->y());
 	while(y <= top->y())
 	{
-		hLine(round_quick(x1), y, round_quick(x2), color);
+		drawHLine_flat(round_quick(x1), y, z1, round_quick(x2), z2, color);
 		x1 += dx1;
 		x2 += dx2;
+		z1 += dz1;
+		z2 += dz2;
 		++y;
 	}
+}
+
+void OpenGL::drawHLine_flat(int x0, int y, double z0, int x1, double z1, const Color& color)
+{
+	if(x0 < x1)
+	{
+		double z = z0;
+		double dz = (z1 - z0)/(x1 - x0);
+		for(int x = x0; x <= x1; ++x)
+		{
+			putPixel(x, y, z, color);
+			z += dz;
+		}
+	}
+	else
+	{
+		double z = z1;
+		double dz = (z0 - z1)/(x0 - x1);
+		for(int x = x1; x <= x0; ++x)
+		{
+			putPixel(x, y, z, color);
+			z += dz;
+		}
+	}
+
 }
 
 void OpenGL::line(int x0, int y0, int x1, int y1, const Color& color)
@@ -515,10 +642,6 @@ void OpenGL::line(int x0, int y0, int x1, int y1, const Color& color)
 	_colorBuffer->line(x0, y0, x1, y1, color);
 }
 
-void OpenGL::hLine(int x0, int y, int x1, const Color& color)
-{
-	_colorBuffer->hLine(x0, y, x1, color);
-}
 
 void OpenGL::glShadeModel(const ShadeModel& model)
 {
@@ -535,6 +658,8 @@ OpenGL::OpenGL()
 
 void OpenGL::init(int x, int y)
 {
+	_x = x;
+	_y = y;
 	_glClearColor.clear(0.0);
 	_activeVertexList = NONE;
 //	_colorBuffer.resize(x, y);
@@ -544,6 +669,7 @@ void OpenGL::init(int x, int y)
 	_projection.setIdentity();
 	_shadeModel = GL_SMOOTH;	// default mode according to ogl specification
 
+	_zBuffer = new double[x*y];
 
 	_initialized = true;
 }
@@ -554,10 +680,33 @@ void OpenGL::glClearColor(float red, float green, float blue, float alpha)
 	_glClearColor = PixelRGBA(red, green, blue, alpha);
 }
 
+void OpenGL::putPixel(int x, int y, double z, const ggl::PixelRGB& color)
+{
+	if( x < 0 || y < 0 || x >= _x || y >= _y)
+		return;
+
+	if(z > _zBuffer[x + _x * y])
+	{
+		_zBuffer[x + _x * y] = z;
+		_colorBuffer->putPixel(x, y, color);
+	}
+	else
+		x++;
+}
+
+void OpenGL::clearZBuffer()
+{
+	// TODO: put zFar instead of this value
+	//memset(_zBuffer, -1000, _x*_y*sizeof(double));
+
+	// TODO: create cleared buffer and then just memcpy it to the zBuffer
+	for(int i = 0; i < _x*_y; ++i)
+		_zBuffer[i] = -1000.0;
+}
+
 OpenGL::~OpenGL()
 {
-	// TODO Auto-generated destructor stub
-	// TODO: delete all allocated memory!!
+	delete _zBuffer;
 }
 
 }

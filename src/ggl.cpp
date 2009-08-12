@@ -36,16 +36,25 @@ void glTest()
    glRotatef(45+angle, 1, 0.7, 0.4);
    glShadeModel(GL_SMOOTH);
    glBegin(GL_TRIANGLES);
-		glColor3f(1.0, 0.0, 0.0);
-		glVertex3f(10, 10, 0);
-		glColor3f(0.0, 1.0, 0.0);
-		glVertex3f(200, 200, 0);
-		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(150, 220, 0);
+
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex3f(0, 0, 0);
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex3f(0, 200, 0);
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex3f(100, 50, -10);
+
+	glColor3f(1.0, 0.0, 1.0);
+	glVertex3f(0, 0, -20);
+	glColor3f(0.0, 1.0, 0.0);
+	glVertex3f(0, 200, -20);
+	glColor3f(0.0, 1.0, 1.0);
+	glVertex3f(100, 50, 10);
+
    glEnd();
 
-   //glShadeModel(GL_FLAT);
-   //glRotatef(45+angle, 1, 0.7, 0.4);
+   glShadeModel(GL_SMOOTH);
+//   glRotatef(45+angle, 1, 0.7, 0.4);
    //glRotatef(45, 1, 1, 0);
    glBegin(GL_LINES);
 		glColor3f(1, 0, 0);
@@ -56,14 +65,14 @@ void glTest()
 		glVertex3f(50, -50, -50); glVertex3f(-50, -50, -50);
 		glVertex3f(-50, -50, -50); glVertex3f(-50, 50, -50);
 
-		glColor3f(0, 1, 0);
+		glColor3f(0, 0, 1);
 		glVertex3f(-50, 50, 50); glVertex3f(50, 50, 50);
 		glVertex3f(50, 50, 50); glVertex3f(50, -50, 50);
 		glVertex3f(50, -50, 50); glVertex3f(-50, -50, 50);
 		glVertex3f(-50, -50, 50); glVertex3f(-50, 50, 50);
 
 	glEnd();
-	glShadeModel(GL_SMOOTH);
+	glShadeModel(GL_FLAT);
 	glBegin(GL_LINES);
 		glColor3f(0, 1, 0);
 		glVertex3f(-50, 50, -50); glVertex3f(-50, 50, 50);
