@@ -24,6 +24,17 @@ using namespace std;
 int angle = 0;
 int delay = 20;
 
+void printMatrix(float matrix[4])
+{
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+			cout<<matrix[i*4 + j]<<"|";
+		cout<<endl;
+	}
+
+}
+
 void glTest()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -83,6 +94,9 @@ void glTest()
 		glVertex3f(-50, -50, 50);
    glEnd();
    glFlush();
+   float matrix[16];
+   glGetFloatv(GL_PROJECTION_MATRIX, matrix);
+   printMatrix(matrix);
 }
 
 void timerCallback(int data)
@@ -94,7 +108,7 @@ void timerCallback(int data)
 	if(angle < 0)
 		angle += 360;
 
-	glutPostRedisplay();
+	//glutPostRedisplay();
 	glutTimerFunc(delay, timerCallback, 0);
 }
 

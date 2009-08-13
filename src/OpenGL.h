@@ -66,6 +66,9 @@ public:
 	void glShadeModel(const ShadeModel& model);
 	void glMatrixMode(MatrixMode mode);
 
+	const Matrix4d& getModelViewMatrix() const {return _modelViewMatrix;}
+	const Matrix4d& getProjectionMatrix() const {return _projectionMatrix;}
+	const Matrix4d& getTextureMatrix() const {return _textureMatrix;}
 
 private:
 	void drawLines();
@@ -87,6 +90,7 @@ private:
 	void drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const Color& color);
 
 	bool inBetweenBeginEnd(){return _activeVertexList != NONE;}
+
 private:
 	bool _initialized;
 

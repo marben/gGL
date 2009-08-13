@@ -39,6 +39,44 @@ void glMatrixMode(GLenum mode)
 	}
 }
 
+template<typename T>
+static void matrixToArray(const Matrix4d& matrix, T* array)
+{
+	for(int i = 0; i < 4; ++i)
+		for(int j = 0; j < 4; ++j)
+			array[i + j*4] = static_cast<T>(matrix(i,j));
+}
+
+template<typename T>
+static void Getv(GLenum pname, T* params)
+{
+	switch(pname)
+	{
+	case GL_MODELVIEW_MATRIX:
+		matrixToArray<T>(opengl.getModelViewMatrix(), params);
+		return;
+	case GL_PROJECTION_MATRIX:
+		matrixToArray<T>(opengl.getProjectionMatrix(), params);
+		return;
+	case GL_TEXTURE_MATRIX:
+		matrixToArray<T>(opengl.getTextureMatrix(), params);
+		return;
+	default:
+		break;
+	}
+
+}
+
+void glGetFloatv(GLenum pname, GLfloat *params)
+{
+	Getv<GLfloat>(pname, params);
+}
+
+void glGetDoublev(GLenum pname, GLdouble* params)
+{
+	Getv<GLdouble>(pname, params);
+}
+
 void glClear(GLbitfield bufferMask)
 {
 	if(bufferMask & GL_COLOR_BUFFER_BIT)
@@ -91,7 +129,7 @@ void glutMainLoop(void)
 {
 	bool done = false;
 	SDL_Event event;
-
+	glutPostRedisplay();
 	while((!done) && SDL_WaitEvent(&event))
 	{
 		switch(event.type)

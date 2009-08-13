@@ -49,6 +49,9 @@ const GLenum GL_QUAD_STRIP = 12;
 const GLenum GL_MODELVIEW = 13;
 const GLenum GL_PROJECTION = 14;
 const GLenum GL_TEXTURE = 15;
+const GLenum GL_MODELVIEW_MATRIX = 16;
+const GLenum GL_PROJECTION_MATRIX = 17;
+const GLenum GL_TEXTURE_MATRIX = 18;
 
 void glutPostRedisplay();
 
@@ -84,6 +87,10 @@ void glColor3f(GLfloat r, GLfloat g, GLfloat b);
  * glFlush — force execution of GL commands in finite time
  */
 void glFlush();
+
+void glGetFloatv(GLenum pname, GLfloat *params);
+
+void glGetDoublev(GLenum pname, GLdouble *params);
 
 void glBegin(GLenum mode);
 
