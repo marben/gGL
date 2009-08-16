@@ -65,10 +65,19 @@ public:
 	void glLoadIdentity();
 	void glShadeModel(const ShadeModel& model);
 	void glMatrixMode(MatrixMode mode);
+	void glOrtho(double left,double right,double bottom,double top,double zNear,double zFar);
+	void glViewport(double x, double y, double width, double height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
+
+	void gluPerspective(double fovy, double aspect, double zNear, double zFar);
 
 	const Matrix4d& getModelViewMatrix() const {return _modelViewMatrix;}
 	const Matrix4d& getProjectionMatrix() const {return _projectionMatrix;}
 	const Matrix4d& getTextureMatrix() const {return _textureMatrix;}
+
+	void applyProjectionMatrix(std::vector<Vertex4>& vertices);	// multiples all vertices by a projection matrix
+	void applyViewportTransformation(Vertex4& vertex);
+	void applyViewportTransformation(std::vector<Vertex4>& vertices);
+	void applyPerspectiveDivision(std::vector<Vertex4>& vertices);
 
 private:
 	void drawLines();
@@ -106,6 +115,7 @@ private:
 	MatrixMode _matrixMode;
 	double* _zBuffer;
 	int _x, _y;	// resolution we are working with
+	struct {double x; double y; double width; double height;} _viewport;
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

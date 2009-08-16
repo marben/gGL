@@ -22,7 +22,7 @@ typedef int GLint;
 typedef unsigned char GLubyte;
 typedef unsigned short GLushort;
 typedef unsigned int GLuint;
-typedef int sizei;
+typedef int GLsizei;
 typedef float GLfloat;
 typedef float GLclampf;	// float clamped in <0;1>
 typedef double	GLdouble;
@@ -99,5 +99,13 @@ void glMatrixMode(GLenum mode);
 void glEnd();
 
 void glClearColor(float red, float green, float blue, float alpha);
+
+void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+
+void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
+
+void gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+
+void gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
 #endif /* GL_H_ */

@@ -77,6 +77,16 @@ void glGetDoublev(GLenum pname, GLdouble* params)
 	Getv<GLdouble>(pname, params);
 }
 
+void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
+{
+	opengl.glOrtho(left, right, bottom, top, zNear, zFar);
+}
+
+void gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
+{
+	glOrtho(left, right, bottom, top, -1, 1);
+}
+
 void glClear(GLbitfield bufferMask)
 {
 	if(bufferMask & GL_COLOR_BUFFER_BIT)
@@ -161,6 +171,11 @@ void glVertex4f(float x, float y, float z, float w){
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z), static_cast<Real>(w));
 }
 
+void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	opengl.glViewport(x, y, width, height);
+}
+
 void glColor3f(GLfloat r, GLfloat g, GLfloat b)
 {
 	opengl.glColor(r, g, b, 1);
@@ -178,6 +193,11 @@ void glFlush()
 	display.endWrite();
 
 	display.redraw();
+}
+
+void gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
+{
+	opengl.gluPerspective(fovy, aspect, zNear, zFar);
 }
 
 void glBegin(GLenum mode){

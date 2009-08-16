@@ -17,6 +17,12 @@ inline double radian(const double degree)
 	return degree*(static_cast<double>(PI)/180.0);
 }
 
+inline double cot(double rad)
+{
+  return (1 / tan(rad));
+}
+
+
 namespace ggl
 {
 
@@ -117,8 +123,8 @@ void OpenGL::drawLines_smooth()
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		const Vertex4& vertex1 = _linesVertexList_smooth[i];
-		const Vertex4& vertex2 = _linesVertexList_smooth[++i];
+		Vertex4& vertex1 = _linesVertexList_smooth[i];
+		Vertex4& vertex2 = _linesVertexList_smooth[++i];
 		drawLine_smooth(vertex1, vertex2);
 	}
 }
@@ -152,9 +158,9 @@ void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
 		Real dy( (v2->y()- v1->y()) / (v2->x() - v1->x()) );
 		Real dz( (v2->z() - v1->z()) / (v2->x() - v1->x()) );
 
-		for(int x = v1->x(); x <= v2->x(); ++x)
+		for(int x = v1->x(); x <= v2->x(); ++x)	// TODO: check, whether storing the precomputed division aside is faster..
 		{
-			putPixel(x, round_quick(y), z, color);
+			putPixel(x, y, z, color);	// warning: don't round() values for putpixel! values have to be rounded down like in int(float) cast, to be pixel precise..
 			z += dz;
 			y += dy;
 			color += dcolor;
@@ -182,7 +188,7 @@ void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
 
 		for(int y = v1->y(); y <= v2->y(); ++y)
 		{
-			putPixel(round_quick(x), y, z, color);
+			putPixel(x, y, z, color);
 			x += dx;
 			z += dz;
 			color += dcolor;
@@ -200,10 +206,8 @@ void OpenGL::drawLines_flat()
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		const Vertex4& vertex1 = _linesVertexList_flat[i];
-		const Vertex4& vertex2 = _linesVertexList_flat[++i];
-		//const Color& color =	vertex2.color();
-		//line(round_quick(vertex1.x()), round_quick(vertex1.y()), round_quick(vertex2.x()), round_quick(vertex2.y()), color);
+		Vertex4& vertex1 = _linesVertexList_flat[i];
+		Vertex4& vertex2 = _linesVertexList_flat[++i];
 		drawLine_flat(vertex1, vertex2, vertex2.color());
 	}
 }
@@ -237,7 +241,7 @@ void OpenGL::drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const
 
 		for(int x = v1->x(); x <= v2->x(); ++x)
 		{
-			putPixel(x, round_quick(y), z, color);
+			putPixel(x, y, z, color);
 			z += dz;
 			y += dy;
 		}
@@ -262,7 +266,7 @@ void OpenGL::drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const
 
 		for(int y = v1->y(); y <= v2->y(); ++y)
 		{
-			putPixel(round_quick(x), y, z, color);
+			putPixel(x, y, z, color);
 			x += dx;
 			z += dz;
 		}
@@ -270,9 +274,59 @@ void OpenGL::drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const
 	}
 }
 
+void OpenGL::applyProjectionMatrix(std::vector<Vertex4>& vertices)
+{
+	for(size_t i = 0; i < vertices.size(); ++i)
+		vertices[i] *= _projectionMatrix;
+}
+
+void OpenGL::applyViewportTransformation(Vertex4& vertex)
+{
+	//std::cout<<"Before VT: x = "<<vertex.x()<<"  y="<<vertex.y()<<std::endl;
+	vertex.x() = (vertex.x() + 1)*(_viewport.width/2 + _viewport.x);
+	vertex.y() = (vertex.y() + 1)*(_viewport.height/2 + _viewport.y);
+	//std::cout<<"After VT: x = "<<vertex.x()<<"  y="<<vertex.y()<<std::endl;
+}
+
+void OpenGL::applyViewportTransformation(std::vector<Vertex4>& vertices)
+{
+	for(size_t i = 0; i < vertices.size(); ++i)
+		applyViewportTransformation(vertices[i]);
+}
+
+void OpenGL::applyPerspectiveDivision(std::vector<Vertex4>& vertices)
+{
+	for(size_t i = 0; i < vertices.size(); ++i)
+	{
+		Real w = vertices[i].w();
+		assert(w != 0.0);
+		if(w == 1)
+			continue;
+		vertices[i].x() /= w;
+		vertices[i].y() /= w;
+		vertices[i].z() /= w;
+	}
+}
+
 const CanvasRGB* OpenGL::glFlush()
 {
 	assert(_activeVertexList == NONE);
+
+	applyProjectionMatrix(_linesVertexList_flat);
+	applyProjectionMatrix(_linesVertexList_smooth);
+	applyProjectionMatrix(_trianglesVertexList_flat);
+	applyProjectionMatrix(_trianglesVertexList_smooth);
+
+	applyPerspectiveDivision(_linesVertexList_flat);
+	applyPerspectiveDivision(_linesVertexList_smooth);
+	applyPerspectiveDivision(_trianglesVertexList_flat);
+	applyPerspectiveDivision(_trianglesVertexList_smooth);
+
+	applyViewportTransformation(_linesVertexList_flat);
+	applyViewportTransformation(_linesVertexList_smooth);
+	applyViewportTransformation(_trianglesVertexList_flat);
+	applyViewportTransformation(_trianglesVertexList_smooth);
+
 
 	drawLines();
 	drawTriangles();
@@ -376,8 +430,6 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 {
 	if(x0 == x1)
 	{
-		//_colorBuffer->putPixel(x0, y, c1);	// TODO rethink this. probably shouldn't draw anything and if, the color should be (c1+c2)/2
-		putPixel(x0, y, z1, c1);
 		return;
 	}
 
@@ -459,10 +511,10 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	double dz1 = (top->z() - bottom->z()) / (top->y() - bottom->y());
 	double dz2 = (middle->z() - bottom->z()) / (middle->y() - bottom->y());
 
-	int y = round_quick(bottom->y());
+	int y = bottom->y();
 	while(y < middle->y())
 	{
-		drawHLine_smooth(round_quick(x1), y, z1, round_quick(x2), z2, startColor1, startColor2);
+		drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		startColor1 += colorDy1;
 		startColor2 += colorDy2;
 		x1 += dx1;
@@ -483,7 +535,7 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 
 	while(y <= top->y())
 	{
-		drawHLine_smooth(round_quick(x1), y, z1, round_quick(x2), z2, startColor1, startColor2);
+		drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		startColor1 += colorDy1;
 		startColor2 += colorDy2;
 		x1 += dx1;
@@ -582,10 +634,10 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	double dz1 = (top->z() - bottom->z()) / (top->y() - bottom->y());
 	double dz2 = (middle->z() - bottom->z()) / (middle->y() - bottom->y());
 
-	int y = round_quick(bottom->y());
+	int y = bottom->y();
 	while(y < middle->y())
 	{
-		drawHLine_flat(round_quick(x1), y, z1, round_quick(x2), z2, color);
+		drawHLine_flat(x1, y, z1, x2, z2, color);
 		x1 += dx1;
 		x2 += dx2;
 		z1 += dz1;
@@ -600,7 +652,7 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	dz2 = (top->z() - middle->z()) / (top->y() - middle->y());
 	while(y <= top->y())
 	{
-		drawHLine_flat(round_quick(x1), y, z1, round_quick(x2), z2, color);
+		drawHLine_flat(x1, y, z1, x2, z2, color);
 		x1 += dx1;
 		x2 += dx2;
 		z1 += dz1;
@@ -611,6 +663,8 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 
 void OpenGL::drawHLine_flat(int x0, int y, double z0, int x1, double z1, const Color& color)
 {
+	if(x0 == x1)
+		return;
 	if(x0 < x1)
 	{
 		double z = z0;
@@ -668,6 +722,22 @@ void OpenGL::glMatrixMode(MatrixMode mode)
 	}
 }
 
+void OpenGL::glOrtho(double left,double right,double bottom,double top,double zNear,double zFar)
+{
+	Matrix4d matrix;
+	/*matrix << 	x*x*(1-c)+c, x*y*(1-c)-z*s, x*z*(1-c)+y*s, 0,
+					y*x*(1-c)+z*s, y*y*(1-c)+c, y*z*(1-c)-x*s, 0,
+					x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z*(1-c)+c, 0,
+					0, 0, 0, 1;*/
+	// TODO: optimize .. precomputations etc..?
+
+	matrix <<	2/(right - left), 0, 0, -(right + left)/(right - left),
+					0, 2/(top - bottom), 0, -(top + bottom)/(top - bottom),
+					0, 0, -2/(zFar - zNear), -(zFar + zNear)/(zFar - zNear),
+					0, 0, 0, 1;
+	*_activeMatrix *= matrix;
+}
+
 OpenGL::OpenGL()
 {
 	_initialized = false;
@@ -688,6 +758,7 @@ void OpenGL::init(int x, int y)
 	_projectionMatrix.setIdentity();
 	_textureMatrix.setIdentity();
 	_shadeModel = GL_SMOOTH;	// default mode according to ogl specification
+	glViewport(0, 0, x, y);
 
 	_zBuffer = new double[x*y];
 
@@ -709,7 +780,7 @@ void OpenGL::putPixel(int x, int y, double z, const ggl::PixelRGB& color)
 	if(z > _zBuffer[x + _x * y])
 	{
 		_zBuffer[x + _x * y] = z;
-		_colorBuffer->putPixel(x, y, color);
+		_colorBuffer->putPixel(x, _y - y - 1, color);	//need to reverse y
 	}
 	else
 		x++;
@@ -723,6 +794,18 @@ void OpenGL::clearZBuffer()
 	// TODO: create cleared buffer and then just memcpy it to the zBuffer
 	for(int i = 0; i < _x*_y; ++i)
 		_zBuffer[i] = -1000.0;
+}
+
+void OpenGL::gluPerspective(double fovy, double aspect, double zNear, double zFar)
+{	// TODO: glu functions shouldn't be in opengl
+	Matrix4d matrix;
+	double f = cot(radian(fovy)/2.0);
+
+	matrix << 	f/aspect, 0, 0, 0,
+					0, f, 0, 0,
+					0, 0, (zFar+zNear)/(zNear-zFar), 2*(zFar*zNear)/(zNear - zFar),
+					0, 0, -1, 0;
+	*_activeMatrix *= matrix;
 }
 
 OpenGL::~OpenGL()
