@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm>
+#include <Eigen/Geometry>
 
 #define PI 3.1415926535897932384626433832795	// tell me of a better way...
 inline double radian(const double degree)
@@ -34,6 +35,7 @@ void OpenGL::clearColorBuffer()
 void OpenGL::glLoadIdentity()
 {
 	_activeMatrix->setIdentity();
+	updateWorldMatrix();
 }
 
 void OpenGL::glTranslate(Real x, Real y, Real z)
@@ -47,6 +49,7 @@ void OpenGL::glTranslate(Real x, Real y, Real z)
 					0, 0, 0, 1;
 
 	*_activeMatrix *= trMatrix;
+	updateWorldMatrix();
 }
 
 void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
@@ -106,6 +109,7 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 					0, 0, 0, 1;
 
 	*_activeMatrix *= matrix;
+	updateWorldMatrix();
 }
 
 void OpenGL::drawLines()
@@ -123,8 +127,8 @@ void OpenGL::drawLines_smooth()
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		Vertex4& vertex1 = _linesVertexList_smooth[i];
-		Vertex4& vertex2 = _linesVertexList_smooth[++i];
+		const Vertex4& vertex1 = _linesVertexList_smooth[i];
+		const Vertex4& vertex2 = _linesVertexList_smooth[++i];
 		drawLine_smooth(vertex1, vertex2);
 	}
 }
@@ -206,8 +210,8 @@ void OpenGL::drawLines_flat()
 
 	for(size_t i = 0; i < top; ++i)
 	{
-		Vertex4& vertex1 = _linesVertexList_flat[i];
-		Vertex4& vertex2 = _linesVertexList_flat[++i];
+		const Vertex4& vertex1 = _linesVertexList_flat[i];
+		const Vertex4& vertex2 = _linesVertexList_flat[++i];
 		drawLine_flat(vertex1, vertex2, vertex2.color());
 	}
 }
@@ -312,11 +316,6 @@ const CanvasRGB* OpenGL::glFlush()
 {
 	assert(_activeVertexList == NONE);
 
-	applyProjectionMatrix(_linesVertexList_flat);
-	applyProjectionMatrix(_linesVertexList_smooth);
-	applyProjectionMatrix(_trianglesVertexList_flat);
-	applyProjectionMatrix(_trianglesVertexList_smooth);
-
 	applyPerspectiveDivision(_linesVertexList_flat);
 	applyPerspectiveDivision(_linesVertexList_smooth);
 	applyPerspectiveDivision(_trianglesVertexList_flat);
@@ -339,19 +338,66 @@ const CanvasRGB* OpenGL::glFlush()
 	return _colorBuffer;
 }
 
+void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
+{
+	++_smoothTriangleVertexCounter;
+	_trianglesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+
+	if(_smoothTriangleVertexCounter == 3)
+	{
+		if(_cullingEnabled)
+		{
+			size_t length = _trianglesVertexList_smooth.size();
+			const Vertex4& v1 = _trianglesVertexList_smooth[length-3];
+			const Vertex4& v2 = _trianglesVertexList_smooth[length-2];
+			const Vertex4& v3 = _trianglesVertexList_smooth[length-1];
+			if(cullFace(v1,v2, v3))
+			{
+				_trianglesVertexList_smooth.pop_back();
+				_trianglesVertexList_smooth.pop_back();
+				_trianglesVertexList_smooth.pop_back();
+			}
+		}
+		_smoothTriangleVertexCounter = 0;
+	}
+}
+
+void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
+{
+	++_flatTriangleVertexCounter;
+	_trianglesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+
+	if(_flatTriangleVertexCounter == 3)
+	{
+		if(_cullingEnabled)
+		{
+			size_t length = _trianglesVertexList_flat.size();
+			const Vertex4& v1 = _trianglesVertexList_flat[length-3];
+			const Vertex4& v2 = _trianglesVertexList_flat[length-2];
+			const Vertex4& v3 = _trianglesVertexList_flat[length-1];
+			if(cullFace(v1,v2, v3))
+			{
+				_trianglesVertexList_flat.pop_back();
+				_trianglesVertexList_flat.pop_back();
+				_trianglesVertexList_flat.pop_back();
+			}
+		}
+		_flatTriangleVertexCounter = 0;
+	}
+}
+
 void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 {
 	assert(_initialized);
 	assert(_activeVertexList != NONE);
 
-	//Vertex4d* vertex = new Vertex4d(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor);
 	switch (_activeVertexList)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
 		break;
 
 	case GL_POLYGON:
@@ -359,9 +405,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 
 	case GL_TRIANGLES:
 		if(_shadeModel == GL_SMOOTH)
-			_trianglesVertexList_smooth.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			addTriangleVertex_smooth(x, y, z, w);
 		else
-			_trianglesVertexList_flat.push_back(Vertex4(_modelViewMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			addTriangleVertex_flat(x, y, z, w);
 		break;
 
 	case NONE:
@@ -369,6 +415,48 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 		std::cerr<<"glVertex called while no active vertex list selected!"<<std::endl;
 		break;
 	}
+}
+
+void OpenGL::enableCulling(bool b)
+{
+	if(inBetweenBeginEnd()){	// TODO: should throw some error
+		return;
+	}
+	_cullingEnabled = b;
+}
+
+bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
+{
+	if(_cullingEnabled == false)
+		return false;
+
+	Matrix<Real, 3, 1> v1(vertex2.x() - vertex1.x(), vertex2.y() - vertex1.y(), vertex2.z() - vertex1.z());
+	Matrix<Real, 3, 1> v2(vertex3.x() - vertex1.x(), vertex3.y() - vertex1.y(), vertex3.z() - vertex1.z());
+	v1.normalize();
+	v2.normalize();
+	Matrix<Real, 3, 1> n = (_frontFace == GL_CW)?v1.cross(v2):v2.cross(v1);
+	Matrix<Real, 3, 1> eye(0.0,0.0,-1.0);
+	double angle = eye.dot(n);
+
+	if(angle <= 0 && (_cullFace == GL_BACK || _cullFace == GL_FRONT_AND_BACK))
+		return true;
+
+	if(angle >= 0 && (_cullFace == GL_FRONT || _cullFace == GL_FRONT_AND_BACK))
+		return true;
+
+	/*
+	if(_frontFace == GL_CW)
+		if(eye.dot(n) <= 0)
+			if(_cullFace == GL_BACK || _cullFace == GL_FRONT_AND_BACK)
+				return true;
+
+	if(_frontFace == GL_CCW)
+		if(eye.dot(n) >= 0)
+			if(_cullFace == GL_FRONT || _cullFace == GL_FRONT_AND_BACK)
+				return true;
+	*/
+
+	return false;
 }
 
 void OpenGL::glColor(float r, float g, float b, float alpha)
@@ -381,12 +469,35 @@ void OpenGL::glBegin(ActiveVertexList what)
 	assert(_initialized);
 	assert(what != NONE);
 	_activeVertexList = what;
+	countWorldMatrix();	// we need to update world matrix...it might have change outside glBegin glEnd calls;
+
+	switch(what) {
+	case GL_TRIANGLES:
+		for(int i = 0; i < 2; ++i){	// we solve the case of not obtaining enough vertices in one glBegin -> glEnd interval
+			if(_smoothTriangleVertexCounter != 0)
+			{
+				--_smoothTriangleVertexCounter;
+				_trianglesVertexList_smooth.pop_back();
+			}
+			if(_flatTriangleVertexCounter != 0)
+			{
+				--_flatTriangleVertexCounter;
+				_trianglesVertexList_flat.pop_back();
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void OpenGL::glEnd()
 {
 	assert(_initialized);
 	_activeVertexList = NONE;
+
+	// TODO: should check correct number of trinagles/etc vertices instead of checking in the place of rendering..
 }
 
 void OpenGL::drawTriangles()
@@ -400,7 +511,6 @@ void OpenGL::drawTriangles()
 	 *
 	 */
 
-
 	// draw flat triangles:
 	size_t top;
 	if((_trianglesVertexList_flat.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
@@ -412,7 +522,6 @@ void OpenGL::drawTriangles()
 
 	for(size_t i = 0; i < top; i += 3)
 		drawTriangle_flat(_trianglesVertexList_flat[i+0], _trianglesVertexList_flat[i+1], _trianglesVertexList_flat[i+2], _trianglesVertexList_flat[i+2].color());
-
 
 	// draw smooth triangles:
 	if((_trianglesVertexList_smooth.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
@@ -725,10 +834,7 @@ void OpenGL::glMatrixMode(MatrixMode mode)
 void OpenGL::glOrtho(double left,double right,double bottom,double top,double zNear,double zFar)
 {
 	Matrix4d matrix;
-	/*matrix << 	x*x*(1-c)+c, x*y*(1-c)-z*s, x*z*(1-c)+y*s, 0,
-					y*x*(1-c)+z*s, y*y*(1-c)+c, y*z*(1-c)-x*s, 0,
-					x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z*(1-c)+c, 0,
-					0, 0, 0, 1;*/
+
 	// TODO: optimize .. precomputations etc..?
 
 	matrix <<	2/(right - left), 0, 0, -(right + left)/(right - left),
@@ -736,6 +842,7 @@ void OpenGL::glOrtho(double left,double right,double bottom,double top,double zN
 					0, 0, -2/(zFar - zNear), -(zFar + zNear)/(zFar - zNear),
 					0, 0, 0, 1;
 	*_activeMatrix *= matrix;
+	updateWorldMatrix();
 }
 
 OpenGL::OpenGL()
@@ -757,9 +864,16 @@ void OpenGL::init(int x, int y)
 	_modelViewMatrix.setIdentity();
 	_projectionMatrix.setIdentity();
 	_textureMatrix.setIdentity();
-	_shadeModel = GL_SMOOTH;	// default mode according to ogl specification
+	updateWorldMatrix();
+	countWorldMatrix();
+	_shadeModel = GL_SMOOTH;
+	_frontFace = GL_CCW;
 	glViewport(0, 0, x, y);
+	glCullFace(GL_BACK);
+	_cullingEnabled = false;
 
+	_smoothTriangleVertexCounter = 0;
+	_flatTriangleVertexCounter = 0;
 	_zBuffer = new double[x*y];
 
 	_initialized = true;
@@ -770,6 +884,21 @@ void OpenGL::glClearColor(float red, float green, float blue, float alpha)
 {
 	assert(_initialized);
 	_glClearColor = PixelRGBA(red, green, blue, alpha);
+}
+
+void OpenGL::glCullFace(CullFace mode)
+{
+	if(inBetweenBeginEnd())	// TODO: throw some error (see man page)
+		return;
+
+	_cullFace = mode;
+}
+
+void OpenGL::glFrontFace(FrontFace mode)
+{
+	if(inBetweenBeginEnd())	// TODO: throw some error (see man page)
+		return;
+	_frontFace = mode;
 }
 
 void OpenGL::putPixel(int x, int y, double z, const ggl::PixelRGB& color)
@@ -806,6 +935,7 @@ void OpenGL::gluPerspective(double fovy, double aspect, double zNear, double zFa
 					0, 0, (zFar+zNear)/(zNear-zFar), 2*(zFar*zNear)/(zNear - zFar),
 					0, 0, -1, 0;
 	*_activeMatrix *= matrix;
+	updateWorldMatrix();
 }
 
 OpenGL::~OpenGL()

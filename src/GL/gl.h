@@ -52,6 +52,12 @@ const GLenum GL_TEXTURE = 15;
 const GLenum GL_MODELVIEW_MATRIX = 16;
 const GLenum GL_PROJECTION_MATRIX = 17;
 const GLenum GL_TEXTURE_MATRIX = 18;
+const GLenum GL_FRONT = 19;
+const GLenum GL_BACK = 20;
+const GLenum GL_FRONT_AND_BACK = 21;
+const GLenum GL_CW = 22;
+const GLenum GL_CCW = 23;
+const GLenum GL_CULL_FACE = 24;
 
 void glutPostRedisplay();
 
@@ -83,6 +89,10 @@ void glVertex4f(float x, float y, float z, float w);
 
 void glColor3f(GLfloat r, GLfloat g, GLfloat b);
 
+void glEnable(GLenum cap);
+
+void glDisable(GLenum cap);
+
 /*
  * glFlush — force execution of GL commands in finite time
  */
@@ -103,6 +113,10 @@ void glClearColor(float red, float green, float blue, float alpha);
 void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
 void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
+
+void glCullFace(GLenum mode);
+
+void glFrontFace(GLenum mode);
 
 void gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
 

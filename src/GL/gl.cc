@@ -176,6 +176,29 @@ void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	opengl.glViewport(x, y, width, height);
 }
 
+void glEnable(GLenum cap)
+{
+	opengl.enableCulling(true);
+	switch(cap) {
+	case ::GL_CULL_FACE:
+		opengl.enableCulling();
+		break;
+	default:
+		break;
+	}
+}
+
+void glDisable(GLenum cap)
+{
+	switch(cap) {
+	case GL_CULL_FACE:
+		opengl.disableCulling();
+		break;
+	default:
+		break;
+	}
+}
+
 void glColor3f(GLfloat r, GLfloat g, GLfloat b)
 {
 	opengl.glColor(r, g, b, 1);
@@ -251,7 +274,7 @@ void glBegin(GLenum mode){
 
 void glShadeModel(GLenum mode)
 {
-	switch(mode){
+	switch(mode) {
 	case ::GL_SMOOTH:
 		opengl.glShadeModel(ggl::GL_SMOOTH);
 		break;
@@ -264,6 +287,42 @@ void glShadeModel(GLenum mode)
 		break;
 	}
 
+}
+
+void glCullFace(GLenum mode)
+{
+	switch(mode) {
+	case ::GL_BACK:
+		opengl.glCullFace(ggl::GL_BACK);
+		break;
+
+	case ::GL_FRONT:
+		opengl.glCullFace(ggl::GL_FRONT);
+		break;
+
+	case ::GL_FRONT_AND_BACK:
+		opengl.glCullFace(ggl::GL_FRONT_AND_BACK);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void glFrontFace(GLenum mode)
+{
+	switch(mode) {
+	case ::GL_CW:
+		opengl.glFrontFace(ggl::GL_CW);
+		break;
+
+	case ::GL_CCW:
+		opengl.glFrontFace(ggl::GL_CCW);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void glutPostRedisplay()

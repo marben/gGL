@@ -22,7 +22,7 @@ using namespace std;
 using namespace std;
 
 int angle = 0;
-int delay = 200;
+int delay = 20;
 
 void printMatrix(float matrix[4])
 {
@@ -148,6 +148,10 @@ void display2(void)
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
+   glEnable(GL_CULL_FACE);
+
+   glTranslatef(100, 100, 0);
+   glRotatef(angle, 0, 1, 0);
    glShadeModel(GL_SMOOTH);
    glColor3f(1.0, 0.0, 0.0);
    glBegin(GL_TRIANGLES);
@@ -155,10 +159,29 @@ void display2(void)
 		glColor3f(1.0, 0, 0);
 		glVertex3f(0.5, 0.5, 0.0);
 		glColor3f(0.0, 1.0, 0);
-		glVertex3f(639.5,239.5,0.2);
+		glVertex3f(50.5,50.5,0.2);
 		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(0.5, 479.5, -0.2);
+		glVertex3f(10.5, 70.5, -0.2);
    glEnd();
+   glTranslatef(100, 100, 0);
+   //glDisable(GL_CULL_FACE);
+   glBegin(GL_TRIANGLES);
+		glColor3f(1.0, 0, 0);
+		glColor3f(1.0, 0, 0);
+		glVertex3f(0.5, 0.5, 0.0);
+		glColor3f(0.0, 1.0, 0);
+		glVertex3f(-50.5,50.5,0.2);
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex3f(10.5, 70.5, -0.2);
+   glEnd();
+
+   glBegin(GL_LINES);
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex3f(-50.5,60.5,0.2);
+		glColor3f(0.0, 1.0, 1.0);
+		glVertex3f(10.5, 85.5, -0.2);
+   glEnd();
+
    glFlush();
 
    //GLfloat matrix[16];
@@ -242,7 +265,7 @@ int main()
 	*/
 
 	glutInit(640, 480);
-	glutDisplayFunc(nehe05);
+	glutDisplayFunc(display2);
 	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();

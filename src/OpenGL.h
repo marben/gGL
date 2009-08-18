@@ -21,13 +21,7 @@ namespace ggl
 {
 
 
-typedef float Real;	// this is the default floating type, we will use in opengl
-// TODO: write a type defining all basic operators on integer, using fixed point precision... something like:
-// template<typename Int_t, int precision>
-//	class Fixed_t{
-//		Fixed_t operator+(const Fixed_t a){return ( (this->_value * a->value) >> precision ) ;}
-//		Int_t _value;
-//}
+typedef double Real;	// this is the default floating type, we will use in opengl
 
 inline int round(Real x){	// TODO: put this in some global header
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
@@ -40,7 +34,7 @@ inline int round_quick(Real x){	// TODO:here should be some extremely fast..not 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
 typedef PixelRGBA Color;
-typedef Vertex4_<double, Color> Vertex4;
+typedef Vertex4_<Real, Color> Vertex4;
 
 class OpenGL
 {
@@ -52,6 +46,8 @@ public:
 
 	void clearColorBuffer();
 	void clearZBuffer();
+	void enableCulling(bool b = true);
+	void disableCulling() {enableCulling(false);}
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
@@ -67,6 +63,8 @@ public:
 	void glMatrixMode(MatrixMode mode);
 	void glOrtho(double left,double right,double bottom,double top,double zNear,double zFar);
 	void glViewport(double x, double y, double width, double height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
+	void glCullFace(CullFace mode);
+	void glFrontFace(FrontFace mode);
 
 	void gluPerspective(double fovy, double aspect, double zNear, double zFar);
 
@@ -100,6 +98,13 @@ private:
 
 	bool inBetweenBeginEnd(){return _activeVertexList != NONE;}
 
+	bool cullFace(const Vertex4& v1, const Vertex4& v2, const Vertex4& v3);
+
+	void addTriangleVertex_smooth(Real x, Real y, Real z, Real w);
+	void addTriangleVertex_flat(Real x, Real y, Real z, Real w);
+	void updateWorldMatrix() {_worldMatrixDirty = true;}	// sets the flag so that we know to recount the world matrix
+	void countWorldMatrix() {if(_worldMatrixDirty){_worldMatrix = _projectionMatrix * _modelViewMatrix;_worldMatrixDirty = false;}}
+
 private:
 	bool _initialized;
 
@@ -110,12 +115,20 @@ private:
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
 	Matrix4d _projectionMatrix, _modelViewMatrix, _textureMatrix;	// projection matrix
+	Matrix4d _worldMatrix;	// projectionMatrix * modelViewMatrix // TODO: change calls to _worldMatrix to worldMatrix() function and implement lazy evaluation
+	bool _worldMatrixDirty;
 	Matrix4d* _activeMatrix;	// pointer to active matrix
 	ShadeModel _shadeModel;
 	MatrixMode _matrixMode;
 	double* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	struct {double x; double y; double width; double height;} _viewport;
+	bool _cullingEnabled;
+	CullFace _cullFace;
+	FrontFace _frontFace;
+
+	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
+	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
