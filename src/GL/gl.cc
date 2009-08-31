@@ -176,6 +176,11 @@ void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	opengl.glViewport(x, y, width, height);
 }
 
+void glScalef(GLfloat x, GLfloat y, GLfloat z)
+{
+	opengl.glScale(x, y, z);
+}
+
 void glEnable(GLenum cap)
 {
 	opengl.enableCulling(true);

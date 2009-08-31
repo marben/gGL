@@ -122,4 +122,6 @@ void gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
 
 void gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
+void glScalef(GLfloat x, GLfloat y, GLfloat z);
+
 #endif /* GL_H_ */

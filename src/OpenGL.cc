@@ -78,6 +78,9 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 	// TODO: check the Mesa implementation in m_matrix.c function _math_matrix_rotate(...)   some neat tricks maybe?
 
 
+	if(inBetweenBeginEnd())
+		return;
+
 	Vector3d vector(x, y, z);
 	vector.normalize();
 
@@ -444,18 +447,6 @@ bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vert
 	if(angle >= 0 && (_cullFace == GL_FRONT || _cullFace == GL_FRONT_AND_BACK))
 		return true;
 
-	/*
-	if(_frontFace == GL_CW)
-		if(eye.dot(n) <= 0)
-			if(_cullFace == GL_BACK || _cullFace == GL_FRONT_AND_BACK)
-				return true;
-
-	if(_frontFace == GL_CCW)
-		if(eye.dot(n) >= 0)
-			if(_cullFace == GL_FRONT || _cullFace == GL_FRONT_AND_BACK)
-				return true;
-	*/
-
 	return false;
 }
 
@@ -599,11 +590,22 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 
 	// TODO: check, for impossible triangles etc...
 
-	assert(bottom->y() != top->y());	// get rid of this
-	Real dx1 = (top->x() - bottom->x()) / (top->y() - bottom->y());
+	int dy1 = static_cast<int>(top->y()) - static_cast<int>(bottom->y());
+	int dy2 = static_cast<int>(middle->y()) - static_cast<int>(bottom->y());
+	int dy3 = static_cast<int>(top->y()) - static_cast<int>(middle->y());
 
-	assert(middle->y() != bottom->y());	// get rid of this
-	Real dx2 = (middle->x() - bottom->x()) / (middle->y() - bottom->y());
+	Real dx1;
+	if(bottom->y() == top->y())
+		dx1 = 0.0;
+	else
+		dx1 = (top->x() - bottom->x()) / dy1 /*(top->y() - bottom->y())*/;
+
+	Real dx2;
+	if(middle->y() == bottom->y())
+		dx2 = 0.0;
+	else
+		dx2 = (middle->x() - bottom->x()) / dy2 /*(middle->y() - bottom->y())*/;
+
 
 	Real x1 = bottom->x();
 	Real x2 = bottom->x();
@@ -611,14 +613,14 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	Color startColor1(bottom->color());
 	Color startColor2(bottom->color());
 
-	Color colorDy1 = (top->color() - bottom->color()) / (top->y() - bottom->y());	// color change along the top->bottom line
-	Color colorDy2 = (middle->color() - bottom->color()) / (middle->y() - bottom->y());	// color change along the other line
+	Color colorDy1 = (top->color() - bottom->color()) / dy1 /*(top->y() - bottom->y())*/;	// color change along the top->bottom line
+	Color colorDy2 = (middle->color() - bottom->color()) / dy2 /*(middle->y() - bottom->y())*/;	// color change along the other line
 
 	double z1 = bottom->z();
 	double z2 = bottom->z();
 
-	double dz1 = (top->z() - bottom->z()) / (top->y() - bottom->y());
-	double dz2 = (middle->z() - bottom->z()) / (middle->y() - bottom->y());
+	double dz1 = (top->z() - bottom->z()) / dy1 /*(top->y() - bottom->y())*/;
+	double dz2 = (middle->z() - bottom->z()) / dy2 /*(middle->y() - bottom->y())*/;
 
 	int y = bottom->y();
 	while(y < middle->y())
@@ -633,13 +635,15 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 		++y;
 	}
 	// now for the top 'half' of a triangle
-	assert(middle->y() != top->y());	// get rid of this
-	dx2 = (top->x() - middle->x()) / (top->y() - middle->y());
+	if(middle->y() == top->y())
+		dx2 = 0.0;
+	else
+		dx2 = (top->x() - middle->x()) / dy3 /*(top->y() - middle->y())*/;
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
 	z2 = middle->z();
 	startColor2 = middle->color();
-	colorDy2 = (top->color() - middle->color()) / (top->y() - middle->y());
-	dz2 = (top->z() - middle->z()) / (top->y() - middle->y());
+	colorDy2 = (top->color() - middle->color()) / dy3 /*(top->y() - middle->y())*/;
+	dz2 = (top->z() - middle->z()) / dy3/*(top->y() - middle->y())*/;
 
 
 	while(y <= top->y())
@@ -653,7 +657,6 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 		z2 += dz2;
 		++y;
 	}
-
 }
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -934,6 +937,21 @@ void OpenGL::gluPerspective(double fovy, double aspect, double zNear, double zFa
 					0, f, 0, 0,
 					0, 0, (zFar+zNear)/(zNear-zFar), 2*(zFar*zNear)/(zNear - zFar),
 					0, 0, -1, 0;
+
+	*_activeMatrix *= matrix;
+	updateWorldMatrix();
+}
+
+void OpenGL::glScale(double x, double y, double z)
+{
+	if(inBetweenBeginEnd())
+			return;
+	Matrix4d matrix;
+	matrix <<	x, 0, 0, 0,
+					0, y, 0, 0,
+					0, 0, z, 0,
+					0, 0, 0, 1;
+
 	*_activeMatrix *= matrix;
 	updateWorldMatrix();
 }

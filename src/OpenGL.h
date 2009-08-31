@@ -65,6 +65,7 @@ public:
 	void glViewport(double x, double y, double width, double height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
 	void glCullFace(CullFace mode);
 	void glFrontFace(FrontFace mode);
+	void glScale(double x, double y, double z);
 
 	void gluPerspective(double fovy, double aspect, double zNear, double zFar);
 

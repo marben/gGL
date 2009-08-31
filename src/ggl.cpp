@@ -17,12 +17,13 @@ using namespace std;
 #include "SDL_Display.h"
 #include "GL/gl.h"
 #include "PngWriter.h"
+#include "Loader_Obj.h"
 
 //using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 20;
+int delay = 100;
 
 void printMatrix(float matrix[4])
 {
@@ -32,108 +33,25 @@ void printMatrix(float matrix[4])
 			cout<<matrix[i*4 + j]<<"|";
 		cout<<endl;
 	}
-
 }
 
-void glTest()
+ggl::Object3d cube;
+
+void renderObject(const ggl::Object3d& obj)
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-25, 25, -25, 25, -30, 30);	// should not be here..
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-   glColor3f(1.0, 0.0, 0.0);
-
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-
-  /*
-   glTranslatef(320, 240, 0);
-
-   glRotatef(45+angle, 1, 0.7, 0.4);
-   glShadeModel(GL_SMOOTH);
-   glBegin(GL_TRIANGLES);
-
-	glColor3f(1.0, 1.0, 0.0);
-	glVertex3f(0, 0, 0);
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex3f(0, 200, 0);
-	glColor3f(1.0, 1.0, 1.0);
-	glVertex3f(100, 50, -10);
-
-	glColor3f(1.0, 0.0, 1.0);
-	glVertex3f(0, 0, -20);
-	glColor3f(0.0, 1.0, 0.0);
-	glVertex3f(0, 200, -20);
-	glColor3f(0.0, 1.0, 1.0);
-	glVertex3f(100, 50, 10);
-
-   glEnd();
-
-   glShadeModel(GL_SMOOTH);
-//   glRotatef(45+angle, 1, 0.7, 0.4);
-   //glRotatef(45, 1, 1, 0);
-   glBegin(GL_LINES);
-		glColor3f(1, 0, 0);
-		glVertex3f(-50, 50, -50); glColor3f(0, 0, 1); glVertex3f(50, 50, -50);
-		glColor3f(1, 0, 0);
-		glVertex3f(50, 50, -50); glVertex3f(50, -50, -50);
-		//glColor3f(1, 0, 0);
-		glVertex3f(50, -50, -50); glVertex3f(-50, -50, -50);
-		glVertex3f(-50, -50, -50); glVertex3f(-50, 50, -50);
-
-		glColor3f(0, 0, 1);
-		glVertex3f(-50, 50, 50); glVertex3f(50, 50, 50);
-		glVertex3f(50, 50, 50); glVertex3f(50, -50, 50);
-		glVertex3f(50, -50, 50); glVertex3f(-50, -50, 50);
-		glVertex3f(-50, -50, 50); glVertex3f(-50, 50, 50);
-
+//	glPushMatrix();
+//	glTranslated(obj.x, obj.y, obj.z);
+//	glRotated(obj.r, 0, 1, 0);
+	glBegin(GL_TRIANGLES);
+		for(unsigned int i = 0; i < obj.faces.size(); i++)
+		{
+//			glNormal3d(obj.faces[i].normal.x, obj.faces[i].normal.y, obj.faces[i].normal.z);
+			glVertex3f(obj.faces[i].a.x, obj.faces[i].a.y, obj.faces[i].a.z);
+			glVertex3f(obj.faces[i].b.x, obj.faces[i].b.y, obj.faces[i].b.z);
+			glVertex3f(obj.faces[i].c.x, obj.faces[i].c.y, obj.faces[i].c.z);
+		}
 	glEnd();
-	glShadeModel(GL_FLAT);
-	glBegin(GL_LINES);
-		glColor3f(0, 1, 0);
-		glVertex3f(-50, 50, -50); glVertex3f(-50, 50, 50);
-		glVertex3f(50, 50, -50); glVertex3f(50, 50, 50);
-		glVertex3f(50, -50, -50); glVertex3f(50, -50, 50);
-		glVertex3f(-50, -50, -50);
-		glColor3f(1, 0, 1);
-		glVertex3f(-50, -50, 50);
-   glEnd();
-   */
-
-   glBegin(GL_LINES);
-		glColor3f(1, 0, 0);
-		glVertex3f(-5, 5, -5); glColor3f(0, 0, 1); glVertex3f(5, 5, -5);
-		glColor3f(1, 0, 0);
-		glVertex3f(5, 5, -5); glVertex3f(5, -5, -5);
-		//glColor3f(1, 0, 0);
-		glVertex3f(5, -5, -5); glVertex3f(-5, -5, -5);
-		glVertex3f(-5, -5, -5); glVertex3f(-5, 5, -5);
-
-		glColor3f(0, 1, 0);
-		glVertex3f(-5, 5, 5); glVertex3f(5, 5, 5);
-		glVertex3f(5, 5, 5); glVertex3f(5, -5, 5);
-		glVertex3f(5, -5, 5); glVertex3f(-5, -5, 5);
-		glVertex3f(-5, -5, 5); glVertex3f(-5, 5, 5);
-
-	glEnd();
-	glShadeModel(GL_FLAT);
-	glBegin(GL_LINES);
-		glColor3f(0, 1, 0);
-		glVertex3f(-5, 5, -5); glVertex3f(-5, 5, 5);
-		glVertex3f(5, 5, -5); glVertex3f(5, 5, 5);
-		glVertex3f(5, -5, -5); glVertex3f(5, -5, 5);
-		glVertex3f(-5, -5, -5);
-		glColor3f(1, 0, 1);
-		glVertex3f(-5, -5, 5);
-   glEnd();
-
-   glFlush();
-
-   float matrix[16];
-   glGetFloatv(GL_PROJECTION_MATRIX, matrix);
-   printMatrix(matrix);
+//	glPopMatrix();
 }
 
 void display2(void)
@@ -148,10 +66,11 @@ void display2(void)
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
-   glEnable(GL_CULL_FACE);
+   //glEnable(GL_CULL_FACE);
 
    glTranslatef(100, 100, 0);
-   glRotatef(angle, 0, 1, 0);
+   glRotatef(angle, 1, 1, 0);
+   //glRotatef(13, 1, 1, 0);
    glShadeModel(GL_SMOOTH);
    glColor3f(1.0, 0.0, 0.0);
    glBegin(GL_TRIANGLES);
@@ -159,28 +78,14 @@ void display2(void)
 		glColor3f(1.0, 0, 0);
 		glVertex3f(0.5, 0.5, 0.0);
 		glColor3f(0.0, 1.0, 0);
-		glVertex3f(50.5,50.5,0.2);
+		glVertex3f(0.5,50.5,0.2);
 		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(10.5, 70.5, -0.2);
+		glVertex3f(130.5, 0.5, -0.2);
    glEnd();
    glTranslatef(100, 100, 0);
-   //glDisable(GL_CULL_FACE);
-   glBegin(GL_TRIANGLES);
-		glColor3f(1.0, 0, 0);
-		glColor3f(1.0, 0, 0);
-		glVertex3f(0.5, 0.5, 0.0);
-		glColor3f(0.0, 1.0, 0);
-		glVertex3f(-50.5,50.5,0.2);
-		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(10.5, 70.5, -0.2);
-   glEnd();
 
-   glBegin(GL_LINES);
-		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(-50.5,60.5,0.2);
-		glColor3f(0.0, 1.0, 1.0);
-		glVertex3f(10.5, 85.5, -0.2);
-   glEnd();
+   glScalef(12, 12, 12);
+   renderObject(cube);
 
    glFlush();
 
@@ -194,53 +99,10 @@ float rtri = 0.0f;
 
 /* rotation angle for the quadrilateral. */
 float rquad = 0.0f;
-void nehe05()
-{
-	  glViewport(0, 0, 640, 480);		// Reset The Current Viewport And Perspective Transformation
-
-	  glMatrixMode(GL_PROJECTION);
-	  glLoadIdentity();
-
-	  gluPerspective(45.0f,(GLfloat)640/(GLfloat)480,0.1f,100.0f);
-	  glMatrixMode(GL_MODELVIEW);
-
-	  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-	  glLoadIdentity();				// Reset The View
-
-	  glTranslatef(0.0f,0.0f,-2.0f);		// Move Left 1.5 Units And Into The Screen 6.0
-
-	  glRotatef(rtri,0.0f,1.0f,0.0f);		// Rotate The Pyramid On The Y axis
-
-	  // draw a pyramid (in smooth coloring mode)
-	  glShadeModel(GL_SMOOTH);
-	  glBegin(GL_TRIANGLES);				// start drawing a pyramid
-
-	  // front face of pyramid
-	  glColor3f(1.0f,0.0f,0.0f);			// Set The Color To Red
-	  glVertex3f(-0.4f, 0.4f, 0.0f);		        // Top of triangle (front)
-	  glColor3f(0.0f,1.0f,0.0f);			// Set The Color To Green
-	  glVertex3f(0.5f,0.0f, 0.0f);		// left of triangle (front)
-	  glColor3f(0.0f,0.0f,1.0f);			// Set The Color To Blue
-	  glVertex3f(-0.4f,-0.4f, 0.0f);		        // right of traingle (front)
-
-
-	  glEnd();					// Done Drawing The Pyramid
-
-
-
-	  rtri+=15.0f;					// Increase The Rotation Variable For The Pyramid
-	  rquad-=15.0f;					// Decrease The Rotation Variable For The Cube
-
-	  glFlush();
-
-	  // float matrix[16];
-	  // glGetFloatv(GL_PROJECTION_MATRIX, matrix);
-	  // printMatrix(matrix);
-}
 
 void timerCallback(int data)
 {
-	angle += 1;
+	angle += 2;
 	if(angle >= 360)
 		angle -= 360;
 
@@ -263,7 +125,8 @@ int main()
 		std::cerr<<"Problem saving file:"<<error.what()<<std::endl;
 	}
 	*/
-
+	ggl::Loader_Obj loader("M1.obj");
+	cube = loader.getObject("M1");
 	glutInit(640, 480);
 	glutDisplayFunc(display2);
 	glutTimerFunc(delay, timerCallback, 0);
