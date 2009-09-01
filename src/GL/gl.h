@@ -58,6 +58,7 @@ const GLenum GL_FRONT_AND_BACK = 21;
 const GLenum GL_CW = 22;
 const GLenum GL_CCW = 23;
 const GLenum GL_CULL_FACE = 24;
+const GLenum GL_NORMALIZE = 25;
 
 void glutPostRedisplay();
 

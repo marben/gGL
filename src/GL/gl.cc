@@ -188,6 +188,9 @@ void glEnable(GLenum cap)
 	case ::GL_CULL_FACE:
 		opengl.enableCulling();
 		break;
+	case	::GL_NORMALIZE:
+		opengl.enableNormalsNormalization();
+		break;
 	default:
 		break;
 	}
@@ -196,8 +199,11 @@ void glEnable(GLenum cap)
 void glDisable(GLenum cap)
 {
 	switch(cap) {
-	case GL_CULL_FACE:
+	case ::GL_CULL_FACE:
 		opengl.disableCulling();
+		break;
+	case ::GL_NORMALIZE:
+		opengl.disableNormalsNormalization();
 		break;
 	default:
 		break;

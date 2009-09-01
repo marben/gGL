@@ -66,7 +66,7 @@ void display2(void)
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
-   //glEnable(GL_CULL_FACE);
+   glEnable(GL_CULL_FACE);
 
    glTranslatef(100, 100, 0);
    glRotatef(angle, 1, 1, 0);

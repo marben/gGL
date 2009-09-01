@@ -344,7 +344,7 @@ const CanvasRGB* OpenGL::glFlush()
 void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 {
 	++_smoothTriangleVertexCounter;
-	_trianglesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+	_trianglesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
 
 	if(_smoothTriangleVertexCounter == 3)
 	{
@@ -368,7 +368,7 @@ void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 {
 	++_flatTriangleVertexCounter;
-	_trianglesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+	_trianglesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
 
 	if(_flatTriangleVertexCounter == 3)
 	{
@@ -398,9 +398,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _activeColor));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
 		break;
 
 	case GL_POLYGON:
@@ -426,6 +426,14 @@ void OpenGL::enableCulling(bool b)
 		return;
 	}
 	_cullingEnabled = b;
+}
+
+void OpenGL::enableNormalsNormalization(bool b)
+{
+	if(inBetweenBeginEnd()){	// TODO: should throw some error
+		return;
+	}
+	_normalizeNormals = b;
 }
 
 bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
@@ -598,13 +606,13 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	if(bottom->y() == top->y())
 		dx1 = 0.0;
 	else
-		dx1 = (top->x() - bottom->x()) / dy1 /*(top->y() - bottom->y())*/;
+		dx1 = (top->x() - bottom->x()) / dy1;
 
 	Real dx2;
 	if(middle->y() == bottom->y())
 		dx2 = 0.0;
 	else
-		dx2 = (middle->x() - bottom->x()) / dy2 /*(middle->y() - bottom->y())*/;
+		dx2 = (middle->x() - bottom->x()) / dy2;
 
 
 	Real x1 = bottom->x();
@@ -613,14 +621,14 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	Color startColor1(bottom->color());
 	Color startColor2(bottom->color());
 
-	Color colorDy1 = (top->color() - bottom->color()) / dy1 /*(top->y() - bottom->y())*/;	// color change along the top->bottom line
-	Color colorDy2 = (middle->color() - bottom->color()) / dy2 /*(middle->y() - bottom->y())*/;	// color change along the other line
+	Color colorDy1 = (top->color() - bottom->color()) / dy1;	// color change along the top->bottom line
+	Color colorDy2 = (middle->color() - bottom->color()) / dy2;	// color change along the other line
 
 	double z1 = bottom->z();
 	double z2 = bottom->z();
 
-	double dz1 = (top->z() - bottom->z()) / dy1 /*(top->y() - bottom->y())*/;
-	double dz2 = (middle->z() - bottom->z()) / dy2 /*(middle->y() - bottom->y())*/;
+	double dz1 = (top->z() - bottom->z()) / dy1;
+	double dz2 = (middle->z() - bottom->z()) / dy2;
 
 	int y = bottom->y();
 	while(y < middle->y())
@@ -638,12 +646,12 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	if(middle->y() == top->y())
 		dx2 = 0.0;
 	else
-		dx2 = (top->x() - middle->x()) / dy3 /*(top->y() - middle->y())*/;
+		dx2 = (top->x() - middle->x()) / dy3;
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
 	z2 = middle->z();
 	startColor2 = middle->color();
-	colorDy2 = (top->color() - middle->color()) / dy3 /*(top->y() - middle->y())*/;
-	dz2 = (top->z() - middle->z()) / dy3/*(top->y() - middle->y())*/;
+	colorDy2 = (top->color() - middle->color()) / dy3;
+	dz2 = (top->z() - middle->z()) / dy3;
 
 
 	while(y <= top->y())
@@ -657,6 +665,13 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 		z2 += dz2;
 		++y;
 	}
+}
+
+void OpenGL::glNormal(double x, double y, double z)
+{
+	_normal << x, y, z;
+	if(_normalizeNormals)
+		_normal.normalize();
 }
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -874,6 +889,8 @@ void OpenGL::init(int x, int y)
 	glViewport(0, 0, x, y);
 	glCullFace(GL_BACK);
 	_cullingEnabled = false;
+	_normal << 0.0, 0.0, -1.0;
+	_normalizeNormals = false;
 
 	_smoothTriangleVertexCounter = 0;
 	_flatTriangleVertexCounter = 0;

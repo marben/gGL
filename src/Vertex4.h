@@ -20,8 +20,8 @@ template<typename T, typename Color_t>
 class Vertex4_
 {
 public:
-	Vertex4_(T x, T y, T z, T w, const Color_t& color):_vertex(Matrix<T, 4, 1>(x, y, z, w)), _color(color){}
-	Vertex4_(const Matrix<T, 4, 1>& vector, const Color_t& color):_vertex(vector), _color(color){}
+	//Vertex4_(T x, T y, T z, T w, const Color_t& color):_vertex(Matrix<T, 4, 1>(x, y, z, w)), _color(color){}
+	Vertex4_(const Matrix<T, 4, 1>& vector, const Matrix<T, 3, 1>& normal, const Color_t& color):_vertex(vector), _normal(normal), _color(color){}
 	//Vertex4(const Vertex4& vertex){std::cerr<<"Vertex4 copy constructor called"<<std::endl;}
 
 	T x()const {return _vertex[0];}
@@ -41,6 +41,7 @@ public:
 
 private:
 	Matrix<T, 4, 1, Eigen::DontAlign> _vertex;	// TODO: figure out, how to make it possible to pass this class with aligned Eigen::Matrix to std::Vector..  (maybe write spcial copy constructor or define aligned allocator in the vector?..) .. maybe a cvs version of libeigen?
+	Matrix<T, 3, 1, Eigen::DontAlign> _normal;
 	Color_t _color;
 
 // this is for libeigen:

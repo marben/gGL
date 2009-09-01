@@ -47,6 +47,8 @@ public:
 	void clearColorBuffer();
 	void clearZBuffer();
 	void enableCulling(bool b = true);
+	void enableNormalsNormalization(bool b = true);
+	void disableNormalsNormalization() {enableNormalsNormalization(false);}
 	void disableCulling() {enableCulling(false);}
 
 public:
@@ -66,6 +68,7 @@ public:
 	void glCullFace(CullFace mode);
 	void glFrontFace(FrontFace mode);
 	void glScale(double x, double y, double z);
+	void glNormal(double x, double y, double z);
 
 	void gluPerspective(double fovy, double aspect, double zNear, double zFar);
 
@@ -125,8 +128,10 @@ private:
 	int _x, _y;	// resolution we are working with
 	struct {double x; double y; double width; double height;} _viewport;
 	bool _cullingEnabled;
+	bool _normalizeNormals;	// set with GL_NORMALIZE
 	CullFace _cullFace;
 	FrontFace _frontFace;
+	Matrix<Real, 3, 1, Eigen::DontAlign> _normal;	// the active normal
 
 	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
 	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
