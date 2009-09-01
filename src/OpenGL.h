@@ -66,14 +66,14 @@ public:
 	void glLoadIdentity();
 	void glShadeModel(const ShadeModel& model);
 	void glMatrixMode(MatrixMode mode);
-	void glOrtho(double left,double right,double bottom,double top,double zNear,double zFar);
-	void glViewport(double x, double y, double width, double height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
+	void glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real zFar);
+	void glViewport(Real x, Real y, Real width, Real height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
 	void glCullFace(CullFace mode);
 	void glFrontFace(FrontFace mode);
-	void glScale(double x, double y, double z);
-	void glNormal(double x, double y, double z);
+	void glScale(Real x, Real y, Real z);
+	void glNormal(Real x, Real y, Real z);
 
-	void gluPerspective(double fovy, double aspect, double zNear, double zFar);
+	void gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar);
 
 	const Matrix4d& getModelViewMatrix() const {return _modelViewMatrix;}
 	const Matrix4d& getProjectionMatrix() const {return _projectionMatrix;}
@@ -129,7 +129,7 @@ private:
 	MatrixMode _matrixMode;
 	double* _zBuffer;
 	int _x, _y;	// resolution we are working with
-	struct {double x; double y; double width; double height;} _viewport;
+	struct {Real x; Real y; Real width; Real height;} _viewport;
 	bool _cullingEnabled;
 	bool _normalizeNormals;	// set with GL_NORMALIZE
 	bool _lightingEnabled;	// true if lighting was enables

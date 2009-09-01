@@ -677,7 +677,7 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	}
 }
 
-void OpenGL::glNormal(double x, double y, double z)
+void OpenGL::glNormal(Real x, Real y, Real z)
 {
 	_normal << x, y, z;
 	if(_normalizeNormals)
@@ -693,7 +693,7 @@ void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Ve
 
 void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color)
 {
-	// it would make sense to use fixed point arithmetics...but...
+	// it would make sense to use fixed point arithmetics...but...according to my tests on ia32 it actually doesn't
 	// and incorporate bresenham algorithm, but...who will ever call this function?
 
 	// first we sort vertices by y
@@ -738,13 +738,13 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 		}
 	}
 	*/
-	// might be better to sort using swap
+	// might be better to sort using swap TODO: test
 	const Vertex4 *top = &v1;
 	const Vertex4 *middle = &v2;
 	const Vertex4 *bottom = &v3;
 
 	if(bottom->y() > middle->y())
-		std::swap(bottom, middle);
+		std::swap(bottom, middle);	// TODO: use xor instead?
 	if(bottom->y() > top->y())
 		std::swap(bottom, top);
 	if(middle->y() > top->y())
@@ -859,7 +859,7 @@ void OpenGL::glMatrixMode(MatrixMode mode)
 	}
 }
 
-void OpenGL::glOrtho(double left,double right,double bottom,double top,double zNear,double zFar)
+void OpenGL::glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real zFar)
 {
 	Matrix4d matrix;
 
@@ -956,21 +956,21 @@ void OpenGL::clearZBuffer()
 		_zBuffer[i] = -1000.0;
 }
 
-void OpenGL::gluPerspective(double fovy, double aspect, double zNear, double zFar)
+void OpenGL::gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar)
 {	// TODO: glu functions shouldn't be in opengl
 	Matrix4d matrix;
 	double f = cot(radian(fovy)/2.0);
 
 	matrix << 	f/aspect, 0, 0, 0,
 					0, f, 0, 0,
-					0, 0, (zFar+zNear)/(zNear-zFar), 2*(zFar*zNear)/(zNear - zFar),
+					0, 0, (zFar + zNear)/(zNear - zFar), 2*(zFar * zNear)/(zNear - zFar),
 					0, 0, -1, 0;
 
 	*_activeMatrix *= matrix;
 	updateWorldMatrix();
 }
 
-void OpenGL::glScale(double x, double y, double z)
+void OpenGL::glScale(Real x, Real y, Real z)
 {
 	if(inBetweenBeginEnd())
 			return;
