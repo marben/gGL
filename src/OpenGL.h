@@ -21,6 +21,7 @@ namespace ggl {
 namespace ogl
 {
 
+const int available_lights_number = 12;	// TODO: check docs/other ogl implementations and eventually increase
 
 typedef double Real;	// this is the default floating type, we will use in opengl
 
@@ -36,6 +37,19 @@ USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
 typedef PixelRGBA Color;
 typedef Vertex4_<Real, Color> Vertex4;
+typedef Matrix<Real, 3, 1, Eigen::DontAlign> Point3d;
+
+class Light
+{
+public:
+	Light():_enabled(false){}
+	void enable(bool enabled = true) {_enabled = enabled;}
+	void disable() {enable(false);}
+private:
+	Color _color;
+	Point3d _position;
+	bool _enabled;
+};
 
 class OpenGL
 {
@@ -53,6 +67,8 @@ public:
 	void disableCulling() {enableCulling(false);}
 	void enableLighting(bool b = true);
 	void disableLighting() {enableLighting(false);}
+	void enableLight(int n, bool enabled = true);
+	void disableLight(int n) {enableLight(n, false);}
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
@@ -135,7 +151,9 @@ private:
 	bool _lightingEnabled;	// true if lighting was enables
 	CullFace _cullFace;
 	FrontFace _frontFace;
-	Matrix<Real, 3, 1, Eigen::DontAlign> _normal;	// the active normal
+	Point3d _normal;	// the active normal
+	Light _lights[available_lights_number];
+
 
 	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
 	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat

@@ -446,6 +446,15 @@ void OpenGL::enableLighting(bool b)
 	_lightingEnabled = b;
 }
 
+void OpenGL::enableLight(int n, bool enabled)
+{
+	if(n <= 0 || n > available_lights_number) {
+		std::cerr<<"enabling unavailable light number: "<<n<<std::endl;
+		return;
+	}
+	_lights[n].enable(enabled);
+}
+
 bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
 {
 	if(_cullingEnabled == false)

@@ -221,6 +221,42 @@ void glEnable(GLenum cap)
 	case	::GL_LIGHTING:
 		opengl.enableLighting();
 		break;
+	case	::GL_LIGHT1:
+		opengl.enableLight(1);
+		break;
+	case	::GL_LIGHT2:
+		opengl.enableLight(2);
+		break;
+	case	::GL_LIGHT3:
+		opengl.enableLight(3);
+		break;
+	case	::GL_LIGHT4:
+		opengl.enableLight(4);
+		break;
+	case	::GL_LIGHT5:
+		opengl.enableLight(5);
+		break;
+	case	::GL_LIGHT6:
+		opengl.enableLight(6);
+		break;
+	case	::GL_LIGHT7:
+		opengl.enableLight(7);
+		break;
+	case	::GL_LIGHT8:
+		opengl.enableLight(8);
+		break;
+	case	::GL_LIGHT9:
+		opengl.enableLight(9);
+		break;
+	case	::GL_LIGHT10:
+		opengl.enableLight(10);
+		break;
+	case	::GL_LIGHT11:
+		opengl.enableLight(11);
+		break;
+	case	::GL_LIGHT12:
+		opengl.enableLight(12);
+		break;
 	default:
 		break;
 	}
@@ -237,6 +273,42 @@ void glDisable(GLenum cap)
 		break;
 	case	::GL_LIGHTING:
 		opengl.disableLighting();
+		break;
+	case	::GL_LIGHT1:
+		opengl.disableLight(1);
+		break;
+	case	::GL_LIGHT2:
+		opengl.disableLight(2);
+		break;
+	case	::GL_LIGHT3:
+		opengl.disableLight(3);
+		break;
+	case	::GL_LIGHT4:
+		opengl.disableLight(4);
+		break;
+	case	::GL_LIGHT5:
+		opengl.disableLight(5);
+		break;
+	case	::GL_LIGHT6:
+		opengl.disableLight(6);
+		break;
+	case	::GL_LIGHT7:
+		opengl.disableLight(7);
+		break;
+	case	::GL_LIGHT8:
+		opengl.disableLight(8);
+		break;
+	case	::GL_LIGHT9:
+		opengl.disableLight(9);
+		break;
+	case	::GL_LIGHT10:
+		opengl.disableLight(10);
+		break;
+	case	::GL_LIGHT11:
+		opengl.disableLight(11);
+		break;
+	case	::GL_LIGHT12:
+		opengl.disableLight(12);
 		break;
 	default:
 		break;
