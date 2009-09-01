@@ -106,6 +106,11 @@ void glTranslatef(GLfloat x, GLfloat y, GLfloat z)
 	opengl.glTranslate(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
+void glTranslated(GLdouble x, GLdouble y, GLdouble z)
+{
+	opengl.glTranslate(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
 void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
 	opengl.glRotate(static_cast<Real>(angle), static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
@@ -160,15 +165,30 @@ void glutMainLoop(void)
 	}
 }
 
-void glVertex2f(float x, float y){
+void glVertex2f(GLfloat x, GLfloat y){
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y));
 }
 
-void glVertex3f(float x, float y, float z){
+void glVertex2d(GLdouble x, GLdouble y)
+{
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y));
+}
+
+void glVertex3f(GLfloat x, GLfloat y, GLfloat z){
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
-void glVertex4f(float x, float y, float z, float w){
+void glVertex3d(GLdouble x, GLdouble y, GLdouble z)
+{
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
+void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w){
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z), static_cast<Real>(w));
+}
+
+void glVertex4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w)
+{
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z), static_cast<Real>(w));
 }
 
@@ -179,7 +199,12 @@ void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
 void glScalef(GLfloat x, GLfloat y, GLfloat z)
 {
-	opengl.glScale(x, y, z);
+	opengl.glScale(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
+void glScaled(GLdouble x, GLdouble y, GLdouble z)
+{
+	opengl.glScale(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
 void glEnable(GLenum cap)
@@ -219,6 +244,11 @@ void glDisable(GLenum cap)
 }
 
 void glColor3f(GLfloat r, GLfloat g, GLfloat b)
+{
+	opengl.glColor(r, g, b, 1);
+}
+
+void glColor3d(GLdouble r, GLdouble g, GLdouble b)
 {
 	opengl.glColor(r, g, b, 1);
 }

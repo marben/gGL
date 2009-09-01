@@ -71,6 +71,8 @@ void glLoadIdentity();
 
 void glTranslatef(GLfloat x, GLfloat y, GLfloat z);
 
+void glTranslated(GLdouble x, GLdouble y, GLdouble z);
+
 void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
 
 void glRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
@@ -83,13 +85,21 @@ void glutTimerFunc(unsigned int msec, void (*func)(int data), int data);
 
 void glutMainLoop(void);
 
-void glVertex2f(float x, float y);
+void glVertex2f(GLfloat x, GLfloat y);
 
-void glVertex3f(float x, float y, float z);
+void glVertex2d(GLdouble x, GLdouble y);
 
-void glVertex4f(float x, float y, float z, float w);
+void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
+
+void glVertex3d(GLdouble x, GLdouble y, GLdouble z);
+
+void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+
+void glVertex4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
 
 void glColor3f(GLfloat r, GLfloat g, GLfloat b);
+
+void glColor3d(GLdouble r, GLdouble g, GLdouble b);
 
 void glEnable(GLenum cap);
 
@@ -125,5 +135,7 @@ void gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
 void gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
 void glScalef(GLfloat x, GLfloat y, GLfloat z);
+
+void glScaled(GLdouble x, GLdouble y, GLdouble z);
 
 #endif /* GL_H_ */
