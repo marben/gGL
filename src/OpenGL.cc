@@ -686,6 +686,7 @@ void OpenGL::glNormal(Real x, Real y, Real z)
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
+	// TODO: this is probably wrong. instead of rounding, static_cast should be called (rounding down)
 	line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.color());
 	line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.color());
 	line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.color());
@@ -756,11 +757,22 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 	// line 1 should be the longer (from top to bottom)
 
 	// TODO: check, for impossible triangles etc...
-	assert(bottom->y() != top->y());	// get rid of this
-	Real dx1 = (top->x() - bottom->x()) / (top->y() - bottom->y());
 
-	assert(middle->y() != bottom->y());	// get rid of this
-	Real dx2 = (middle->x() - bottom->x()) / (middle->y() - bottom->y());
+	int dy1 = static_cast<int>(top->y()) - static_cast<int>(bottom->y());
+	int dy2 = static_cast<int>(middle->y()) - static_cast<int>(bottom->y());
+	int dy3 = static_cast<int>(top->y()) - static_cast<int>(middle->y());
+
+	Real dx1;
+	if(bottom->y() == top->y())
+		dx1 = 0.0;
+	else
+		dx1 = (top->x() - bottom->x()) / dy1;
+
+	Real dx2;
+	if(middle->y() == bottom->y())
+		dx2 = 0.0;
+	else
+		dx2 = (middle->x() - bottom->x()) / dy2;
 
 	Real x1 = bottom->x();
 	Real x2 = bottom->x();
@@ -782,8 +794,11 @@ void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Ver
 		++y;
 	}
 	// and now for the other 'half' of the triangle
-	assert(middle->y() != top->y());	// get rid of this
-	dx2 = (top->x() - middle->x()) / (top->y() - middle->y());
+	if(middle->y() == top->y())
+		dx2 = 0.0;
+	else
+		dx2 = (top->x() - middle->x()) / dy3;
+
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
 	z2 = middle->z();
 	dz2 = (top->z() - middle->z()) / (top->y() - middle->y());
