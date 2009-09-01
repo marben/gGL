@@ -17,7 +17,8 @@
 #include "Vertex4.h"
 
 
-namespace ggl
+namespace ggl {
+namespace ogl
 {
 
 
@@ -144,5 +145,5 @@ public:
 };
 
 }
-
+}
 #endif /* OPENGL_H_ */

@@ -12,7 +12,9 @@
 #ifndef VERTEX4_H_
 #define VERTEX4_H_
 
-namespace ggl{
+namespace ggl {
+namespace ogl
+{
 
 USING_PART_OF_NAMESPACE_EIGEN
 
@@ -50,7 +52,7 @@ private:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign)
 };
 
-
+}	// namespace ogl
 } // namespace ggl
 
 #endif /* VERTEX4_H_ */

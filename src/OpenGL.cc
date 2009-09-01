@@ -24,8 +24,10 @@ inline double cot(double rad)
 }
 
 
-namespace ggl
+namespace ggl {
+namespace ogl
 {
+
 
 void OpenGL::clearColorBuffer()
 {
@@ -987,4 +989,5 @@ OpenGL::~OpenGL()
 	delete _zBuffer;
 }
 
+}
 }

@@ -4,8 +4,9 @@
 #include "gl.h"
 
 using namespace ggl;
+using namespace ggl::ogl;
 
-static ggl::OpenGL opengl;	// the default global opengl instance
+static ggl::ogl::OpenGL opengl;	// the default global opengl instance
 static SDL_Display display;	// used by glut so far..
 static void (*glutDisplayFunction)(void);
 static Image2dRGB colorBuffer;
@@ -26,13 +27,13 @@ void glMatrixMode(GLenum mode)
 {
 	switch(mode) {
 	case ::GL_PROJECTION:
-		opengl.glMatrixMode(ggl::GL_PROJECTION);
+		opengl.glMatrixMode(ogl::GL_PROJECTION);
 		break;
 	case ::GL_MODELVIEW:
-		opengl.glMatrixMode(ggl::GL_MODELVIEW);
+		opengl.glMatrixMode(ogl::GL_MODELVIEW);
 		break;
 	case ::GL_TEXTURE:
-		opengl.glMatrixMode(ggl::GL_TEXTURE);
+		opengl.glMatrixMode(ogl::GL_TEXTURE);
 		break;
 	default:
 		break;
@@ -246,43 +247,43 @@ void glBegin(GLenum mode){
 	switch(mode)
 	{
 	case ::GL_POINTS:
-		opengl.glBegin(ggl::GL_POINTS);
+		opengl.glBegin(ogl::GL_POINTS);
 		break;
 
 	case ::GL_LINES:
-		opengl.glBegin(ggl::GL_LINES);
+		opengl.glBegin(ogl::GL_LINES);
 		break;
 
 	case GLenum(::GL_POLYGON):
-		opengl.glBegin(ggl::GL_POLYGON);
+		opengl.glBegin(ogl::GL_POLYGON);
 		break;
 
 	case GLenum(::GL_TRIANGLES):
-		opengl.glBegin(ggl::GL_TRIANGLES);
+		opengl.glBegin(ogl::GL_TRIANGLES);
 		break;
 
 	case GLenum(::GL_QUADS):
-		opengl.glBegin(ggl::GL_QUADS);
+		opengl.glBegin(ogl::GL_QUADS);
 		break;
 
 	case GLenum(::GL_LINE_STRIP):
-		opengl.glBegin(ggl::GL_LINE_STRIP);
+		opengl.glBegin(ogl::GL_LINE_STRIP);
 		break;
 
 	case GLenum(::GL_LINE_LOOP):
-		opengl.glBegin(ggl::GL_LINE_LOOP);
+		opengl.glBegin(ogl::GL_LINE_LOOP);
 		break;
 
 	case GLenum(::GL_TRIANGLE_STRIP):
-		opengl.glBegin(ggl::GL_TRIANGLE_STRIP);
+		opengl.glBegin(ogl::GL_TRIANGLE_STRIP);
 		break;
 
 	case GLenum(::GL_TRIANGLE_FAN):
-		opengl.glBegin(ggl::GL_TRIANGLE_FAN);
+		opengl.glBegin(ogl::GL_TRIANGLE_FAN);
 		break;
 
 	case GLenum(::GL_QUAD_STRIP):
-		opengl.glBegin(ggl::GL_QUAD_STRIP);
+		opengl.glBegin(ogl::GL_QUAD_STRIP);
 		break;
 
 	default:
@@ -294,11 +295,11 @@ void glShadeModel(GLenum mode)
 {
 	switch(mode) {
 	case ::GL_SMOOTH:
-		opengl.glShadeModel(ggl::GL_SMOOTH);
+		opengl.glShadeModel(ogl::GL_SMOOTH);
 		break;
 
 	case ::GL_FLAT:
-		opengl.glShadeModel(ggl::GL_FLAT);
+		opengl.glShadeModel(ogl::GL_FLAT);
 		break;
 
 	default:
@@ -311,15 +312,15 @@ void glCullFace(GLenum mode)
 {
 	switch(mode) {
 	case ::GL_BACK:
-		opengl.glCullFace(ggl::GL_BACK);
+		opengl.glCullFace(ogl::GL_BACK);
 		break;
 
 	case ::GL_FRONT:
-		opengl.glCullFace(ggl::GL_FRONT);
+		opengl.glCullFace(ogl::GL_FRONT);
 		break;
 
 	case ::GL_FRONT_AND_BACK:
-		opengl.glCullFace(ggl::GL_FRONT_AND_BACK);
+		opengl.glCullFace(ogl::GL_FRONT_AND_BACK);
 		break;
 
 	default:
@@ -331,11 +332,11 @@ void glFrontFace(GLenum mode)
 {
 	switch(mode) {
 	case ::GL_CW:
-		opengl.glFrontFace(ggl::GL_CW);
+		opengl.glFrontFace(ogl::GL_CW);
 		break;
 
 	case ::GL_CCW:
-		opengl.glFrontFace(ggl::GL_CCW);
+		opengl.glFrontFace(ogl::GL_CCW);
 		break;
 
 	default:
