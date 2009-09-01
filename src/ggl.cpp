@@ -45,7 +45,7 @@ void renderObject(const ggl::Object3d& obj)
 	glBegin(GL_TRIANGLES);
 		for(unsigned int i = 0; i < obj.faces.size(); i++)
 		{
-			//glNormal3f(obj.faces[i].normal.x, obj.faces[i].normal.y, obj.faces[i].normal.z);
+			glNormal3f(obj.faces[i].normal.x, obj.faces[i].normal.y, obj.faces[i].normal.z);
 			glVertex3f(obj.faces[i].a.x, obj.faces[i].a.y, obj.faces[i].a.z);
 			glVertex3f(obj.faces[i].b.x, obj.faces[i].b.y, obj.faces[i].b.z);
 			glVertex3f(obj.faces[i].c.x, obj.faces[i].c.y, obj.faces[i].c.z);

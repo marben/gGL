@@ -105,6 +105,10 @@ void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
 
+void glNormal3f(GLfloat x, GLfloat y, GLfloat z);
+
+void glNormal3d(GLdouble x, GLdouble y, GLdouble z);
+
 /*
  * glFlush — force execution of GL commands in finite time
  */

@@ -248,6 +248,16 @@ void glColor3f(GLfloat r, GLfloat g, GLfloat b)
 	opengl.glColor(r, g, b, 1);
 }
 
+void glNormal3f(GLfloat x, GLfloat y, GLfloat z)
+{
+	opengl.glNormal(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
+void glNormal3d(GLdouble x, GLdouble y, GLdouble z)
+{
+	opengl.glNormal(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
 void glColor3d(GLdouble r, GLdouble g, GLdouble b)
 {
 	opengl.glColor(r, g, b, 1);
