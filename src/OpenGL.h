@@ -50,6 +50,8 @@ public:
 	void enableNormalsNormalization(bool b = true);
 	void disableNormalsNormalization() {enableNormalsNormalization(false);}
 	void disableCulling() {enableCulling(false);}
+	void enableLighting(bool b = true);
+	void disableLighting() {enableLighting(false);}
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
@@ -129,6 +131,7 @@ private:
 	struct {double x; double y; double width; double height;} _viewport;
 	bool _cullingEnabled;
 	bool _normalizeNormals;	// set with GL_NORMALIZE
+	bool _lightingEnabled;	// true if lighting was enables
 	CullFace _cullFace;
 	FrontFace _frontFace;
 	Matrix<Real, 3, 1, Eigen::DontAlign> _normal;	// the active normal

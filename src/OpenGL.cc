@@ -436,6 +436,14 @@ void OpenGL::enableNormalsNormalization(bool b)
 	_normalizeNormals = b;
 }
 
+void OpenGL::enableLighting(bool b)
+{
+	if(inBetweenBeginEnd()){	// TODO: should throw some error
+		return;
+	}
+	_lightingEnabled = b;
+}
+
 bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
 {
 	if(_cullingEnabled == false)
@@ -891,6 +899,7 @@ void OpenGL::init(int x, int y)
 	_cullingEnabled = false;
 	_normal << 0.0, 0.0, -1.0;
 	_normalizeNormals = false;
+	_lightingEnabled = false;
 
 	_smoothTriangleVertexCounter = 0;
 	_flatTriangleVertexCounter = 0;

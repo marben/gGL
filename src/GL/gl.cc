@@ -183,13 +183,17 @@ void glScalef(GLfloat x, GLfloat y, GLfloat z)
 
 void glEnable(GLenum cap)
 {
-	opengl.enableCulling(true);
+	// TODO: checking for being outside begin..end should probably be here...not in every OpenGL::enable function..
+	//opengl.enableCulling(true);
 	switch(cap) {
 	case ::GL_CULL_FACE:
 		opengl.enableCulling();
 		break;
 	case	::GL_NORMALIZE:
 		opengl.enableNormalsNormalization();
+		break;
+	case	::GL_LIGHTING:
+		opengl.enableLighting();
 		break;
 	default:
 		break;
@@ -204,6 +208,9 @@ void glDisable(GLenum cap)
 		break;
 	case ::GL_NORMALIZE:
 		opengl.disableNormalsNormalization();
+		break;
+	case	::GL_LIGHTING:
+		opengl.disableLighting();
 		break;
 	default:
 		break;
