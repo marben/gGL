@@ -11,9 +11,9 @@
 
 namespace ggl {
 
-class PixelRGB {
+class ColorRGB {
 public:
-	PixelRGB(float r = 0, float g = 0, float b = 0):
+	ColorRGB(float r = 0, float g = 0, float b = 0):
 		_r(r), _g(g), _b(b){}
 
 	float getR()const {return _r;}
@@ -49,8 +49,8 @@ public:
 
 	void clear(const float & value = 0) {_r = _g = _b = value;}	// should this be virtual? redefined in PixelRGBA?
 
-	virtual PixelRGB operator-(const PixelRGB& p2)const {return PixelRGB(this->r() - p2.r(), this->g() - p2.g(), this->b() - p2.b());}
-	virtual PixelRGB& operator+=(const PixelRGB& p2){_r += p2.r(); _g += p2.g(); _b += p2.b();return *this;}
+	virtual ColorRGB operator-(const ColorRGB& p2)const {return ColorRGB(this->r() - p2.r(), this->g() - p2.g(), this->b() - p2.b());}
+	virtual ColorRGB& operator+=(const ColorRGB& p2){_r += p2.r(); _g += p2.g(); _b += p2.b();return *this;}
 
 private:
 	virtual void normalize();
@@ -59,8 +59,8 @@ protected:
 	float _r, _g, _b;
 };
 
-inline PixelRGB operator/(const PixelRGB& p, const float f) {
-	return PixelRGB(p.r()/f, p.g()/f, p.b()/f);
+inline ColorRGB operator/(const ColorRGB& p, const float f) {
+	return ColorRGB(p.r()/f, p.g()/f, p.b()/f);
 }
 
 }

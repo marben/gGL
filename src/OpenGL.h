@@ -114,7 +114,7 @@ private:
 	void drawHLine_flat(int x0, int y, double z0, int x1, double z1, const Color& color);
 
 	void line(int x0, int y0, int x1, int y1, const Color& color);	// 2D line on a drawing surface
-	void putPixel(int x, int y, double z, const ggl::PixelRGB& color);	// puts pixel on color buffer and sets z buffer
+	void putPixel(int x, int y, double z, const ggl::ColorRGB& color);	// puts pixel on color buffer and sets z buffer
 
 	void drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2);
 	void drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const Color& color);

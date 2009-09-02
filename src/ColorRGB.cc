@@ -5,11 +5,11 @@
  *      Author: gix
  */
 
-#include "PixelRGB.h"
+#include "ColorRGB.h"
 
 using namespace ggl;
 
-void PixelRGB::normalize()
+void ColorRGB::normalize()
 {
 	if(_r>1.0)
 		_r = 1.0;

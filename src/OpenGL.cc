@@ -956,7 +956,7 @@ void OpenGL::glFrontFace(FrontFace mode)
 	_frontFace = mode;
 }
 
-void OpenGL::putPixel(int x, int y, double z, const ggl::PixelRGB& color)
+void OpenGL::putPixel(int x, int y, double z, const ggl::ColorRGB& color)
 {
 	if( x < 0 || y < 0 || x >= _x || y >= _y)
 		return;

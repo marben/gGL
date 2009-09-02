@@ -11,7 +11,7 @@
 Uint32 getpixel(SDL_Surface *surface, int x, int y);
 void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 
-void SDL_Display::putPixel(const size_t & x, const size_t & y, const ggl::PixelRGB & pixel)
+void SDL_Display::putPixel(const size_t & x, const size_t & y, const ggl::ColorRGB & pixel)
 {
 	if(_surface_locked)
 	{
@@ -25,7 +25,7 @@ void SDL_Display::putPixel(const size_t & x, const size_t & y, const ggl::PixelR
 	}
 }
 
-void SDL_Display::clearScreen(const ggl::PixelRGB & pixel)
+void SDL_Display::clearScreen(const ggl::ColorRGB & pixel)
 {
 	SDL_FillRect(_screen, NULL, SDL_MapRGB(_screen->format, (pixel.r()>1)?255:(pixel.r()<0)?0:pixel.r()*255, (pixel.g()>1)?255:(pixel.g()<0)?0:pixel.g()*255, (pixel.b()>1)?255:(pixel.b()<0)?0:pixel.b()*255));
 }

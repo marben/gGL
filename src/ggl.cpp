@@ -10,7 +10,7 @@
 #include <stdexcept>
 using namespace std;
 
-#include "PixelRGB.h"
+#include "ColorRGB.h"
 #include "PixelRGBA.h"
 #include "Image2d.h"
 #include "Image.h"

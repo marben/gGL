@@ -9,26 +9,26 @@
 #define IMAGE_H_
 
 #include "Image2d.h"
-#include "PixelRGB.h"
+#include "ColorRGB.h"
 #include "PixelRGBA.h"
 
 namespace ggl
 {
 
-typedef Image2d<PixelRGB> Image2dRGB;
+typedef Image2d<ColorRGB> Image2dRGB;
 typedef Image2d<PixelRGBA> Image2dRGBA;
 
-typedef Canvas<PixelRGB> CanvasRGB;
+typedef Canvas<ColorRGB> CanvasRGB;
 typedef Canvas<PixelRGBA> CanvasRGBA;
 
-static const PixelRGB Red(1,0,0);
-static const PixelRGB Green(0,1,0);
-static const PixelRGB Blue(0,0,1);
-static const PixelRGB Black(0,0,0);
-static const PixelRGB White(1,1,1);
-static const PixelRGB Cyan(0,1,1);
-static const PixelRGB Magenta(1,0,1);
-static const PixelRGB Yellow(1,1,0);
+static const ColorRGB Red(1,0,0);
+static const ColorRGB Green(0,1,0);
+static const ColorRGB Blue(0,0,1);
+static const ColorRGB Black(0,0,0);
+static const ColorRGB White(1,1,1);
+static const ColorRGB Cyan(0,1,1);
+static const ColorRGB Magenta(1,0,1);
+static const ColorRGB Yellow(1,1,0);
 }
 
 #endif /* IMAGE_H_ */

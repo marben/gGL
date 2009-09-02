@@ -9,7 +9,7 @@
 #define SDL_DISPLAY_H_
 
 #include <SDL/SDL.h>
-#include "PixelRGB.h"
+#include "ColorRGB.h"
 #include "Image.h"
 #include <iostream>
 
@@ -30,8 +30,8 @@ public:
 	const size_t& width() {return _x;}
 	const size_t& height() {return _y;}
 
-	void putPixel(const size_t & x, const size_t & y, const ggl::PixelRGB & pixel);	// can be called even without ::beginWrite(), but will be slower
-	void clearScreen(const ggl::PixelRGB & color);
+	void putPixel(const size_t & x, const size_t & y, const ggl::ColorRGB & pixel);	// can be called even without ::beginWrite(), but will be slower
+	void clearScreen(const ggl::ColorRGB & color);
 
 	void beginWrite();	// when beginning to write to surface it is locked
 	void endWrite();	// when end of writing to surface
@@ -59,7 +59,7 @@ private:
 	};
 
 private:
-	SDL_Canvas<ggl::PixelRGB> _canvasRGB;
+	SDL_Canvas<ggl::ColorRGB> _canvasRGB;
 
 	SDL_Surface* _screen;
 	bool _surface_locked;
