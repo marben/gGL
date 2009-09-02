@@ -5,8 +5,8 @@
  *      Author: gix
  */
 
-#ifndef PIXELRGB_H_
-#define PIXELRGB_H_
+#ifndef COLORRGB_H_
+#define COLORRGB_H_
 
 
 namespace ggl {
