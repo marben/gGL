@@ -448,7 +448,7 @@ void OpenGL::enableLighting(bool b)
 
 void OpenGL::enableLight(int n, bool enabled)
 {
-	if(n <= 0 || n > available_lights_number) {
+	if(n < 0 || n > available_lights_number - 1) {
 		std::cerr<<"enabling unavailable light number: "<<n<<std::endl;
 		return;
 	}

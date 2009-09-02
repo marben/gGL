@@ -165,7 +165,8 @@ void glutMainLoop(void)
 	}
 }
 
-void glVertex2f(GLfloat x, GLfloat y){
+void glVertex2f(GLfloat x, GLfloat y)
+{
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y));
 }
 
@@ -174,7 +175,8 @@ void glVertex2d(GLdouble x, GLdouble y)
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y));
 }
 
-void glVertex3f(GLfloat x, GLfloat y, GLfloat z){
+void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
+{
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
@@ -183,7 +185,8 @@ void glVertex3d(GLdouble x, GLdouble y, GLdouble z)
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
-void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w){
+void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+{
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z), static_cast<Real>(w));
 }
 
@@ -210,7 +213,6 @@ void glScaled(GLdouble x, GLdouble y, GLdouble z)
 void glEnable(GLenum cap)
 {
 	// TODO: checking for being outside begin..end should probably be here...not in every OpenGL::enable function..
-	//opengl.enableCulling(true);
 	switch(cap) {
 	case ::GL_CULL_FACE:
 		opengl.enableCulling();
@@ -220,6 +222,9 @@ void glEnable(GLenum cap)
 		break;
 	case	::GL_LIGHTING:
 		opengl.enableLighting();
+		break;
+	case	::GL_LIGHT0:
+		opengl.enableLight(0);
 		break;
 	case	::GL_LIGHT1:
 		opengl.enableLight(1);
@@ -254,9 +259,6 @@ void glEnable(GLenum cap)
 	case	::GL_LIGHT11:
 		opengl.enableLight(11);
 		break;
-	case	::GL_LIGHT12:
-		opengl.enableLight(12);
-		break;
 	default:
 		break;
 	}
@@ -273,6 +275,9 @@ void glDisable(GLenum cap)
 		break;
 	case	::GL_LIGHTING:
 		opengl.disableLighting();
+		break;
+	case	::GL_LIGHT0:
+		opengl.disableLight(0);
 		break;
 	case	::GL_LIGHT1:
 		opengl.disableLight(1);
@@ -307,15 +312,17 @@ void glDisable(GLenum cap)
 	case	::GL_LIGHT11:
 		opengl.disableLight(11);
 		break;
-	case	::GL_LIGHT12:
-		opengl.disableLight(12);
-		break;
 	default:
 		break;
 	}
 }
 
 void glColor3f(GLfloat r, GLfloat g, GLfloat b)
+{
+	opengl.glColor(r, g, b, 1);
+}
+
+void glColor3d(GLdouble r, GLdouble g, GLdouble b)
 {
 	opengl.glColor(r, g, b, 1);
 }
@@ -328,11 +335,6 @@ void glNormal3f(GLfloat x, GLfloat y, GLfloat z)
 void glNormal3d(GLdouble x, GLdouble y, GLdouble z)
 {
 	opengl.glNormal(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
-}
-
-void glColor3d(GLdouble r, GLdouble g, GLdouble b)
-{
-	opengl.glColor(r, g, b, 1);
 }
 
 /*
@@ -355,7 +357,6 @@ void gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFa
 }
 
 void glBegin(GLenum mode){
-	// TODO: make some sane mapping between gl defines and ggl enum or whatever...
 	switch(mode)
 	{
 	case ::GL_POINTS:
@@ -417,7 +418,6 @@ void glShadeModel(GLenum mode)
 	default:
 		break;
 	}
-
 }
 
 void glCullFace(GLenum mode)
@@ -467,4 +467,50 @@ void glEnd(){
 
 void glClearColor(float red, float green, float blue, float alpha){
 	opengl.glClearColor(red, green, blue, alpha);
+}
+
+void glLightfv(GLenum light, GLenum pname, const GLfloat* params)
+{
+	int light_n;
+	switch(light) {
+	case ::GL_LIGHT0:
+		light_n = 0;
+		break;
+	case ::GL_LIGHT1:
+		light_n = 1;
+		break;
+	case ::GL_LIGHT2:
+		light_n = 2;
+		break;
+	case ::GL_LIGHT3:
+		light_n = 3;
+		break;
+	case ::GL_LIGHT4:
+		light_n = 4;
+		break;
+	case ::GL_LIGHT5:
+		light_n = 5;
+		break;
+	case ::GL_LIGHT6:
+		light_n = 6;
+		break;
+	case ::GL_LIGHT7:
+		light_n = 7;
+		break;
+	case ::GL_LIGHT8:
+		light_n = 8;
+		break;
+	case ::GL_LIGHT9:
+		light_n = 9;
+		break;
+	case ::GL_LIGHT10:
+		light_n = 10;
+		break;
+	case ::GL_LIGHT11:
+		light_n = 11;
+		break;
+	default:
+		return;
+	}
+
 }

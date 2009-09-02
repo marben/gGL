@@ -60,18 +60,18 @@ const GLenum GL_CCW = 23;
 const GLenum GL_CULL_FACE = 24;
 const GLenum GL_NORMALIZE = 25;
 const GLenum GL_LIGHTING = 26;
-const GLenum GL_LIGHT1 = 27;
-const GLenum GL_LIGHT2 = 28;
-const GLenum GL_LIGHT3 = 29;
-const GLenum GL_LIGHT4 = 30;
-const GLenum GL_LIGHT5 = 31;
-const GLenum GL_LIGHT6 = 32;
-const GLenum GL_LIGHT7 = 33;
-const GLenum GL_LIGHT8 = 34;
-const GLenum GL_LIGHT9 = 35;
-const GLenum GL_LIGHT10 = 36;
-const GLenum GL_LIGHT11 = 37;
-const GLenum GL_LIGHT12 = 38;
+const GLenum GL_LIGHT0 = 27;
+const GLenum GL_LIGHT1 = 28;
+const GLenum GL_LIGHT2 = 29;
+const GLenum GL_LIGHT3 = 30;
+const GLenum GL_LIGHT4 = 31;
+const GLenum GL_LIGHT5 = 32;
+const GLenum GL_LIGHT6 = 33;
+const GLenum GL_LIGHT7 = 34;
+const GLenum GL_LIGHT8 = 35;
+const GLenum GL_LIGHT9 = 36;
+const GLenum GL_LIGHT10 = 37;
+const GLenum GL_LIGHT11 = 38;
 
 void glutPostRedisplay();
 
@@ -153,5 +153,7 @@ void gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFa
 void glScalef(GLfloat x, GLfloat y, GLfloat z);
 
 void glScaled(GLdouble x, GLdouble y, GLdouble z);
+
+void glLightfv(GLenum light, GLenum pname, const GLfloat* params);
 
 #endif /* GL_H_ */
