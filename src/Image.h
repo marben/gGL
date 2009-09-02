@@ -10,16 +10,16 @@
 
 #include "Image2d.h"
 #include "ColorRGB.h"
-#include "PixelRGBA.h"
+#include "ColorRGBA.h"
 
 namespace ggl
 {
 
 typedef Image2d<ColorRGB> Image2dRGB;
-typedef Image2d<PixelRGBA> Image2dRGBA;
+typedef Image2d<ColorRGBA> Image2dRGBA;
 
 typedef Canvas<ColorRGB> CanvasRGB;
-typedef Canvas<PixelRGBA> CanvasRGBA;
+typedef Canvas<ColorRGBA> CanvasRGBA;
 
 static const ColorRGB Red(1,0,0);
 static const ColorRGB Green(0,1,0);

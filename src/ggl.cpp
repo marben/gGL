@@ -11,7 +11,7 @@
 using namespace std;
 
 #include "ColorRGB.h"
-#include "PixelRGBA.h"
+#include "ColorRGBA.h"
 #include "Image2d.h"
 #include "Image.h"
 #include "SDL_Display.h"

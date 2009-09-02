@@ -12,7 +12,7 @@
 #include <Eigen/StdVector>	// this is eigen's version of std::vector with custom allocator for certain types..
 
 #include "GL/gl_types.h"
-#include "PixelRGBA.h"
+#include "ColorRGBA.h"
 #include "Image.h"
 #include "Vertex4.h"
 
@@ -35,7 +35,7 @@ inline int round_quick(Real x){	// TODO:here should be some extremely fast..not 
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
-typedef PixelRGBA Color;
+typedef ColorRGBA Color;
 typedef Vertex4_<Real, Color> Vertex4;
 typedef Matrix<Real, 3, 1, Eigen::DontAlign> Point3d;
 
@@ -132,7 +132,7 @@ private:
 	bool _initialized;
 
 private:
-	PixelRGBA _glClearColor;
+	ColorRGBA _glClearColor;
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
 	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList_flat, _trianglesVertexList_smooth;
 	Color _activeColor;
