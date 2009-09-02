@@ -22,6 +22,8 @@ public:
 		ColorRGB(pixel), _alpha(1){}
 
 	float	getAlpha()const {return _alpha;}
+	void setAlpha(float a) {_alpha = a;}
+	void setA(float a) {setAlpha(a);}
 	float	alpha()const {return _alpha;}
 	float	a()const {return getAlpha();}
 

@@ -72,6 +72,11 @@ const GLenum GL_LIGHT8 = 35;
 const GLenum GL_LIGHT9 = 36;
 const GLenum GL_LIGHT10 = 37;
 const GLenum GL_LIGHT11 = 38;
+const GLenum GL_AMBIENT = 39;
+const GLenum GL_DIFFUSE = 40;
+const GLenum GL_SPECULAR = 41;
+const GLenum GL_POSITION = 42;
+const GLenum GL_SPOT_DIRECTION = 43;
 
 void glutPostRedisplay();
 

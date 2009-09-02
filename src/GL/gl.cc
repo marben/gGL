@@ -472,7 +472,8 @@ void glClearColor(float red, float green, float blue, float alpha){
 void glLightfv(GLenum light, GLenum pname, const GLfloat* params)
 {
 	int light_n;
-	switch(light) {
+	switch(light)
+	{
 	case ::GL_LIGHT0:
 		light_n = 0;
 		break;
@@ -512,5 +513,33 @@ void glLightfv(GLenum light, GLenum pname, const GLfloat* params)
 	default:
 		return;
 	}
+
+	switch(pname)
+	{
+	case GL_AMBIENT:
+		opengl.setLightAmbient(light_n, params[0], params[1], params[2], params[3]);
+		return;
+
+	case GL_DIFFUSE:
+		opengl.setLightDiffuse(light_n, params[0], params[1], params[2], params[3]);
+		return;
+
+	case GL_SPECULAR:
+		opengl.setLightSpecular(light_n, params[0], params[1], params[2], params[3]);
+		return;
+
+	case GL_POSITION:
+		opengl.setLightPosition(light_n, Point4d(params[0], params[1], params[2], params[3]));
+		return;
+
+	case GL_SPOT_DIRECTION:
+		opengl.setLightSpotDirection(light_n, Point3d(params[0], params[1], params[2]));
+		return;
+
+	default:
+		return;
+	}
+
+	// TODO: set other light parameters
 
 }

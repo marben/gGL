@@ -8,9 +8,16 @@
 #ifndef GL_TYPES_H_
 #define GL_TYPES_H_
 
+#include <Eigen/Core>
+USING_PART_OF_NAMESPACE_EIGEN
+
 namespace ggl {	// just for the time being...should be reworked somehow
 namespace ogl
 {
+	typedef double Real;	// this is the default floating type, we will use in opengl
+	typedef Matrix<Real, 3, 1, Eigen::DontAlign> Point3d;
+	typedef Matrix<Real, 4, 1, Eigen::DontAlign> Point4d;
+
 	enum ActiveVertexList {NONE, GL_POINTS, GL_LINES, GL_POLYGON, GL_TRIANGLES, GL_QUADS, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUAD_STRIP};
 	enum ShadeModel {GL_SMOOTH, GL_FLAT};
 	enum MatrixMode {GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE};

@@ -15,41 +15,26 @@
 #include "ColorRGBA.h"
 #include "Image.h"
 #include "Vertex4.h"
+#include "Light.h"
 
 
 namespace ggl {
 namespace ogl
 {
 
-const int available_lights_number = 12;	// TODO: check docs/other ogl implementations and eventually increase
-
-typedef double Real;	// this is the default floating type, we will use in opengl
+const int available_lights_number = 12;	// TODO: check other ogl implementations and eventually increase. minimum is 8
 
 inline int round(Real x){	// TODO: put this in some global header
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
 }
 inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function ..
 	return round(x);
-	//return static_cast<int>(x);
 }
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
 typedef ColorRGBA Color;
 typedef Vertex4_<Real, Color> Vertex4;
-typedef Matrix<Real, 3, 1, Eigen::DontAlign> Point3d;
-
-class Light
-{
-public:
-	Light():_enabled(false){}
-	void enable(bool enabled = true) {_enabled = enabled;}
-	void disable() {enable(false);}
-private:
-	Color _color;
-	Point3d _position;
-	bool _enabled;
-};
 
 class OpenGL
 {
@@ -99,6 +84,11 @@ public:
 	void applyViewportTransformation(Vertex4& vertex);
 	void applyViewportTransformation(std::vector<Vertex4>& vertices);
 	void applyPerspectiveDivision(std::vector<Vertex4>& vertices);
+	void setLightAmbient(int light, float r, float g, float b, float a) {_lights[light].setAmbient(r, g, b, a);}
+	void setLightDiffuse(int light, float r, float g, float b, float a) {_lights[light].setDiffuse(r, g, b, a);}
+	void setLightSpecular(int light, float r, float g, float b, float a) {_lights[light].setSpecular(r, g, b, a);}
+	void setLightPosition(int light, const Point4d& position);
+	void setLightSpotDirection(int light, const Point3d& direction);
 
 private:
 	void drawLines();
@@ -127,6 +117,7 @@ private:
 	void addTriangleVertex_flat(Real x, Real y, Real z, Real w);
 	void updateWorldMatrix() {_worldMatrixDirty = true;}	// sets the flag so that we know to recount the world matrix
 	void countWorldMatrix() {if(_worldMatrixDirty){_worldMatrix = _projectionMatrix * _modelViewMatrix;_worldMatrixDirty = false;}}
+	void initLights();	// sets lights to default state according to opengl specification
 
 private:
 	bool _initialized;

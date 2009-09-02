@@ -20,6 +20,10 @@ public:
 	float	getG()const {return _g;}
 	float	getB()const {return _b;}
 
+	void setR(float r) {_r = r;}
+	void setG(float g) {_g = g;}
+	void setB(float b) {_b = b;}
+
 	// return normalized
 	float getR_norm()const {return (_r>1.0)?1:(_r<0.0)?0:_r;}
 	float	getG_norm()const {return (_g>1.0)?1:(_g<0.0)?0:_g;}

@@ -400,9 +400,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
+			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor));
 		break;
 
 	case GL_POLYGON:
@@ -933,12 +933,14 @@ void OpenGL::init(int x, int y)
 
 	_initialized = true;
 	glMatrixMode(GL_MODELVIEW);
+
+	initLights();
 }
 
 void OpenGL::glClearColor(float red, float green, float blue, float alpha)
 {
 	assert(_initialized);
-	_glClearColor = PixelRGBA(red, green, blue, alpha);
+	_glClearColor = ColorRGBA(red, green, blue, alpha);
 }
 
 void OpenGL::glCullFace(CullFace mode)
@@ -1006,6 +1008,30 @@ void OpenGL::glScale(Real x, Real y, Real z)
 
 	*_activeMatrix *= matrix;
 	updateWorldMatrix();
+}
+
+void OpenGL::setLightPosition(int light, const Point4d& position)
+{
+	_lights[light].setPosition(_modelViewMatrix * position);
+}
+
+void OpenGL::setLightSpotDirection(int light, const Point3d& direction)
+{
+	_lights[light].setSpotDirection(_modelViewMatrix.block<3,3>(0,0) * direction);
+}
+
+void OpenGL::initLights()
+{
+	/*
+	for(int i = 0; i < available_lights_number; ++i)
+	{
+		setLightAmbient(i, 0, 0, 0, 1);
+		setLightDiffuse(i, 0, 0, 0, 1);
+		setLightSpecular(i, 0, 0, 0, 1);
+	}
+	*/
+	setLightDiffuse(0, 1, 1, 1, 1);
+	setLightSpecular(0, 1, 1, 1, 1);
 }
 
 OpenGL::~OpenGL()
