@@ -75,8 +75,12 @@ const GLenum GL_LIGHT11 = 38;
 const GLenum GL_AMBIENT = 39;
 const GLenum GL_DIFFUSE = 40;
 const GLenum GL_SPECULAR = 41;
-const GLenum GL_POSITION = 42;
-const GLenum GL_SPOT_DIRECTION = 43;
+const GLenum GL_EMISSION = 42;
+const GLenum GL_SHININESS = 43;
+const GLenum GL_AMBIENT_AND_DIFFUSE = 44;
+const GLenum GL_COLOR_INDEXES = 45;
+const GLenum GL_POSITION = 46;
+const GLenum GL_SPOT_DIRECTION = 47;
 
 void glutPostRedisplay();
 
@@ -125,6 +129,8 @@ void glDisable(GLenum cap);
 void glNormal3f(GLfloat x, GLfloat y, GLfloat z);
 
 void glNormal3d(GLdouble x, GLdouble y, GLdouble z);
+
+void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params);
 
 /*
  * glFlush — force execution of GL commands in finite time

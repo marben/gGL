@@ -541,5 +541,130 @@ void glLightfv(GLenum light, GLenum pname, const GLfloat* params)
 	}
 
 	// TODO: set other light parameters
+}
 
+void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params)
+{
+	switch(pname)
+	{
+	case GL_AMBIENT:
+		switch(face)
+		{
+		case ::GL_FRONT:
+			opengl.setFrontMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_BACK:
+			opengl.setBackMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_FRONT_AND_BACK:
+			opengl.setFrontMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			return;
+		default:
+			return;
+		}
+		return;
+
+	case GL_DIFFUSE:
+		switch(face)
+		{
+		case ::GL_FRONT:
+			opengl.setFrontMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_BACK:
+			opengl.setBackMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_FRONT_AND_BACK:
+			opengl.setFrontMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			return;
+		default:
+			return;
+		}
+		return;
+
+	case GL_SPECULAR:
+		switch(face)
+		{
+		case ::GL_FRONT:
+			opengl.setFrontMaterialSpecular(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_BACK:
+			opengl.setBackMaterialSpecular(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_FRONT_AND_BACK:
+			opengl.setFrontMaterialSpecular(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialSpecular(Color(params[0], params[1], params[2], params[3]));
+			return;
+		default:
+			return;
+		}
+		return;
+
+	case GL_EMISSION:
+		switch(face)
+		{
+		case ::GL_FRONT:
+			opengl.setFrontMaterialEmission(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_BACK:
+			opengl.setBackMaterialEmission(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_FRONT_AND_BACK:
+			opengl.setFrontMaterialEmission(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialEmission(Color(params[0], params[1], params[2], params[3]));
+			return;
+		default:
+			return;
+		}
+		return;
+
+	case GL_SHININESS:	// not supported right now
+		switch(face)
+		{
+		case ::GL_FRONT:
+			//opengl.setFrontMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_BACK:
+			//opengl.setBackMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_FRONT_AND_BACK:
+			//opengl.setFrontMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			//opengl.setBackMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			return;
+		default:
+			return;
+		}
+		return;
+
+	case GL_AMBIENT_AND_DIFFUSE:
+		switch(face)
+		{
+		case ::GL_FRONT:
+			opengl.setFrontMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			opengl.setFrontMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_BACK:
+			opengl.setBackMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			return;
+		case ::GL_FRONT_AND_BACK:
+			opengl.setFrontMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			opengl.setFrontMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialAmbient(Color(params[0], params[1], params[2], params[3]));
+			opengl.setBackMaterialDiffuse(Color(params[0], params[1], params[2], params[3]));
+			return;
+		default:
+			return;
+		}
+		return;
+
+	case GL_COLOR_INDEXES:
+		std::cerr<<"Error: opengl implementation doesn't support color indexes"<<std::endl;
+		return;
+
+	default:
+		return;
+
+	}
 }

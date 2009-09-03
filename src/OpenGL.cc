@@ -346,7 +346,7 @@ const CanvasRGB* OpenGL::glFlush()
 void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 {
 	++_smoothTriangleVertexCounter;
-	_trianglesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
+	_trianglesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 
 	if(_smoothTriangleVertexCounter == 3)
 	{
@@ -370,7 +370,7 @@ void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 {
 	++_flatTriangleVertexCounter;
-	_trianglesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor));
+	_trianglesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 
 	if(_flatTriangleVertexCounter == 3)
 	{
@@ -400,9 +400,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor));
+			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 		break;
 
 	case GL_POLYGON:

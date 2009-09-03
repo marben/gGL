@@ -33,7 +33,6 @@ inline int round_quick(Real x){	// TODO:here should be some extremely fast..not 
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
-typedef ColorRGBA Color;
 typedef Vertex4_<Real, Color> Vertex4;
 
 class OpenGL
@@ -89,6 +88,14 @@ public:
 	void setLightSpecular(int light, float r, float g, float b, float a) {_lights[light].setSpecular(r, g, b, a);}
 	void setLightPosition(int light, const Point4d& position);
 	void setLightSpotDirection(int light, const Point3d& direction);
+	void setFrontMaterialAmbient(const Color& color) {_materialFront.setAmbient(color);}
+	void setFrontMaterialDiffuse(const Color& color) {_materialFront.setDiffuse(color);}
+	void setFrontMaterialSpecular(const Color& color) {_materialFront.setSpecular(color);}
+	void setFrontMaterialEmission(const Color& color) {_materialFront.setEmission(color);}
+	void setBackMaterialAmbient(const Color& color) {_materialBack.setAmbient(color);}
+	void setBackMaterialDiffuse(const Color& color) {_materialBack.setDiffuse(color);}
+	void setBackMaterialSpecular(const Color& color) {_materialBack.setSpecular(color);}
+	void setBackMaterialEmission(const Color& color) {_materialBack.setEmission(color);}
 
 private:
 	void drawLines();
@@ -144,6 +151,7 @@ private:
 	FrontFace _frontFace;
 	Point3d _normal;	// the active normal
 	Light _lights[available_lights_number];
+	Material _materialFront, _materialBack;	// the material we currently assign to each new vertex
 
 
 	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
