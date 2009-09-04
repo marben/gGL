@@ -42,7 +42,10 @@ public:
 	T& z(){return _vertex[2];}
 	T& w(){return _vertex[3];}
 
-	const Color_t& color()const {return _color;}
+	//const Color_t& color()const {return _color;}
+	const Color_t& getColor()const {return _color;}
+	const Material& getMaterialFront()const {return _materialFront;}
+	const Material& getMaterialBack()const {return _materialBack;}
 	//const Matrix<T, 4, 1, Eigen::DontAlign> vertex() const {return _vertex;}
 	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; return *this;}
 	const Matrix<T, 4, 1, Eigen::DontAlign>& getCoordinates() const {return _vertex;}

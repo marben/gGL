@@ -32,6 +32,8 @@ public:
 
 	virtual ColorRGBA operator-(const ColorRGBA& p2)const {return ColorRGBA(this->r() - p2.r(), this->g() - p2.g(), this->b() - p2.b(), this->a() - p2.a());}
 	virtual ColorRGBA& operator+=(const ColorRGBA& p2){_r += p2.r(); _g += p2.g(); _b += p2.b(); _alpha += p2.a();return *this;}
+	virtual ColorRGBA& operator-=(const ColorRGBA& p2){_r -= p2.r(); _g -= p2.g(); _b -= p2.b(); _alpha -= p2.a();return *this;}
+	virtual ColorRGBA& operator/=(const float f){_r /= f; _g /= f; _b /= f; _alpha /= f;return *this;}
 
 protected:
 	float _alpha;

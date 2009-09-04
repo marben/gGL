@@ -25,6 +25,10 @@ public:
 	void setSpecular(const Color& color) {_specular = color;}
 	void setEmission(const Color& color) {_emission = color;}
 
+	Material operator-(const Material& mat) const;
+	Material operator/(const float f) const;
+	Material& operator+=(const Material& mat);
+
 private:
 	Color _ambient, _diffuse, _specular, _emission;
 	float _shininess;	//specular exponent  [0, 128]; default = 0

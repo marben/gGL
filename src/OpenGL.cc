@@ -161,9 +161,9 @@ void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
 
 		Real y( v1->y() );
 		Real z( v1->z() );
-		Color color( v1->color() );
+		Color color( v1->getColor() );
 
-		Color dcolor( (v2->color() - v1->color()) / (v2->x()-v1->x()) );
+		Color dcolor( (v2->getColor() - v1->getColor()) / (v2->x()-v1->x()) );
 		Real dy( (v2->y()- v1->y()) / (v2->x() - v1->x()) );
 		Real dz( (v2->z() - v1->z()) / (v2->x() - v1->x()) );
 
@@ -189,9 +189,9 @@ void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
 
 		Real x( v1->x() );
 		Real z( v1->z() );
-		Color color( v1->color() );
+		Color color( v1->getColor() );
 
-		Color dcolor( (v2->color() - v1->color()) / (v2->y() - v1->y()) );
+		Color dcolor( (v2->getColor() - v1->getColor()) / (v2->y() - v1->y()) );
 		Real dx( (v2->x() - v1->x()) / (v2->y() - v1->y()) );
 		Real dz( (v2->z() - v1->z()) / (v2->y() - v1->y()) );
 
@@ -217,7 +217,7 @@ void OpenGL::drawLines_flat()
 	{
 		const Vertex4& vertex1 = _linesVertexList_flat[i];
 		const Vertex4& vertex2 = _linesVertexList_flat[++i];
-		drawLine_flat(vertex1, vertex2, vertex2.color());
+		drawLine_flat(vertex1, vertex2, vertex2.getColor());
 	}
 }
 
@@ -539,7 +539,7 @@ void OpenGL::drawTriangles()
 		top = _trianglesVertexList_flat.size();
 
 	for(size_t i = 0; i < top; i += 3)
-		drawTriangle_flat(_trianglesVertexList_flat[i+0], _trianglesVertexList_flat[i+1], _trianglesVertexList_flat[i+2], _trianglesVertexList_flat[i+2].color());
+		drawTriangle_flat(_trianglesVertexList_flat[i+0], _trianglesVertexList_flat[i+1], _trianglesVertexList_flat[i+2], _trianglesVertexList_flat[i+2].getColor());
 
 	// draw smooth triangles:
 	if((_trianglesVertexList_smooth.size() % 3) != 0)	// check if we have correct number of vertices for our triangles
@@ -596,6 +596,11 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 	}
 }
 
+void OpenGL::drawHLine_shaded(int x0, int y, double z0, int x1, double z1, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2)
+{
+
+}
+
 void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
 
@@ -637,11 +642,11 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	Real x1 = bottom->x();
 	Real x2 = bottom->x();
 
-	Color startColor1(bottom->color());
-	Color startColor2(bottom->color());
+	Color startColor1(bottom->getColor());
+	Color startColor2(bottom->getColor());
 
-	Color colorDy1 = (top->color() - bottom->color()) / dy1;	// color change along the top->bottom line
-	Color colorDy2 = (middle->color() - bottom->color()) / dy2;	// color change along the other line
+	Color colorDy1 = (top->getColor() - bottom->getColor()) / dy1;	// color change along the top->bottom line
+	Color colorDy2 = (middle->getColor() - bottom->getColor()) / dy2;	// color change along the other line
 
 	double z1 = bottom->z();
 	double z2 = bottom->z();
@@ -668,8 +673,8 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 		dx2 = (top->x() - middle->x()) / dy3;
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
 	z2 = middle->z();
-	startColor2 = middle->color();
-	colorDy2 = (top->color() - middle->color()) / dy3;
+	startColor2 = middle->getColor();
+	colorDy2 = (top->getColor() - middle->getColor()) / dy3;
 	dz2 = (top->z() - middle->z()) / dy3;
 
 
@@ -678,6 +683,120 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 		drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		startColor1 += colorDy1;
 		startColor2 += colorDy2;
+		x1 += dx1;
+		x2 += dx2;
+		z1 += dz1;
+		z2 += dz2;
+		++y;
+	}
+}
+
+void OpenGL::drawTriangle_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
+{
+	// this should be the same as drawTriangle_smooth, except it interpolates material and normal instead of just color + gouraud shades the pixels
+
+	const Vertex4 *top = &v1;
+	const Vertex4 *middle = &v2;
+	const Vertex4 *bottom = &v3;
+
+	if(bottom->y() > middle->y())
+		std::swap(bottom, middle);
+	if(bottom->y() > top->y())
+		std::swap(bottom, top);
+	if(middle->y() > top->y())
+		std::swap(middle, top);
+
+
+	// lets iterate from bottom to top
+	// we count the float x difference for both lines we iterate
+	// line 1 should be the longer (from top to bottom)
+
+	// TODO: check, for impossible triangles etc...
+
+	int dy1 = static_cast<int>(top->y()) - static_cast<int>(bottom->y());
+	int dy2 = static_cast<int>(middle->y()) - static_cast<int>(bottom->y());
+	int dy3 = static_cast<int>(top->y()) - static_cast<int>(middle->y());
+
+	Real dx1;
+	if(bottom->y() == top->y())
+		dx1 = 0.0;
+	else
+		dx1 = (top->x() - bottom->x()) / dy1;
+
+	Real dx2;
+	if(middle->y() == bottom->y())
+		dx2 = 0.0;
+	else
+		dx2 = (middle->x() - bottom->x()) / dy2;
+
+
+	Real x1 = bottom->x();
+	Real x2 = bottom->x();
+
+	//Color startColor1(bottom->getColor());
+	//Color startColor2(bottom->getColor());
+	Material startMaterialFront1(bottom->getMaterialFront());
+	Material startMaterialBack1(bottom->getMaterialBack());
+	Material startMaterialFront2(bottom->getMaterialFront());
+	Material startMaterialBack2(bottom->getMaterialBack());
+
+	Color colorDy1 = (top->getColor() - bottom->getColor()) / dy1;	// color change along the top->bottom line
+	Color colorDy2 = (middle->getColor() - bottom->getColor()) / dy2;	// color change along the other line
+	Material materialFrontDy1 = (top->getMaterialFront() - bottom->getMaterialFront()) / dy1;
+	Material materialBackDy1 = (top->getMaterialBack() - bottom->getMaterialBack()) / dy1;
+	Material materialFrontDy2 = (middle->getMaterialFront() - bottom->getMaterialFront()) / dy2;
+	Material materialBackDy2 = (middle->getMaterialBack() - bottom->getMaterialBack()) / dy2;
+
+	double z1 = bottom->z();
+	double z2 = bottom->z();
+
+	double dz1 = (top->z() - bottom->z()) / dy1;
+	double dz2 = (middle->z() - bottom->z()) / dy2;
+
+	int y = bottom->y();
+	while(y < middle->y())
+	{
+		//drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
+		//startColor1 += colorDy1;
+		//startColor2 += colorDy2;
+		drawHLine_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
+		startMaterialFront1 += materialFrontDy1;
+		startMaterialBack1 += materialBackDy1;
+		startMaterialFront2 += materialFrontDy2;
+		startMaterialBack2 += materialBackDy2;
+		x1 += dx1;
+		x2 += dx2;
+		z1 += dz1;
+		z2 += dz2;
+		++y;
+	}
+	// now for the top 'half' of a triangle
+	if(middle->y() == top->y())
+		dx2 = 0.0;
+	else
+		dx2 = (top->x() - middle->x()) / dy3;
+	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
+	z2 = middle->z();
+	//startColor2 = middle->getColor();
+	startMaterialFront2 = middle->getMaterialFront();
+	startMaterialBack2 = middle->getMaterialBack();
+
+	//colorDy2 = (top->getColor() - middle->getColor()) / dy3;
+	materialFrontDy2 = (top->getMaterialFront() - middle->getMaterialFront()) / dy3;
+	materialBackDy2 = (top->getMaterialBack() - middle->getMaterialBack()) / dy3;
+	dz2 = (top->z() - middle->z()) / dy3;
+
+
+	while(y <= top->y())
+	{
+		//drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
+		//startColor1 += colorDy1;
+		//startColor2 += colorDy2;
+		drawHLine_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
+		startMaterialFront1 += materialFrontDy1;
+		startMaterialBack1 += materialBackDy1;
+		startMaterialFront2 += materialFrontDy2;
+		startMaterialBack2 += materialBackDy2;
 		x1 += dx1;
 		x2 += dx2;
 		z1 += dz1;
@@ -696,9 +815,9 @@ void OpenGL::glNormal(Real x, Real y, Real z)
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
 	// TODO: this is probably wrong. instead of rounding, static_cast should be called (rounding down)
-	line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.color());
-	line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.color());
-	line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.color());
+	line(round_quick(v1.x()), round_quick(v1.y()), round_quick(v2.x()), round_quick(v2.y()), v1.getColor());
+	line(round_quick(v2.x()), round_quick(v2.y()), round_quick(v3.x()), round_quick(v3.y()), v2.getColor());
+	line(round_quick(v3.x()), round_quick(v3.y()), round_quick(v1.x()), round_quick(v1.y()), v3.getColor());
 }
 
 void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color)
