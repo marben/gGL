@@ -49,6 +49,7 @@ public:
 	//const Matrix<T, 4, 1, Eigen::DontAlign> vertex() const {return _vertex;}
 	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; return *this;}
 	const Matrix<T, 4, 1, Eigen::DontAlign>& getCoordinates() const {return _vertex;}
+	bool lightingEnabled() const {return _lightingEnabled;}
 
 private:
 	Matrix<T, 4, 1, Eigen::DontAlign> _vertex;	// TODO: figure out, how to make it possible to pass this class with aligned Eigen::Matrix to std::Vector..  (maybe write spcial copy constructor or define aligned allocator in the vector?..) .. maybe a cvs version of libeigen?

@@ -411,8 +411,8 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	case GL_TRIANGLES:
 		if(_shadeModel == GL_SMOOTH)
 			addTriangleVertex_smooth(x, y, z, w);
-		else
-			addTriangleVertex_flat(x, y, z, w);
+		else	// flat
+			addTriangleVertex_flat(x, y, z, w);	// if lighting is disabled
 		break;
 
 	case NONE:
@@ -550,7 +550,12 @@ void OpenGL::drawTriangles()
 		top = _trianglesVertexList_smooth.size();
 
 	for(size_t i = 0; i < top; i += 3)
-		drawTriangle_smooth(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
+	{
+		if(_trianglesVertexList_smooth[i].lightingEnabled())
+			drawTriangle_smooth_shaded(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
+		else
+			drawTriangle_smooth(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
+	}
 }
 
 void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const Color& c1, const Color& c2)
@@ -565,16 +570,14 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 	Color color, dcolor;
 	double dz;
 
-	// TODO: why did i put here the if else ??
-
 	if(x0 < x1)
 	{
 		x = x0;
 		z = z0;
 		xmax = x1;
 		color = c1;
-		dcolor = (c2 - c1) / (x1 - x0);
-		dz = (z1 - z0) / (x1 - x0);
+		dcolor = (c2 - c1) / (xmax - x);
+		dz = (z1 - z0) / (xmax - x);
 	}
 	else
 	{
@@ -582,8 +585,8 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 		z = z1;
 		xmax = x0;
 		color = c2;
-		dcolor = (c1 - c2) / (x0 - x1);
-		dz = (z0 - z1) / (x0 - x1);
+		dcolor = (c1 - c2) / (xmax - x);
+		dz = (z0 - z1) / (xmax - x);
 	}
 
 	while(x <= xmax)
@@ -595,9 +598,55 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 	}
 }
 
-void OpenGL::drawHLine_shaded(int x0, int y, double z0, int x1, double z1, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2)
+void OpenGL::drawHLine_smooth_shaded(int x0, int y, double z0, int x1, double z1, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2)
 {
+	if(x0 == x1)
+	{
+		return;
+	}
 
+	int x, xmax;
+	double z;
+	Material materialFront, materialBack, dMaterialFront, dMaterialBack;
+	double dz;
+
+	if(x0 < x1)
+	{
+		x = x0;
+		z = z0;
+		xmax = x1;
+		//color = c1;
+		materialFront = matFront1;
+		materialBack = matBack1;
+		//dcolor = (c2 - c1) / (xmax - x);
+		dMaterialFront = (matFront2 - matFront1) / (xmax - x);
+		dMaterialBack = (matBack2 - matBack1) / (xmax - x);
+		dz = (z1 - z0) / (xmax - x);
+	}
+	else
+	{
+		x = x1;
+		z = z1;
+		xmax = x0;
+		//color = c2;
+		materialFront = matFront2;
+		materialBack = matBack2;
+		//dcolor = (c1 - c2) / (xmax - x);
+		dMaterialFront = (matFront1 - matFront2) / (xmax - x);
+		dMaterialBack = (matBack1 - matBack2) / (xmax - x);
+		dz = (z0 - z1) / (xmax - x);
+	}
+
+	while(x <= xmax)
+	{
+		//putPixel(x, y, z, color);
+		//color += dcolor;
+		putPixel_shaded(x, y, z, materialFront);
+		materialFront += dMaterialFront;
+		materialBack += dMaterialBack;
+		z += dz;
+		x++;
+	}
 }
 
 void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -690,7 +739,7 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	}
 }
 
-void OpenGL::drawTriangle_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
+void OpenGL::drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
 	// this should be the same as drawTriangle_smooth, except it interpolates material and normal instead of just color + gouraud shades the pixels
 
@@ -758,7 +807,7 @@ void OpenGL::drawTriangle_shaded(const Vertex4 & v1, const Vertex4 & v2, const V
 		//drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		//startColor1 += colorDy1;
 		//startColor2 += colorDy2;
-		drawHLine_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
+		drawHLine_smooth_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
 		startMaterialFront1 += materialFrontDy1;
 		startMaterialBack1 += materialBackDy1;
 		startMaterialFront2 += materialFrontDy2;
@@ -791,7 +840,7 @@ void OpenGL::drawTriangle_shaded(const Vertex4 & v1, const Vertex4 & v2, const V
 		//drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		//startColor1 += colorDy1;
 		//startColor2 += colorDy2;
-		drawHLine_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
+		drawHLine_smooth_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
 		startMaterialFront1 += materialFrontDy1;
 		startMaterialBack1 += materialBackDy1;
 		startMaterialFront2 += materialFrontDy2;
@@ -1086,8 +1135,18 @@ void OpenGL::putPixel(int x, int y, double z, const ggl::ColorRGB& color)
 		_zBuffer[x + _x * y] = z;
 		_colorBuffer->putPixel(x, _y - y - 1, color);	//need to reverse y
 	}
-	else
-		x++;
+}
+
+void OpenGL::putPixel_shaded(int x, int y, double z, const Material& material)
+{
+	if( x < 0 || y < 0 || x >= _x || y >= _y)
+		return;
+
+	//if(z > _zBuffer[x + _x * y])
+	{
+		_zBuffer[x + _x * y] = z;
+		_colorBuffer->putPixel(x, _y - y - 1, material.getDiffuse());
+	}
 }
 
 void OpenGL::clearZBuffer()

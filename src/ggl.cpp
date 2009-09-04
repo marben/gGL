@@ -23,7 +23,14 @@ using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 20;
+int delay = 40;
+
+GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
+
+GLfloat robotAmbient[]={0.4, 0.4, 0.8, 1.0};
+GLfloat robotDiffuse[]={0.8, 0.4, 0.4, 1.0};
+GLfloat robotSpecular[]={0.0, 1.0, 1.0, 1.0};
+GLfloat robotShininess[]={25.0};
 
 void printMatrix(float matrix[4])
 {
@@ -73,6 +80,7 @@ void display2(void)
    //glRotatef(13, 1, 1, 0);
    glShadeModel(GL_SMOOTH);
    glColor3f(1.0, 0.0, 0.0);
+   glDisable(GL_LIGHTING);
    glBegin(GL_TRIANGLES);
 	glColor3f(1.0, 0, 0);
 		glColor3f(1.0, 0, 0);
@@ -82,9 +90,22 @@ void display2(void)
 		glColor3f(0.0, 0.0, 1.0);
 		glVertex3f(130.5, 0.5, -0.2);
    glEnd();
-   glTranslatef(100, 100, 0);
 
-   glScalef(12, 12, 12);
+   glTranslatef(20, 20, 0);
+   glEnable(GL_LIGHTING);
+   glTranslatef(100, 100, 0);
+   glBegin(GL_TRIANGLES);
+		glColor3f(0.0, 1.0, 0);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotDiffuse);
+		glVertex3f(0.5, 0.5, 0.0);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotAmbient);
+		glVertex3f(50.5,50.5,0.2);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotSpecular);
+		glVertex3f(10.5, 70.5, -0.2);
+   glEnd();
+
+   glTranslatef(100, 100, 0);
+   glScalef(20, 20, 20);
    renderObject(cube);
 
    glFlush();

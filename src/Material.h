@@ -25,6 +25,11 @@ public:
 	void setSpecular(const Color& color) {_specular = color;}
 	void setEmission(const Color& color) {_emission = color;}
 
+	const Color& getAmbient() const {return _ambient;}
+	const Color& getDiffuse() const {return _diffuse;}
+	const Color& getSpecular() const {return _specular;}
+	const Color& getEmission() const {return _emission;}
+
 	Material operator-(const Material& mat) const;
 	Material operator/(const float f) const;
 	Material& operator+=(const Material& mat);
