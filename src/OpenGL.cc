@@ -588,7 +588,6 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 
 	while(x <= xmax)
 	{
-		//_colorBuffer->putPixel(x, y, color);
 		putPixel(x, y, z, color);
 		color += dcolor;
 		z += dz;

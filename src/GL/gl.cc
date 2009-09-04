@@ -11,15 +11,42 @@ static SDL_Display display;	// used by glut so far..
 static void (*glutDisplayFunction)(void);
 static Image2dRGB colorBuffer;
 static SDL_TimerID	timer_id;	// timer id used by glutTimerFunc
+bool glut_Displaying = false;	// set to true, if we are in glutDisplay function, so that we don't call it multiple times, based on timer
 
 //static unsigned int frames;	// used to measure fps .. should lock for thread safety...but who cares?
 
+class Timer
+{
+public:
+	Timer():_running(false){}
+	void set(Uint32 msecs) {_wait = msecs; _running = true; _start = SDL_GetTicks();}	// sets for how long we wait since NOW
+	void wait();	// block until its time
+private:
+	Uint32 _start, _wait;
+	bool _running;
+};
+void Timer::wait()
+{
+	_running = false;
+	Uint32 curr = SDL_GetTicks();
+	int diff = static_cast<int>(curr) - static_cast<int>(_start);
+	if(diff < 0)	// we are late!!
+	{
+		std::cerr<<"the timer is late...your machine is probably too slow...running out of sync.."<<std::endl;
+		return;
+	}
+	else
+		SDL_Delay(diff);
+}
+
 void (*_glutTimerFuncPointer) (int data);
+Timer timer;
 
 Uint32 _glutTimerCallbackFunction(Uint32 interval, void* param)
 {
 	SDL_RemoveTimer(timer_id);	// should not be necessary
-	_glutTimerFuncPointer((int)param);
+		_glutTimerFuncPointer((int)param);
+
 	return 0;	// the timer is cancelled, if we return 0 -- doesn;t work(it seems)...need to call SDL_RemoveTimer
 }
 
@@ -458,7 +485,15 @@ void glFrontFace(GLenum mode)
 
 void glutPostRedisplay()
 {
+	if(glut_Displaying)
+	{
+		//std::cerr<<"machine too slow. drawing took place before the end of the last drawing..  Increase your timer delay"<<std::endl;
+		std::cerr<<"frame drop"<<std::endl;
+		return;
+	}
+	glut_Displaying = true;
 	glutDisplayFunction();
+	glut_Displaying = false;
 }
 
 void glEnd(){

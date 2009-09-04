@@ -23,7 +23,7 @@ using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 100;
+int delay = 20;
 
 void printMatrix(float matrix[4])
 {
