@@ -207,9 +207,19 @@ void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
+void glVertex3fv(const GLfloat *v)
+{
+	opengl.glVertex4(static_cast<Real>(v[0]), static_cast<Real>(v[1]), static_cast<Real>(v[2]));
+}
+
 void glVertex3d(GLdouble x, GLdouble y, GLdouble z)
 {
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
+void glVertex3dv(const GLdouble *v)
+{
+	opengl.glVertex4(static_cast<Real>(v[0]), static_cast<Real>(v[1]), static_cast<Real>(v[2]));
 }
 
 void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
@@ -362,6 +372,11 @@ void glNormal3f(GLfloat x, GLfloat y, GLfloat z)
 void glNormal3d(GLdouble x, GLdouble y, GLdouble z)
 {
 	opengl.glNormal(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
+void glNormal3fv(const GLfloat *v)
+{
+	opengl.glNormal(static_cast<Real>(v[0]), static_cast<Real>(v[1]), static_cast<Real>(v[2]));
 }
 
 /*

@@ -25,7 +25,7 @@ using namespace std;
 int angle = 0;
 int delay = 40;
 
-GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
+//GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
 
 GLfloat robotAmbient[]={0.4, 0.4, 0.8, 1.0};
 GLfloat robotDiffuse[]={0.8, 0.4, 0.4, 1.0};
@@ -93,14 +93,15 @@ void display2(void)
 
    glTranslatef(20, 20, 0);
    glEnable(GL_LIGHTING);
+   glEnable(GL_LIGHT0);
    glTranslatef(100, 100, 0);
    glBegin(GL_TRIANGLES);
 		glColor3f(0.0, 1.0, 0);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotDiffuse);
+		//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotDiffuse);
 		glVertex3f(0.5, 0.5, 0.0);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotAmbient);
+		//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotAmbient);
 		glVertex3f(50.5,50.5,0.2);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotSpecular);
+		//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotSpecular);
 		glVertex3f(10.5, 70.5, -0.2);
    glEnd();
 
@@ -120,6 +121,96 @@ float rtri = 0.0f;
 
 /* rotation angle for the quadrilateral. */
 float rquad = 0.0f;
+
+GLfloat glBlack[] = {0.0, 0.0, 0.0, 1.0};
+GLfloat glWhite[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat glRed[] = {1.0, 0.0, 0.0, 1.0};
+GLfloat glGreen[] = {0.0, 1.0, 0.0, 1.0};
+GLfloat glBlue[] = {0.0, 0.0, 1.0, 1.0};
+GLfloat glTmp[] = {0.5, 0.5, 0.0, 1.0};
+
+GLfloat lightPosition[] = {0, 0, 1, 0};
+
+#define X .525731112119133606
+#define Z .850650808352039932
+static GLfloat vdata[12][3] = {
+  {-X, 0.0, Z}, {X, 0.0, Z}, {-X, 0.0, -Z}, {X, 0.0, -Z},
+  {0.0, Z, X}, {0.0, Z, -X}, {0.0, -Z, X}, {0.0, -Z, -X},
+  {Z, X, 0.0}, {-Z, X, 0.0}, {Z, -X, 0.0}, {-Z, -X, 0.0}
+};
+
+static GLuint tindices[20][3] = {
+  {1,4,0}, {4,9,0}, {4,9,5}, {8,5,4}, {1,8,4},
+  {1,10,8}, {10,3,8}, {8,3,5}, {3,2,5}, {3,7,2},
+  {3,10,7}, {10,6,7}, {6,11,7}, {6,0,11}, {6,1,0},
+  {10,1,6}, {11,0,9}, {2,11,9}, {5,2,9}, {11,2,7}
+};
+
+void normalize(float v[3]) {
+  GLfloat d = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+  v[0] /= d; v[1] /= d; v[2] /= d;
+}
+
+void normCrossProd(float u[3], float v[3], float out[3]) {
+  out[0] = u[1]*v[2] - u[2]*v[1];
+  out[1] = u[2]*v[0] - u[0]*v[2];
+  out[2] = u[0]*v[1] - u[1]*v[0];
+  normalize(out);
+}
+
+GLfloat d1[3], d2[3], n[3];
+void icoNormVec (int i) {
+  for (int k = 0; k < 3; k++) {
+    d1[k] = vdata[tindices[i][0]][k] - vdata[tindices[i][1]][k];
+    d2[k] = vdata[tindices[i][1]] [k] - vdata[tindices[i][2]] [k];
+  }
+  normCrossProd(d1, d2, n);
+  glNormal3fv(n);
+}
+
+void drawIcosahedron()
+{
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < 20; i++) {
+	  icoNormVec(i);
+	  glVertex3fv(&vdata[tindices[i][0]] [0]);
+	  glVertex3fv(&vdata[tindices[i][1]] [0]);
+	  glVertex3fv(&vdata[tindices[i][2]] [0]);
+	}
+	glEnd();
+}
+
+
+void display4()
+{
+	glViewport(0, 0, 640, 480);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 0, 480, -500, 500);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
+	glTranslated(200, 200, 0);
+	//glNormal3f(0,0,1);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, glBlack);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, glRed);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, glBlack);
+	glRotatef(angle, 1, 1, 1);
+	//glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
+	/*
+	glBegin(GL_TRIANGLES);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(100.0, 0.0, 0.0);
+		glVertex3f(0.0, 150.0, 0.0);
+	glEnd();
+	*/
+	glEnable(GL_NORMALIZE);
+	glScalef(100, 100, 100);
+	drawIcosahedron();
+	glFlush();
+}
 
 void timerCallback(int data)
 {
@@ -149,7 +240,7 @@ int main()
 	Loader_Obj loader("M1.obj");
 	cube = loader.getObject("M1");
 	glutInit(640, 480);
-	glutDisplayFunc(display2);
+	glutDisplayFunc(display4);
 	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();

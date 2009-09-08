@@ -22,12 +22,12 @@ namespace ggl {
 namespace ogl
 {
 
-const int available_lights_number = 12;	// TODO: check other ogl implementations and eventually increase. minimum is 8
+const unsigned available_lights_number = 12;	// TODO: check other ogl implementations and eventually increase. minimum is 8
 
 inline int round(Real x){	// TODO: put this in some global header
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
 }
-inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function ..
+inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function .. (SSE4 supports some fast rounding)
 	return round(x);
 }
 
@@ -106,15 +106,16 @@ private:
 	void drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 	void drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color);
 	void drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
-	void drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
+	//void drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3);
 
 	void drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const Color& c1, const Color& c2);
 	void drawHLine_flat(int x0, int y, double z0, int x1, double z1, const Color& color);
-	void drawHLine_smooth_shaded(int x0, int y, double z0, int x1, double z1, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2);
+	//void drawHLine_smooth_shaded(int x0, int y, double z0, int x1, double z1, const Point3d& normal, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2);
 
 	void line(int x0, int y0, int x1, int y1, const Color& color);	// 2D line on a drawing surface
 	void putPixel(int x, int y, double z, const ggl::ColorRGB& color);	// puts pixel on color buffer and sets z buffer
-	void putPixel_shaded(int x, int y, double z, const Material& material);	// does shading and puts pixel do color buffer
+	//void putPixel_shaded(int x, int y, double z, const Point3d& normal, const Material& materialFront, const Material& materialBack);	// does shading and puts pixel do color buffer
+	Color shade(const Vertex4& vertex)const;
 
 	void drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2);
 	void drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const Color& color);

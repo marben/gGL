@@ -46,9 +46,11 @@ public:
 	const Color_t& getColor()const {return _color;}
 	const Material& getMaterialFront()const {return _materialFront;}
 	const Material& getMaterialBack()const {return _materialBack;}
+	const Matrix<T, 3, 1, Eigen::DontAlign> getNormal()const {return _normal;}
 	//const Matrix<T, 4, 1, Eigen::DontAlign> vertex() const {return _vertex;}
 	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; return *this;}
 	const Matrix<T, 4, 1, Eigen::DontAlign>& getCoordinates() const {return _vertex;}
+	const Matrix<T, 4, 1, Eigen::DontAlign>& getPosition() const {return _vertex;}
 	bool lightingEnabled() const {return _lightingEnabled;}
 
 private:

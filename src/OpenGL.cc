@@ -75,7 +75,6 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 	  (if not, the GL will normalize this vector).
 */
 
-	// TODO: need to distinguish between projection/model/texture matrix
 	// TODO: optimize by checking, whether we are rotating around one base axis, which doesn't require whole matrix construction
 	// TODO: check the Mesa implementation in m_matrix.c function _math_matrix_rotate(...)   some neat tricks maybe?
 
@@ -83,7 +82,7 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 	if(inBetweenBeginEnd())
 		return;
 
-	Vector3d vector(x, y, z);
+	Vector3d vector(x*-1, y*-1, z);	// TODO: i don't know where the problem is, but *-1 is necessary, to rotate in the right direction...needs more investigation!!!probably something is wrong with the way i work with matrixes??
 	vector.normalize();
 
 	x = vector.x();
@@ -400,9 +399,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 		break;
 
 	case GL_POLYGON:
@@ -448,7 +447,7 @@ void OpenGL::enableLighting(bool b)
 
 void OpenGL::enableLight(int n, bool enabled)
 {
-	if(n < 0 || n > available_lights_number - 1) {
+	if(n < 0 || n > (int)available_lights_number - 1) {
 		std::cerr<<"enabling unavailable light number: "<<n<<std::endl;
 		return;
 	}
@@ -551,9 +550,9 @@ void OpenGL::drawTriangles()
 
 	for(size_t i = 0; i < top; i += 3)
 	{
-		if(_trianglesVertexList_smooth[i].lightingEnabled())
-			drawTriangle_smooth_shaded(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
-		else
+		//if(_trianglesVertexList_smooth[i].lightingEnabled())
+		//	drawTriangle_smooth_shaded(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
+		//else
 			drawTriangle_smooth(_trianglesVertexList_smooth[i+0], _trianglesVertexList_smooth[i+1], _trianglesVertexList_smooth[i+2]);
 	}
 }
@@ -598,7 +597,8 @@ void OpenGL::drawHLine_smooth(int x0, int y, double z0, int x1, double z1, const
 	}
 }
 
-void OpenGL::drawHLine_smooth_shaded(int x0, int y, double z0, int x1, double z1, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2)
+/*
+void OpenGL::drawHLine_smooth_shaded(int x0, int y, double z0, int x1, double z1, const Point3d& normal, const Material& matFront1, const Material& matFront2, const Material& matBack1, const Material& matBack2)
 {
 	if(x0 == x1)
 	{
@@ -641,17 +641,19 @@ void OpenGL::drawHLine_smooth_shaded(int x0, int y, double z0, int x1, double z1
 	{
 		//putPixel(x, y, z, color);
 		//color += dcolor;
-		putPixel_shaded(x, y, z, materialFront);
+		putPixel_shaded(x, y, z, normal, materialFront, materialBack);
 		materialFront += dMaterialFront;
 		materialBack += dMaterialBack;
 		z += dz;
 		x++;
 	}
 }
+*/
 
 void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
 
+	bool shading = v1.lightingEnabled();
 	const Vertex4 *top = &v1;
 	const Vertex4 *middle = &v2;
 	const Vertex4 *bottom = &v3;
@@ -689,12 +691,26 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 
 	Real x1 = bottom->x();
 	Real x2 = bottom->x();
+	Color bottomColor, middleColor, topColor;
 
-	Color startColor1(bottom->getColor());
-	Color startColor2(bottom->getColor());
+	if(shading)
+	{
+		bottomColor = shade(*bottom);
+		middleColor = shade(*middle);
+		topColor = shade(*top);
+	}
+	else
+	{
+		bottomColor = bottom->getColor();
+		middleColor = middle->getColor();
+		topColor = top->getColor();
+	}
 
-	Color colorDy1 = (top->getColor() - bottom->getColor()) / dy1;	// color change along the top->bottom line
-	Color colorDy2 = (middle->getColor() - bottom->getColor()) / dy2;	// color change along the other line
+	Color startColor1(bottomColor);
+	Color startColor2(bottomColor);
+
+	Color colorDy1 = (topColor - bottomColor) / dy1;	// color change along the top->bottom line
+	Color colorDy2 = (middleColor - bottomColor) / dy2;	// color change along the other line
 
 	double z1 = bottom->z();
 	double z2 = bottom->z();
@@ -721,8 +737,8 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 		dx2 = (top->x() - middle->x()) / dy3;
 	x2 = middle->x();	// this fixes precision problems(visible) with adding float numbers
 	z2 = middle->z();
-	startColor2 = middle->getColor();
-	colorDy2 = (top->getColor() - middle->getColor()) / dy3;
+	startColor2 = middleColor;
+	colorDy2 = (topColor - middleColor) / dy3;
 	dz2 = (top->z() - middle->z()) / dy3;
 
 
@@ -739,9 +755,12 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 	}
 }
 
-void OpenGL::drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
+
+/* following function is basically a phong shading(except it is needed to add normal interpolation). I will use gouraud shading,
+ * so im not going to continue working on it, but will leave it in place in case it is useful some day...
+ */
+/*void OpenGL::drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
 {
-	// this should be the same as drawTriangle_smooth, except it interpolates material and normal instead of just color + gouraud shades the pixels
 
 	const Vertex4 *top = &v1;
 	const Vertex4 *middle = &v2;
@@ -807,7 +826,7 @@ void OpenGL::drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, 
 		//drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		//startColor1 += colorDy1;
 		//startColor2 += colorDy2;
-		drawHLine_smooth_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
+		drawHLine_smooth_shaded(x1, y, z1, x2, z2, v3.getNormal(), startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
 		startMaterialFront1 += materialFrontDy1;
 		startMaterialBack1 += materialBackDy1;
 		startMaterialFront2 += materialFrontDy2;
@@ -840,7 +859,7 @@ void OpenGL::drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, 
 		//drawHLine_smooth(x1, y, z1, x2, z2, startColor1, startColor2);
 		//startColor1 += colorDy1;
 		//startColor2 += colorDy2;
-		drawHLine_smooth_shaded(x1, y, z1, x2, z2, startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
+		drawHLine_smooth_shaded(x1, y, z1, x2, z2, v3.getNormal(), startMaterialFront1, startMaterialFront2, startMaterialBack1, startMaterialBack2);
 		startMaterialFront1 += materialFrontDy1;
 		startMaterialBack1 += materialBackDy1;
 		startMaterialFront2 += materialFrontDy2;
@@ -851,11 +870,49 @@ void OpenGL::drawTriangle_smooth_shaded(const Vertex4 & v1, const Vertex4 & v2, 
 		z2 += dz2;
 		++y;
 	}
+}*/
+
+Color OpenGL::shade(const Vertex4& vertex) const
+{
+	Color color(Black);
+	const Material* material;
+
+	for(size_t i = 0; i < static_cast<size_t>(available_lights_number); i++)
+	{
+		const Light *light = &_lights[i];
+
+		if(light->isEnabled())
+		{
+			Vector3d vLight;
+
+			if(light->isDirectional())
+				vLight = light->getPosition().start<3>();
+			else
+				vLight = light->getPosition().start<3>() - vertex.getPosition().start<3>();
+
+			vLight.normalize();
+			double angle_cos(vertex.getNormal().dot(vLight));
+
+			// TODO: select between front and back materials
+			material = &vertex.getMaterialFront();
+
+			if(angle_cos <= 0)
+				return Black;
+
+			color += (material->getAmbient()*light->getAmbient()) + ((material->getDiffuse() * light->getDiffuse()) * angle_cos);
+		}
+	}
+	return color;
 }
 
 void OpenGL::glNormal(Real x, Real y, Real z)
 {
 	_normal << x, y, z;
+	countWorldMatrix();	// this is necessary, since _world matrix is recounted on lazy basis only on the Call of glBegin()
+								// while glNormal can be called outside glBegin glEnd, we need to recount _worldMatrix now
+
+	_normal = _worldMatrix.corner<3,3>(Eigen::TopLeft) * _normal;
+
 	if(_normalizeNormals)
 		_normal.normalize();
 }
@@ -1090,7 +1147,7 @@ void OpenGL::init(int x, int y)
 	glViewport(0, 0, x, y);
 	glCullFace(GL_BACK);
 	_cullingEnabled = false;
-	_normal << 0.0, 0.0, -1.0;
+	_normal << 0.0, 0.0, 1.0;
 	_normalizeNormals = false;
 	_lightingEnabled = false;
 
@@ -1137,17 +1194,19 @@ void OpenGL::putPixel(int x, int y, double z, const ggl::ColorRGB& color)
 	}
 }
 
-void OpenGL::putPixel_shaded(int x, int y, double z, const Material& material)
+/*
+void OpenGL::putPixel_shaded(int x, int y, double z, const Point3d& normal, const Material& materialFront, const Material& materialBack)
 {
 	if( x < 0 || y < 0 || x >= _x || y >= _y)
 		return;
 
-	//if(z > _zBuffer[x + _x * y])
+	if(z > _zBuffer[x + _x * y])
 	{
 		_zBuffer[x + _x * y] = z;
-		_colorBuffer->putPixel(x, _y - y - 1, material.getDiffuse());
+		_colorBuffer->putPixel(x, _y - y - 1, materialFront.getDiffuse());
 	}
 }
+*/
 
 void OpenGL::clearZBuffer()
 {

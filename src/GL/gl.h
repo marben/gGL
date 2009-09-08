@@ -112,7 +112,11 @@ void glVertex2d(GLdouble x, GLdouble y);
 
 void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
 
+void glVertex3fv(const GLfloat *v);
+
 void glVertex3d(GLdouble x, GLdouble y, GLdouble z);
+
+void glVertex3dv(const GLdouble *v);
 
 void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
@@ -129,6 +133,8 @@ void glDisable(GLenum cap);
 void glNormal3f(GLfloat x, GLfloat y, GLfloat z);
 
 void glNormal3d(GLdouble x, GLdouble y, GLdouble z);
+
+void glNormal3fv(const GLfloat *v);
 
 void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params);
 

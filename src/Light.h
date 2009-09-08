@@ -18,15 +18,26 @@ public:
 	void setSpecular(float r, float g, float b, float a) {_specular.setR(r); _specular.setG(g); _specular.setB(b); _specular.setA(a);}
 	void setPosition(const Point4d& position) { _position = position;}
 	void setSpotDirection(const Point3d& direction) {_spot_direction = direction;}
+	//void setDirectional(bool directional = true) {_directional = directional;}
+
+	const Color& getAmbient() const {return _ambient;}
+	const Color& getDiffuse() const {return _diffuse;}
+	const Color& getSpecular() const {return _specular;}
+	const Point3d getSpotDirection() const {return _spot_direction;}
+
+	bool isDirectional() const {return !_position[3];}
+	bool isEnabled() const {return _enabled;}
+
+	const Point4d& getPosition()const {return _position;}
 private:
 	bool _enabled;
 	Point4d _position;
 	ColorRGBA _ambient, _diffuse, _specular;
 	Point3d _spot_direction;
+	//bool _directional;	// it seems, that we can not rely on _position[3], since it is  multiplied by modelview matrix
 };
 
 }
 }
-
 
 #endif
