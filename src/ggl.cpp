@@ -23,7 +23,7 @@ using namespace ggl;
 using namespace std;
 
 int angle = 0;
-int delay = 40;
+int delay = 400;
 
 //GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
 
@@ -241,7 +241,7 @@ int main()
 	cube = loader.getObject("M1");
 	glutInit(640, 480);
 	glutDisplayFunc(display4);
-	glutTimerFunc(delay, timerCallback, 0);
+	//glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();
 

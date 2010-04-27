@@ -43,7 +43,7 @@ void SDL_Display::init(size_t x, size_t y)
 	_x = x;
 	_y = y;
 
-	_screen = SDL_SetVideoMode(x, y, 32, SDL_SWSURFACE);
+	_screen = SDL_SetVideoMode(x, y, 0, SDL_ANYFORMAT);
 	_surface_locked = false;
 
 }
@@ -67,7 +67,7 @@ void SDL_Display::redraw()
 
 SDL_Display::~SDL_Display()
 {
-	SDL_Quit();
+	//SDL_Quit();	// sometimes causes 'double free' segfault...don't know why
 }
 
 

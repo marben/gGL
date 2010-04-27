@@ -138,7 +138,7 @@ void OpenGL::drawLines_smooth()
 }
 
 void OpenGL::drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2)
-{	// TODO: shlod be using some bresenham implementation or something like that..
+{	// TODO: should be using some bresenham implementation or something like that..
 
 	Real dx = vertex2.x() - vertex1.x();
 	Real dy = vertex2.y() - vertex1.y();
@@ -434,6 +434,7 @@ void OpenGL::enableNormalsNormalization(bool b)
 	if(inBetweenBeginEnd()){	// TODO: should throw some error
 		return;
 	}
+
 	_normalizeNormals = b;
 }
 
@@ -442,6 +443,7 @@ void OpenGL::enableLighting(bool b)
 	if(inBetweenBeginEnd()){	// TODO: should throw some error
 		return;
 	}
+
 	_lightingEnabled = b;
 }
 
@@ -451,6 +453,7 @@ void OpenGL::enableLight(int n, bool enabled)
 		std::cerr<<"enabling unavailable light number: "<<n<<std::endl;
 		return;
 	}
+
 	_lights[n].enable(enabled);
 }
 

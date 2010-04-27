@@ -45,7 +45,8 @@ Timer timer;
 Uint32 _glutTimerCallbackFunction(Uint32 interval, void* param)
 {
 	SDL_RemoveTimer(timer_id);	// should not be necessary
-		_glutTimerFuncPointer((int)param);
+		//_glutTimerFuncPointer((int)param);
+	_glutTimerFuncPointer(*static_cast<int*>(param));
 
 	return 0;	// the timer is cancelled, if we return 0 -- doesn;t work(it seems)...need to call SDL_RemoveTimer
 }
