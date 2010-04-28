@@ -167,6 +167,17 @@ void glutTimerFunc(unsigned int msec, void (*func)(int data), int data)
 	timer_id = SDL_AddTimer(msec, _glutTimerCallbackFunction, &_glutTimerData);
 }
 
+void glLightModelfv(GLenum pname, GLfloat* params)
+{
+	switch (pname){
+	case (::GL_LIGHT_MODEL_AMBIENT):
+		opengl.glLightModelAmbient(params[0], params[1], params[2], params[3]);
+
+	default:
+		std::cerr<<"unimplemented glLightModel call..";
+	}
+}
+
 void glutDisplayFunc(void (*func)(void))
 {
 	glutDisplayFunction = func;

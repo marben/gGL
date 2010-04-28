@@ -81,6 +81,9 @@ const GLenum GL_AMBIENT_AND_DIFFUSE = 44;
 const GLenum GL_COLOR_INDEXES = 45;
 const GLenum GL_POSITION = 46;
 const GLenum GL_SPOT_DIRECTION = 47;
+const GLenum GL_LIGHT_MODEL_AMBIENT = 48;
+const GLenum GL_LIGHT_MODEL_LOCAL_VIEWER = 49;
+const GLenum GL_LIGHT_MODEL_TWO_SIDE = 50;
 
 void glutPostRedisplay();
 

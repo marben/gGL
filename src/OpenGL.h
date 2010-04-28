@@ -72,6 +72,7 @@ public:
 	void glFrontFace(FrontFace mode);
 	void glScale(Real x, Real y, Real z);
 	void glNormal(Real x, Real y, Real z);
+	void glLightModelAmbient(Real r, Real g, Real b, Real a);
 
 	void gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar);
 
@@ -156,7 +157,7 @@ private:
 	Point3d _normal;	// the active normal
 	//Light _lights[available_lights_number];
 	std::vector<Light> _lights;
-	Light* _lightModelAmbient;
+	Light* _lightModelAmbient;	// TODO: make it possible to disable this light
 
 	Material _materialFront, _materialBack;	// the material we currently assign to each new vertex
 

@@ -910,6 +910,11 @@ Color OpenGL::shade(const Vertex4& vertex) const
 	return color;
 }
 
+void OpenGL::glLightModelAmbient(Real r, Real g, Real b, Real a)
+{
+
+}
+
 void OpenGL::glNormal(Real x, Real y, Real z)
 {
 	_normal << x, y, z;
