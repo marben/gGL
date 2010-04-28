@@ -880,7 +880,7 @@ Color OpenGL::shade(const Vertex4& vertex) const
 	Color color(Black);
 	const Material* material;
 
-	for(size_t i = 0; i < static_cast<size_t>(available_lights_number); i++)
+	for(size_t i = 0; i < _lights.size() ; i++)
 	{
 		const Light *light = &_lights[i];
 
@@ -902,6 +902,8 @@ Color OpenGL::shade(const Vertex4& vertex) const
 			if(angle_cos <= 0)
 				return Black;
 
+			// TODO: specular shading
+			// TODO: ambient light should enlighten both sides of a triangle
 			color += (material->getAmbient()*light->getAmbient()) + ((material->getDiffuse() * light->getDiffuse()) * angle_cos);
 		}
 	}
@@ -1261,16 +1263,29 @@ void OpenGL::setLightSpotDirection(int light, const Point3d& direction)
 
 void OpenGL::initLights()
 {
-	/*
-	for(int i = 0; i < available_lights_number; ++i)
+	for (unsigned i = 0; i < available_lights_number; ++i)
+	{
+		_lights.push_back( Light() );
+	}
+
+	_lights.push_back( Light() );
+	_lightModelAmbient = &_lights.back();
+	_lightModelAmbient->setAmbient(0.2, 0.2, 0.2, 1);
+	_lightModelAmbient->setDiffuse(0, 0, 0, 1);
+	_lightModelAmbient->setSpecular(0, 0, 0, 1);
+	_lightModelAmbient->enable();	// ambient light from nowhere is enabled by default
+
+	for(unsigned int i = 0; i < available_lights_number; ++i)
 	{
 		setLightAmbient(i, 0, 0, 0, 1);
 		setLightDiffuse(i, 0, 0, 0, 1);
 		setLightSpecular(i, 0, 0, 0, 1);
 	}
-	*/
+
+	// GL_LIGHT0 is special - enabled by default...
 	setLightDiffuse(0, 1, 1, 1, 1);
 	setLightSpecular(0, 1, 1, 1, 1);
+	enableLight(0, true);	// LIGHT0 seems to be enabled by default
 }
 
 OpenGL::~OpenGL()

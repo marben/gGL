@@ -154,7 +154,10 @@ private:
 	CullFace _cullFace;
 	FrontFace _frontFace;
 	Point3d _normal;	// the active normal
-	Light _lights[available_lights_number];
+	//Light _lights[available_lights_number];
+	std::vector<Light> _lights;
+	Light* _lightModelAmbient;
+
 	Material _materialFront, _materialBack;	// the material we currently assign to each new vertex
 
 

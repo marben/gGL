@@ -40,12 +40,14 @@ void Timer::wait()
 }
 
 void (*_glutTimerFuncPointer) (int data);
+int _glutTimerData = 0;	// the timer parameter is stored here
+
 Timer timer;
 
 Uint32 _glutTimerCallbackFunction(Uint32 interval, void* param)
 {
 	SDL_RemoveTimer(timer_id);	// should not be necessary
-		//_glutTimerFuncPointer((int)param);
+
 	_glutTimerFuncPointer(*static_cast<int*>(param));
 
 	return 0;	// the timer is cancelled, if we return 0 -- doesn;t work(it seems)...need to call SDL_RemoveTimer
@@ -161,7 +163,8 @@ void glutInit(int x, int y)	// TODO: allright, this shouldn't be here and should
 void glutTimerFunc(unsigned int msec, void (*func)(int data), int data)
 {
 	_glutTimerFuncPointer = func;
-	timer_id = SDL_AddTimer(msec, _glutTimerCallbackFunction, (void*)data);
+	_glutTimerData = data;
+	timer_id = SDL_AddTimer(msec, _glutTimerCallbackFunction, &_glutTimerData);
 }
 
 void glutDisplayFunc(void (*func)(void))
