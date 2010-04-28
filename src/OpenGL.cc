@@ -912,7 +912,7 @@ Color OpenGL::shade(const Vertex4& vertex) const
 
 void OpenGL::glLightModelAmbient(Real r, Real g, Real b, Real a)
 {
-
+	_lightModelAmbient->setAmbient(r,g,b,a);
 }
 
 void OpenGL::glNormal(Real x, Real y, Real z)

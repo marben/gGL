@@ -87,6 +87,8 @@ const GLenum GL_LIGHT_MODEL_TWO_SIDE = 50;
 
 void glutPostRedisplay();
 
+void glLightModelfv(GLenum pname, GLfloat param);
+
 void glClear(GLbitfield bufferMask);
 
 void glShadeModel(GLenum mode);
