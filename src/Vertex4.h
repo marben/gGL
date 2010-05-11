@@ -30,7 +30,6 @@ public:
 	Vertex4_(const Matrix<T, 4, 1>& vector, const Matrix<T, 3, 1>& normal, const Color_t& color, const Material& frontMaterial, const Material& backMaterial, bool lightingEnabled):
 		_vertex(vector), _normal(normal), _color(color),
 		_materialFront(frontMaterial), _materialBack(backMaterial), _lightingEnabled(lightingEnabled){}
-	//Vertex4(const Vertex4& vertex){std::cerr<<"Vertex4 copy constructor called"<<std::endl;}
 
 	T x()const {return _vertex[0];}
 	T y()const {return _vertex[1];}
@@ -44,20 +43,30 @@ public:
 
 	//const Color_t& color()const {return _color;}
 	const Color_t& getColor()const {return _color;}
+
 	const Material& getMaterialFront()const {return _materialFront;}
+
 	const Material& getMaterialBack()const {return _materialBack;}
-	const Matrix<T, 3, 1, Eigen::DontAlign> getNormal()const {return _normal;}
-	//const Matrix<T, 4, 1, Eigen::DontAlign> vertex() const {return _vertex;}
+
+	const Matrix<T, 3, 1/*, Eigen::DontAlign*/> getNormal()const {return _normal;}
+
 	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; return *this;}
-	const Matrix<T, 4, 1, Eigen::DontAlign>& getCoordinates() const {return _vertex;}
-	const Matrix<T, 4, 1, Eigen::DontAlign>& getPosition() const {return _vertex;}
+
+	const Matrix<T, 4, 1/*, Eigen::DontAlign*/>& getCoordinates() const {return _vertex;}
+
+	const Matrix<T, 4, 1/*, Eigen::DontAlign*/>& getPosition() const {return _vertex;}
+
 	bool lightingEnabled() const {return _lightingEnabled;}
 
 private:
-	Matrix<T, 4, 1, Eigen::DontAlign> _vertex;	// TODO: figure out, how to make it possible to pass this class with aligned Eigen::Matrix to std::Vector..  (maybe write spcial copy constructor or define aligned allocator in the vector?..) .. maybe a cvs version of libeigen?
-	Matrix<T, 3, 1, Eigen::DontAlign> _normal;
+	Matrix<T, 4, 1/*, Eigen::DontAlign*/> _vertex;	// TODO: figure out, how to make it possible to pass this class with aligned Eigen::Matrix to std::Vector..  (maybe write spcial copy constructor or define aligned allocator in the vector?..) .. maybe a cvs version of libeigen?
+
+	Matrix<T, 3, 1/*, Eigen::DontAlign*/> _normal;
+
 	Color_t _color;
+
 	Material _materialFront, _materialBack;
+
 	bool _lightingEnabled;
 
 // this is for libeigen:

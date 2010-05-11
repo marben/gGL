@@ -35,6 +35,8 @@ USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
 typedef Vertex4_<Real, Color> Vertex4;
 
+typedef float ZBuffer_t;
+
 class OpenGL
 {
 public:
@@ -115,7 +117,6 @@ private:
 
 	void line(int x0, int y0, int x1, int y1, const Color& color);	// 2D line on a drawing surface
 	void putPixel(int x, int y, double z, const ggl::ColorRGB& color);	// puts pixel on color buffer and sets z buffer
-	//void putPixel_shaded(int x, int y, double z, const Point3d& normal, const Material& materialFront, const Material& materialBack);	// does shading and puts pixel do color buffer
 	Color shade(const Vertex4& vertex)const;
 
 	void drawLine_smooth(const Vertex4& vertex1, const Vertex4& vertex2);
@@ -128,8 +129,17 @@ private:
 	void addTriangleVertex_smooth(Real x, Real y, Real z, Real w);
 	void addTriangleVertex_flat(Real x, Real y, Real z, Real w);
 	void updateWorldMatrix() {_worldMatrixDirty = true;}	// sets the flag so that we know to recount the world matrix
-	void countWorldMatrix() {if(_worldMatrixDirty){_worldMatrix = _projectionMatrix * _modelViewMatrix;_worldMatrixDirty = false;}}
 	void initLights();	// sets lights to default state according to opengl specification
+
+private:
+	const Matrix4d& getWorldMatrix() {
+		if (_worldMatrixDirty)
+		{
+			_worldMatrix = _projectionMatrix * _modelViewMatrix;
+			_worldMatrixDirty = false;
+		}
+		return _worldMatrix;
+	}
 
 private:
 	bool _initialized;
@@ -146,7 +156,7 @@ private:
 	Matrix4d* _activeMatrix;	// pointer to active matrix
 	ShadeModel _shadeModel;
 	MatrixMode _matrixMode;
-	double* _zBuffer;
+	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	struct {Real x; Real y; Real width; Real height;} _viewport;
 	bool _cullingEnabled;
@@ -158,6 +168,7 @@ private:
 	//Light _lights[available_lights_number];
 	std::vector<Light> _lights;
 	Light* _lightModelAmbient;	// TODO: make it possible to disable this light
+	DepthFunc _depthFunc;
 
 	Material _materialFront, _materialBack;	// the material we currently assign to each new vertex
 

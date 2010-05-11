@@ -11,6 +11,7 @@
 #include <cmath>
 #include <algorithm>
 #include <Eigen/Geometry>
+#include <limits>	// to get the maximal value of a type
 
 #define PI 3.1415926535897932384626433832795	// tell me of a better way...
 inline double radian(const double degree)
@@ -45,7 +46,7 @@ void OpenGL::glTranslate(Real x, Real y, Real z)
 	// TODO: check, whether we are not between glBegin glEnd, otherwise set some error
 
 	Matrix4d trMatrix;
-	trMatrix <<	1, 0, 0, x,
+	trMatrix	<<	1, 0, 0, x,
 					0, 1, 0, y,
 					0, 0, 1, z,
 					0, 0, 0, 1;
@@ -82,7 +83,7 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 	if(inBetweenBeginEnd())
 		return;
 
-	Vector3d vector(x*-1, y*-1, z);	// TODO: i don't know where the problem is, but *-1 is necessary, to rotate in the right direction...needs more investigation!!!probably something is wrong with the way i work with matrixes??
+	Vector3d vector(x, y, z);
 	vector.normalize();
 
 	x = vector.x();
@@ -345,7 +346,10 @@ const CanvasRGB* OpenGL::glFlush()
 void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 {
 	++_smoothTriangleVertexCounter;
-	_trianglesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+	Vertex4 transformedVertex = Vertex4(getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled);
+
+	//_trianglesVertexList_smooth.push_back(Vertex4(getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+	_trianglesVertexList_smooth.push_back(transformedVertex);
 
 	if(_smoothTriangleVertexCounter == 3)
 	{
@@ -369,7 +373,7 @@ void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 {
 	++_flatTriangleVertexCounter;
-	_trianglesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+	_trianglesVertexList_flat.push_back(Vertex4(getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 
 	if(_flatTriangleVertexCounter == 3)
 	{
@@ -379,7 +383,7 @@ void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 			const Vertex4& v1 = _trianglesVertexList_flat[length-3];
 			const Vertex4& v2 = _trianglesVertexList_flat[length-2];
 			const Vertex4& v3 = _trianglesVertexList_flat[length-1];
-			if(cullFace(v1,v2, v3))
+			if(cullFace(v1, v2, v3))
 			{
 				_trianglesVertexList_flat.pop_back();
 				_trianglesVertexList_flat.pop_back();
@@ -399,7 +403,7 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+			_linesVertexList_smooth.push_back(Vertex4(getWorldMatrix() * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 		else
 			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 		break;
@@ -489,7 +493,7 @@ void OpenGL::glBegin(ActiveVertexList what)
 	assert(_initialized);
 	assert(what != NONE);
 	_activeVertexList = what;
-	countWorldMatrix();	// we need to update world matrix...it might have change outside glBegin glEnd calls;
+	updateWorldMatrix();	// we need to update world matrix...it might have change outside glBegin glEnd calls;
 
 	switch(what) {
 	case GL_TRIANGLES:
@@ -900,7 +904,8 @@ Color OpenGL::shade(const Vertex4& vertex) const
 			material = &vertex.getMaterialFront();
 
 			if(angle_cos <= 0)
-				return Black;
+				//return Black;
+				angle_cos *= -1;
 
 			// TODO: specular shading
 			// TODO: ambient light should enlighten both sides of a triangle
@@ -918,10 +923,10 @@ void OpenGL::glLightModelAmbient(Real r, Real g, Real b, Real a)
 void OpenGL::glNormal(Real x, Real y, Real z)
 {
 	_normal << x, y, z;
-	countWorldMatrix();	// this is necessary, since _world matrix is recounted on lazy basis only on the Call of glBegin()
+	updateWorldMatrix();	// this is necessary, since _world matrix is recounted on lazy basis only on the Call of glBegin()
 								// while glNormal can be called outside glBegin glEnd, we need to recount _worldMatrix now
 
-	_normal = _worldMatrix.corner<3,3>(Eigen::TopLeft) * _normal;
+	_normal = getWorldMatrix().corner<3,3>(Eigen::TopLeft) * _normal;
 
 	if(_normalizeNormals)
 		_normal.normalize();
@@ -937,51 +942,6 @@ void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Ve
 
 void OpenGL::drawTriangle_flat(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3, const Color & color)
 {
-	// it would make sense to use fixed point arithmetics...but...according to my tests on ia32 it actually doesn't
-	// and incorporate bresenham algorithm, but...who will ever call this function?
-
-	// first we sort vertices by y
-
-	/*
-	const Vertex4 *top, *middle, *bottom;
-
-	if(v1.y() > v2.y()) {
-		if( v1.y() > v3.y()) {
-			top = &v1;
-			if( v2.y() > v3.y()) {
-				middle = &v2;
-				bottom = &v3;
-			}
-			else {
-				middle = &v3;
-				bottom = &v2;
-			}
-		}
-		else {
-			top = &v3;
-			middle = &v1;
-			bottom = &v2;
-		}
-	}
-	else {
-		if(v2.y() > v3.y()) {
-			top = &v2;
-			if(v1.y() > v3.y()) {
-				middle = &v1;
-				bottom = &v3;
-			}
-			else {
-				middle = &v3;
-				bottom = &v1;
-			}
-		}
-		else {
-			top = &v3;
-			middle = &v2;
-			bottom = &v1;
-		}
-	}
-	*/
 	// might be better to sort using swap TODO: test
 	const Vertex4 *top = &v1;
 	const Vertex4 *middle = &v2;
@@ -1151,7 +1111,6 @@ void OpenGL::init(int x, int y)
 	_projectionMatrix.setIdentity();
 	_textureMatrix.setIdentity();
 	updateWorldMatrix();
-	countWorldMatrix();
 	_shadeModel = GL_SMOOTH;
 	_frontFace = GL_CCW;
 	glViewport(0, 0, x, y);
@@ -1163,10 +1122,12 @@ void OpenGL::init(int x, int y)
 
 	_smoothTriangleVertexCounter = 0;
 	_flatTriangleVertexCounter = 0;
-	_zBuffer = new double[x*y];
+	_zBuffer = new ZBuffer_t[x*y];
 
 	_initialized = true;
 	glMatrixMode(GL_MODELVIEW);
+
+	_depthFunc = GL_LESS;
 
 	initLights();
 }
@@ -1197,11 +1158,45 @@ void OpenGL::putPixel(int x, int y, double z, const ggl::ColorRGB& color)
 	if( x < 0 || y < 0 || x >= _x || y >= _y)
 		return;
 
-	if(z > _zBuffer[x + _x * y])
+	/*
+	 * let's do the clamping here for now, but this may not be necassary later, when correct
+	 * clamping and clipping is implemented
+	 * TODO: think through...
+	 */
+/*
+	if (z < 0.0)
+		z = 0.0;
+	else if (z > 1.0)
+		z = 1.0;
+		*/
+
+
+
+	bool zPassed = false;
+
+	switch (_depthFunc)
+	{
+	case GL_LESS:
+		zPassed = z < _zBuffer[x + _x * y];
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	if (zPassed)
 	{
 		_zBuffer[x + _x * y] = z;
 		_colorBuffer->putPixel(x, _y - y - 1, color);	//need to reverse y
+
+		/*
+		 * now for some tests
+		 */
+
+		if (x == 328 && y == _y - 241 - 1)
+			std::cout<<" x == "<<x<<"   y == "<<y<<"   z =="<<z<<"   b == "<<color.b()<<std::endl;
 	}
+
 }
 
 /*
@@ -1221,22 +1216,27 @@ void OpenGL::putPixel_shaded(int x, int y, double z, const Point3d& normal, cons
 void OpenGL::clearZBuffer()
 {
 	// TODO: put zFar instead of this value
-	//memset(_zBuffer, -1000, _x*_y*sizeof(double));
 
-	// TODO: create cleared buffer and then just memcpy it to the zBuffer
+	// z-buffer is filled with minimal(lowest z value) and pixel with the highest value is considered the closest
+	// this probably doesn't correspond to other opengl implementations using unsigned int z buffer (like http://www.sjbaker.org/steve/omniv/love_your_z_buffer.html )
+
+	// FIXME: TODO: create cleared buffer and then just memcpy it to the zBuffer
 	for(int i = 0; i < _x*_y; ++i)
-		_zBuffer[i] = -1000.0;
+		_zBuffer[i] = 1.0;
+		//_zBuffer[i] = std::numeric_limits<ZBuffer_t>::max();
 }
 
 void OpenGL::gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar)
 {	// TODO: glu functions shouldn't be in opengl
 	Matrix4d matrix;
-	double f = cot(radian(fovy)/2.0);
+	double f = cot(radian(fovy) / 2.0);
 
 	matrix << 	f/aspect, 0, 0, 0,
 					0, f, 0, 0,
-					0, 0, (zFar + zNear)/(zNear - zFar), 2*(zFar * zNear)/(zNear - zFar),
+					0, 0, (zFar + zNear) / (zNear - zFar), 2 * (zFar * zNear) / (zNear - zFar),
 					0, 0, -1, 0;
+
+	// todo: implement gluPerspective using glFrustum
 
 	*_activeMatrix *= matrix;
 	updateWorldMatrix();

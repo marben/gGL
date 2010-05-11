@@ -22,8 +22,12 @@ using namespace std;
 using namespace ggl;
 using namespace std;
 
-int angle = 0;
-int delay = 400;
+int width = 640, height = 480;
+
+int nearPlane = 1, farPlane = 1000;
+
+int angle = 100;
+int delay = 20;
 
 //GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
 
@@ -43,6 +47,16 @@ void printMatrix(float matrix[4])
 }
 
 ggl::Object3d cube;
+
+void setSanePerspective()
+{
+	glViewport(0, 0, 640, 480);	// nemelo by byt volano porad dokola
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	gluPerspective(45.0, (GLdouble)width/(GLdouble)height,
+			nearPlane, farPlane);
+}
 
 void renderObject(const ggl::Object3d& obj)
 {
@@ -129,7 +143,7 @@ GLfloat glGreen[] = {0.0, 1.0, 0.0, 1.0};
 GLfloat glBlue[] = {0.0, 0.0, 1.0, 1.0};
 GLfloat glTmp[] = {0.5, 0.5, 0.0, 1.0};
 
-GLfloat lightPosition[] = {0, 0, 1, 0};
+GLfloat lightPosition[] = {0, 0, 1, 0.0};
 
 #define X .525731112119133606
 #define Z .850650808352039932
@@ -180,6 +194,32 @@ void drawIcosahedron()
 	glEnd();
 }
 
+void display5()
+{
+	glViewport(0,0,640,480);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-319.5, 319.5, -239.5, 239.5, -500, 500);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_LIGHTING);
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glBlack);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glBlack);
+
+	glRotatef(45, 1, 0, 0);
+	glBegin(GL_TRIANGLES);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, glGreen);
+		glMaterialfv(GL_BACK, GL_AMBIENT, glRed);
+		glVertex3f(-100, 100, 0);
+		glVertex3f(100, 100, 0);
+		glVertex3f(0, -100, 0);
+	glEnd();
+
+	glFlush();
+}
 
 void display4()
 {
@@ -192,12 +232,13 @@ void display4()
 	glLoadIdentity();
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT1);
+	glDisable(GL_LIGHT0);
 	glTranslated(200, 200, 0);
 	//glNormal3f(0,0,1);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, glBlack);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, glRed);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, glWhite);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, glBlack);
-	glRotatef(angle, 1, 1, 1);
+	glRotatef(angle, 1, 0, 0);
 	//glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
 	/*
 	glBegin(GL_TRIANGLES);
@@ -206,15 +247,68 @@ void display4()
 		glVertex3f(0.0, 150.0, 0.0);
 	glEnd();
 	*/
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glRed);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glBlack);
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
+
 	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+
 	glScalef(100, 100, 100);
 	drawIcosahedron();
+
+	glFlush();
+}
+
+void displayTriangles()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	setSanePerspective();
+
+	// just a test
+
+	//glMatrixMode(GL_PROJECTION_MATRIX);
+	//glLoadIdentity();
+
+	// end of test
+
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+
+	   GLfloat matrix[16];
+	   glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
+	   std::cout<<"modelview matrix:"<<std::endl;
+	   printMatrix(matrix);
+
+
+	   glGetFloatv(GL_PROJECTION_MATRIX, matrix);
+	   std::cout<<"projection matrix:"<<std::endl;
+	   printMatrix(matrix);
+
+	glColor3f(1,1,0);
+	glBegin(GL_TRIANGLES);
+		glVertex3f(-1, -1, -20);
+		glVertex3f(-1, 1, -20);
+		glVertex3f(1, 1, -20);
+	glEnd();
+
+
+	glColor3f(0,0.3,0.77);
+	glBegin(GL_TRIANGLES);
+		glVertex3f(1, -1, -9);
+		glVertex3f(-1, 1, -9);
+		glVertex3f(1, 1, -9);
+	glEnd();
+
+
 	glFlush();
 }
 
 void timerCallback(int data)
 {
-	angle += 2;
+	angle += 1;
 	if(angle >= 360)
 		angle -= 360;
 
@@ -237,11 +331,11 @@ int main()
 		std::cerr<<"Problem saving file:"<<error.what()<<std::endl;
 	}
 	*/
-	Loader_Obj loader("M1.obj");
-	cube = loader.getObject("M1");
+	//Loader_Obj loader("M1.obj");
+	//cube = loader.getObject("M1");
 	glutInit(640, 480);
 	glutDisplayFunc(display4);
-	//glutTimerFunc(delay, timerCallback, 0);
+	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();
 
