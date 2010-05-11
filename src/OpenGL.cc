@@ -1159,42 +1159,64 @@ void OpenGL::putPixel(int x, int y, double z, const ggl::ColorRGB& color)
 		return;
 
 	/*
-	 * let's do the clamping here for now, but this may not be necassary later, when correct
+	 * let's do the clamping here for now, but this may not be necessary later, when correct
 	 * clamping and clipping is implemented
-	 * TODO: think through...
+	 * TODO: think this through...
 	 */
-/*
-	if (z < 0.0)
-		z = 0.0;
+	if (z < -1.0)
+		z = -1.0;
 	else if (z > 1.0)
 		z = 1.0;
-		*/
 
 
-
-	bool zPassed = false;
+	bool z_passed = false;
+	const unsigned buffer_offset = x + _x * y;
 
 	switch (_depthFunc)
 	{
+	case GL_NEVER:
+		z_passed = true;
+
 	case GL_LESS:
-		zPassed = z < _zBuffer[x + _x * y];
+		z_passed = z < _zBuffer[buffer_offset];
 		break;
-	default:
-		assert(0);
+
+	case GL_EQUAL:
+		z_passed = z == _zBuffer[buffer_offset];
+		break;
+
+	case GL_LEQUAL:
+		z_passed = z <= _zBuffer[buffer_offset];
+		break;
+
+	case GL_GREATER:
+		z_passed = z > _zBuffer[buffer_offset];
+		break;
+
+	case GL_NOTEQUAL:
+		z_passed = z != _zBuffer[buffer_offset];
+		break;
+
+	case GL_GEQUAL:
+		z_passed = z >= _zBuffer[buffer_offset];
+		break;
+
+	case GL_ALWAYS:
+		z_passed = true;
 		break;
 	}
 
-	if (zPassed)
+	if (z_passed)
 	{
-		_zBuffer[x + _x * y] = z;
+		_zBuffer[buffer_offset] = z;
 		_colorBuffer->putPixel(x, _y - y - 1, color);	//need to reverse y
 
 		/*
 		 * now for some tests
 		 */
 
-		if (x == 328 && y == _y - 241 - 1)
-			std::cout<<" x == "<<x<<"   y == "<<y<<"   z =="<<z<<"   b == "<<color.b()<<std::endl;
+		//if (x == 328 && y == _y - 241 - 1)
+		//	std::cout<<" x == "<<x<<"   y == "<<y<<"   z =="<<z<<"   b == "<<color.b()<<std::endl;
 	}
 
 }

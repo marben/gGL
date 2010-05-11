@@ -461,6 +461,47 @@ void glBegin(GLenum mode){
 	}
 }
 
+void glDepthFunc(GLenum func)
+{
+	switch (func)
+	{
+	case ::GL_NEVER:
+		opengl.glDepthFunc(ogl::GL_NEVER);
+		break;
+
+	case ::GL_LESS:
+		opengl.glDepthFunc(ogl::GL_LESS);
+		break;
+
+	case ::GL_EQUAL:
+		opengl.glDepthFunc(ogl::GL_EQUAL);
+		break;
+
+	case ::GL_LEQUAL:
+		opengl.glDepthFunc(ogl::GL_LEQUAL);
+		break;
+
+	case ::GL_GREATER:
+		opengl.glDepthFunc(ogl::GL_GREATER);
+		break;
+
+	case ::GL_NOTEQUAL:
+		opengl.glDepthFunc(ogl::GL_NOTEQUAL);
+		break;
+
+	case ::GL_GEQUAL:
+		opengl.glDepthFunc(ogl::GL_GEQUAL);
+		break;
+
+	case ::GL_ALWAYS:
+		opengl.glDepthFunc(ogl::GL_ALWAYS);
+		break;
+
+	default:
+		assert(0);
+	}
+}
+
 void glShadeModel(GLenum mode)
 {
 	switch(mode) {

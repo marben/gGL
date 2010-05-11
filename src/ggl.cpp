@@ -238,7 +238,7 @@ void display4()
 	glLightfv(GL_LIGHT1, GL_AMBIENT, glBlack);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, glWhite);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, glBlack);
-	glRotatef(angle, 1, 0, 0);
+	glRotatef(angle, 1, 1, 0);
 	//glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
 	/*
 	glBegin(GL_TRIANGLES);

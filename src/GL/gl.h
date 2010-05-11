@@ -84,6 +84,19 @@ const GLenum GL_SPOT_DIRECTION = 47;
 const GLenum GL_LIGHT_MODEL_AMBIENT = 48;
 const GLenum GL_LIGHT_MODEL_LOCAL_VIEWER = 49;
 const GLenum GL_LIGHT_MODEL_TWO_SIDE = 50;
+const GLenum GL_NEVER = 51;
+const GLenum GL_LESS = 52;
+const GLenum GL_EQUAL = 53;
+const GLenum GL_LEQUAL = 54;
+const GLenum GL_GREATER = 55;
+const GLenum GL_NOTEQUAL = 56;
+const GLenum GL_GEQUAL = 57;
+const GLenum GL_ALWAYS = 58;
+
+/*
+ * specify the value used for depth buffer comparisons
+ */
+void glDepthFunc(GLenum func);
 
 void glutPostRedisplay();
 
