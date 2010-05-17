@@ -267,6 +267,14 @@ void displayTriangles()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	setSanePerspective();
 
+	//glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	GLfloat lightPosition[] = {3.0, 7.0, 0.0, 1.0};
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
 	// just a test
 
 	//glMatrixMode(GL_PROJECTION_MATRIX);
@@ -277,6 +285,7 @@ void displayTriangles()
 	//glMatrixMode(GL_MODELVIEW);
 	//glLoadIdentity();
 
+	/*
 	   GLfloat matrix[16];
 	   glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 	   std::cout<<"modelview matrix:"<<std::endl;
@@ -286,12 +295,13 @@ void displayTriangles()
 	   glGetFloatv(GL_PROJECTION_MATRIX, matrix);
 	   std::cout<<"projection matrix:"<<std::endl;
 	   printMatrix(matrix);
+	   */
 
 	glColor3f(1,1,0);
 	glBegin(GL_TRIANGLES);
 		glVertex3f(-1, -1, -20);
-		glVertex3f(-1, 1, -20);
 		glVertex3f(1, 1, -20);
+		glVertex3f(-1, 1, -20);
 	glEnd();
 
 

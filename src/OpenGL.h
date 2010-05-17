@@ -16,18 +16,18 @@
 #include "Image.h"
 #include "Vertex4.h"
 #include "Light.h"
+#include "OpenGL_state.h"
 
 
 namespace ggl {
 namespace ogl
 {
 
-const unsigned available_lights_number = 12;	// TODO: check other ogl implementations and eventually increase. minimum is 8
-
 inline int round(Real x){	// TODO: put this in some global header
 	return static_cast<int>( (x>0.0) ? x + 0.5 : x - 0.5 );
 }
-inline int round_quick(Real x){	// TODO:here should be some extremely fast..not so precise function .. (SSE4 supports some fast rounding)
+
+inline int round_quick(Real x){	// TODO:here should be some fast..not so precise function .. (SSE4 supports some fast rounding)
 	return round(x);
 }
 
@@ -79,9 +79,9 @@ public:
 
 	void gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar);
 
-	const Matrix4d& getModelViewMatrix() const {return _modelViewMatrix;}
-	const Matrix4d& getProjectionMatrix() const {return _projectionMatrix;}
-	const Matrix4d& getTextureMatrix() const {return _textureMatrix;}
+	const Matrix4d& getModelViewMatrix() const {return _state.getModelViewMatrix();}
+	const Matrix4d& getProjectionMatrix() const {return _state.getProjectionMatrix();}
+	const Matrix4d& getTextureMatrix() const {return _state.getTextureMatrix();}
 
 	void applyProjectionMatrix(std::vector<Vertex4>& vertices);	// multiples all vertices by a projection matrix
 	void applyViewportTransformation(Vertex4& vertex);
@@ -133,6 +133,7 @@ private:
 	void initLights();	// sets lights to default state according to opengl specification
 
 private:
+	/*
 	const Matrix4d& getWorldMatrix() {
 		if (_worldMatrixDirty)
 		{
@@ -141,32 +142,28 @@ private:
 		}
 		return _worldMatrix;
 	}
+	*/
 
 private:
 	bool _initialized;
 
 private:
-	ColorRGBA _glClearColor;
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
 	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList_flat, _trianglesVertexList_smooth;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
-	Matrix4d _projectionMatrix, _modelViewMatrix, _textureMatrix;	// projection matrix
+	//Matrix4d _projectionMatrix;//, _modelViewMatrix;//, _textureMatrix;	// projection matrix
 	Matrix4d _worldMatrix;	// projectionMatrix * modelViewMatrix // TODO: change calls to _worldMatrix to worldMatrix() function and implement lazy evaluation
 	bool _worldMatrixDirty;
-	Matrix4d* _activeMatrix;	// pointer to active matrix
+	//Matrix4d* _activeMatrix;	// pointer to active matrix
 	ShadeModel _shadeModel;
-	MatrixMode _matrixMode;
+	//MatrixMode _matrixMode;
 	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	struct {Real x; Real y; Real width; Real height;} _viewport;
-	bool _cullingEnabled;
 	bool _normalizeNormals;	// set with GL_NORMALIZE
-	bool _lightingEnabled;	// true if lighting was enables
-	CullFace _cullFace;
 	FrontFace _frontFace;
 	Point3d _normal;	// the active normal
-	//Light _lights[available_lights_number];
 	std::vector<Light> _lights;
 	Light* _lightModelAmbient;	// TODO: make it possible to disable this light
 	DepthFunc _depthFunc;
@@ -176,6 +173,8 @@ private:
 
 	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
 	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
+
+	OpenGL_state _state;	// the state -- TODO: most of OpenGL class private members should move here
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

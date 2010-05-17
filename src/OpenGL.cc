@@ -13,6 +13,8 @@
 #include <Eigen/Geometry>
 #include <limits>	// to get the maximal value of a type
 
+#include "OpenGL_settings.h"
+
 #define PI 3.1415926535897932384626433832795	// tell me of a better way...
 inline double radian(const double degree)
 {
@@ -32,13 +34,14 @@ namespace ogl
 
 void OpenGL::clearColorBuffer()
 {
-	_colorBuffer->clear(_glClearColor);
+	_colorBuffer->clear(_state.getClearColor());
 }
 
 void OpenGL::glLoadIdentity()
 {
-	_activeMatrix->setIdentity();
-	updateWorldMatrix();
+	//_activeMatrix->setIdentity();
+	//updateWorldMatrix();
+	_state.loadIdentity();
 }
 
 void OpenGL::glTranslate(Real x, Real y, Real z)
@@ -51,8 +54,9 @@ void OpenGL::glTranslate(Real x, Real y, Real z)
 					0, 0, 1, z,
 					0, 0, 0, 1;
 
-	*_activeMatrix *= trMatrix;
-	updateWorldMatrix();
+	//*_activeMatrix *= trMatrix;
+	//updateWorldMatrix();
+	_state.multiplyActiveMatrix(trMatrix);
 }
 
 void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
@@ -113,8 +117,9 @@ void OpenGL::glRotate(Real angle, Real x, Real y, Real z)
 					xzc1-y*s, yzc1+x*s, z*z*c1+c, 0,
 					0, 0, 0, 1;
 
-	*_activeMatrix *= matrix;
-	updateWorldMatrix();
+	//*_activeMatrix *= matrix;
+	//updateWorldMatrix();
+	_state.multiplyActiveMatrix(matrix);
 }
 
 void OpenGL::drawLines()
@@ -286,7 +291,7 @@ void OpenGL::drawLine_flat(const Vertex4& vertex1, const Vertex4& vertex2, const
 void OpenGL::applyProjectionMatrix(std::vector<Vertex4>& vertices)
 {
 	for(size_t i = 0; i < vertices.size(); ++i)
-		vertices[i] *= _projectionMatrix;
+		vertices[i] *= _state.getProjectionMatrix();
 }
 
 void OpenGL::applyViewportTransformation(Vertex4& vertex)
@@ -346,14 +351,13 @@ const CanvasRGB* OpenGL::glFlush()
 void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 {
 	++_smoothTriangleVertexCounter;
-	Vertex4 transformedVertex = Vertex4(getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled);
+	Vertex4 transformedVertex = Vertex4(_state.getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled());
 
-	//_trianglesVertexList_smooth.push_back(Vertex4(getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
 	_trianglesVertexList_smooth.push_back(transformedVertex);
 
 	if(_smoothTriangleVertexCounter == 3)
 	{
-		if(_cullingEnabled)
+		if(_state.getCullingEnabled())
 		{
 			size_t length = _trianglesVertexList_smooth.size();
 			const Vertex4& v1 = _trianglesVertexList_smooth[length-3];
@@ -373,11 +377,11 @@ void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 {
 	++_flatTriangleVertexCounter;
-	_trianglesVertexList_flat.push_back(Vertex4(getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+	_trianglesVertexList_flat.push_back(Vertex4(_state.getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
 
 	if(_flatTriangleVertexCounter == 3)
 	{
-		if(_cullingEnabled)
+		if(_state.getCullingEnabled())
 		{
 			size_t length = _trianglesVertexList_flat.size();
 			const Vertex4& v1 = _trianglesVertexList_flat[length-3];
@@ -403,9 +407,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(getWorldMatrix() * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+			_linesVertexList_smooth.push_back(Vertex4(_state.getWorldMatrix() * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _lightingEnabled));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
 		break;
 
 	case GL_POLYGON:
@@ -430,7 +434,7 @@ void OpenGL::enableCulling(bool b)
 	if(inBetweenBeginEnd()){	// TODO: should throw some error
 		return;
 	}
-	_cullingEnabled = b;
+	_state.setCullingEnabled(b);
 }
 
 void OpenGL::enableNormalsNormalization(bool b)
@@ -448,7 +452,7 @@ void OpenGL::enableLighting(bool b)
 		return;
 	}
 
-	_lightingEnabled = b;
+	_state.setLightingEnabled(b);
 }
 
 void OpenGL::enableLight(int n, bool enabled)
@@ -463,7 +467,7 @@ void OpenGL::enableLight(int n, bool enabled)
 
 bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
 {
-	if(_cullingEnabled == false)
+	if(_state.getCullingEnabled() == false)
 		return false;
 
 	Matrix<Real, 3, 1> v1(vertex2.x() - vertex1.x(), vertex2.y() - vertex1.y(), vertex2.z() - vertex1.z());
@@ -474,10 +478,10 @@ bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vert
 	Matrix<Real, 3, 1> eye(0.0,0.0,-1.0);
 	double angle = eye.dot(n);
 
-	if(angle <= 0 && (_cullFace == GL_BACK || _cullFace == GL_FRONT_AND_BACK))
+	if(angle <= 0 && (_state.getCullFace() == GL_BACK || _state.getCullFace() == GL_FRONT_AND_BACK))
 		return true;
 
-	if(angle >= 0 && (_cullFace == GL_FRONT || _cullFace == GL_FRONT_AND_BACK))
+	if(angle >= 0 && (_state.getCullFace() == GL_FRONT || _state.getCullFace() == GL_FRONT_AND_BACK))
 		return true;
 
 	return false;
@@ -926,7 +930,7 @@ void OpenGL::glNormal(Real x, Real y, Real z)
 	updateWorldMatrix();	// this is necessary, since _world matrix is recounted on lazy basis only on the Call of glBegin()
 								// while glNormal can be called outside glBegin glEnd, we need to recount _worldMatrix now
 
-	_normal = getWorldMatrix().corner<3,3>(Eigen::TopLeft) * _normal;
+	_normal = _state.getWorldMatrix().corner<3,3>(Eigen::TopLeft) * _normal;
 
 	if(_normalizeNormals)
 		_normal.normalize();
@@ -1058,6 +1062,9 @@ void OpenGL::glShadeModel(const ShadeModel& model)
 
 void OpenGL::glMatrixMode(MatrixMode mode)
 {
+	_state.setMatrixMode(mode);
+
+	/*
 	_matrixMode = mode;
 	switch (mode)
 	{
@@ -1072,9 +1079,13 @@ void OpenGL::glMatrixMode(MatrixMode mode)
 	case GL_TEXTURE:
 		_activeMatrix = &_textureMatrix;
 
+		break;
+
+
 	default:
 		break;
 	}
+	*/
 }
 
 void OpenGL::glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real zFar)
@@ -1087,8 +1098,10 @@ void OpenGL::glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real z
 					0, 2/(top - bottom), 0, -(top + bottom)/(top - bottom),
 					0, 0, -2/(zFar - zNear), -(zFar + zNear)/(zFar - zNear),
 					0, 0, 0, 1;
-	*_activeMatrix *= matrix;
-	updateWorldMatrix();
+
+	//*_activeMatrix *= matrix;
+	//updateWorldMatrix();
+	_state.multiplyActiveMatrix(matrix);
 }
 
 OpenGL::OpenGL()
@@ -1101,24 +1114,20 @@ void OpenGL::init(int x, int y)
 {
 	_x = x;
 	_y = y;
-	_glClearColor.clear(0.0);
 	_activeVertexList = NONE;
 //	_colorBuffer.resize(x, y);
 //	_colorBuffer = new Image2dRGB;
 //	_colorBuffer->resize(x, y);
 	_activeColor = Color(1, 1, 1, 1);
-	_modelViewMatrix.setIdentity();
-	_projectionMatrix.setIdentity();
-	_textureMatrix.setIdentity();
+//	_modelViewMatrix.setIdentity();
+//	_projectionMatrix.setIdentity();
+//	_textureMatrix.setIdentity();
 	updateWorldMatrix();
 	_shadeModel = GL_SMOOTH;
 	_frontFace = GL_CCW;
 	glViewport(0, 0, x, y);
-	glCullFace(GL_BACK);
-	_cullingEnabled = false;
 	_normal << 0.0, 0.0, 1.0;
 	_normalizeNormals = false;
-	_lightingEnabled = false;
 
 	_smoothTriangleVertexCounter = 0;
 	_flatTriangleVertexCounter = 0;
@@ -1135,7 +1144,7 @@ void OpenGL::init(int x, int y)
 void OpenGL::glClearColor(float red, float green, float blue, float alpha)
 {
 	assert(_initialized);
-	_glClearColor = ColorRGBA(red, green, blue, alpha);
+	_state.setClearColor(ColorRGBA(red, green, blue, alpha));
 }
 
 void OpenGL::glCullFace(CullFace mode)
@@ -1143,7 +1152,7 @@ void OpenGL::glCullFace(CullFace mode)
 	if(inBetweenBeginEnd())	// TODO: throw some error (see man page)
 		return;
 
-	_cullFace = mode;
+	_state.setCullFace(mode);
 }
 
 void OpenGL::glFrontFace(FrontFace mode)
@@ -1260,8 +1269,9 @@ void OpenGL::gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar)
 
 	// todo: implement gluPerspective using glFrustum
 
-	*_activeMatrix *= matrix;
-	updateWorldMatrix();
+	//*_activeMatrix *= matrix;
+	//updateWorldMatrix();
+	_state.multiplyActiveMatrix(matrix);
 }
 
 void OpenGL::glScale(Real x, Real y, Real z)
@@ -1274,18 +1284,20 @@ void OpenGL::glScale(Real x, Real y, Real z)
 					0, 0, z, 0,
 					0, 0, 0, 1;
 
-	*_activeMatrix *= matrix;
-	updateWorldMatrix();
+	//*_activeMatrix *= matrix;
+	//updateWorldMatrix();
+
+	_state.multiplyActiveMatrix(matrix);
 }
 
 void OpenGL::setLightPosition(int light, const Point4d& position)
 {
-	_lights[light].setPosition(_modelViewMatrix * position);
+	_lights[light].setPosition(_state.getModelViewMatrix() * position);
 }
 
 void OpenGL::setLightSpotDirection(int light, const Point3d& direction)
 {
-	_lights[light].setSpotDirection(_modelViewMatrix.block<3,3>(0,0) * direction);
+	_lights[light].setSpotDirection(_state.getModelViewMatrix().block<3,3>(0,0) * direction);
 }
 
 void OpenGL::initLights()
@@ -1312,7 +1324,7 @@ void OpenGL::initLights()
 	// GL_LIGHT0 is special - enabled by default...
 	setLightDiffuse(0, 1, 1, 1, 1);
 	setLightSpecular(0, 1, 1, 1, 1);
-	enableLight(0, true);	// LIGHT0 seems to be enabled by default
+	//enableLight(0, true);	// LIGHT0 seems to be enabled by default	-- no, it doesn't
 }
 
 OpenGL::~OpenGL()
