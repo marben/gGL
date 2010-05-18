@@ -1104,7 +1104,8 @@ void OpenGL::glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real z
 	_state.multiplyActiveMatrix(matrix);
 }
 
-OpenGL::OpenGL()
+OpenGL::OpenGL() :
+		_vertexOps(_state)
 {
 	_initialized = false;
 	_colorBuffer = NULL;

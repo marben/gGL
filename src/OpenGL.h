@@ -17,6 +17,7 @@
 #include "Vertex4.h"
 #include "Light.h"
 #include "OpenGL_state.h"
+#include "VertexOps.h"
 
 
 namespace ggl {
@@ -32,8 +33,6 @@ inline int round_quick(Real x){	// TODO:here should be some fast..not so precise
 }
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
-
-typedef Vertex4_<Real, Color> Vertex4;
 
 typedef float ZBuffer_t;
 
@@ -133,16 +132,6 @@ private:
 	void initLights();	// sets lights to default state according to opengl specification
 
 private:
-	/*
-	const Matrix4d& getWorldMatrix() {
-		if (_worldMatrixDirty)
-		{
-			_worldMatrix = _projectionMatrix * _modelViewMatrix;
-			_worldMatrixDirty = false;
-		}
-		return _worldMatrix;
-	}
-	*/
 
 private:
 	bool _initialized;
@@ -152,12 +141,9 @@ private:
 	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList_flat, _trianglesVertexList_smooth;
 	Color _activeColor;
 	CanvasRGB* _colorBuffer;
-	//Matrix4d _projectionMatrix;//, _modelViewMatrix;//, _textureMatrix;	// projection matrix
 	Matrix4d _worldMatrix;	// projectionMatrix * modelViewMatrix // TODO: change calls to _worldMatrix to worldMatrix() function and implement lazy evaluation
 	bool _worldMatrixDirty;
-	//Matrix4d* _activeMatrix;	// pointer to active matrix
 	ShadeModel _shadeModel;
-	//MatrixMode _matrixMode;
 	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	struct {Real x; Real y; Real width; Real height;} _viewport;
@@ -170,11 +156,11 @@ private:
 
 	Material _materialFront, _materialBack;	// the material we currently assign to each new vertex
 
-
 	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
 	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
 
 	OpenGL_state _state;	// the state -- TODO: most of OpenGL class private members should move here
+	VertexOps _vertexOps;	// operations on vertices are done here - coordinate transformations, lighting..
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

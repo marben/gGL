@@ -14,12 +14,13 @@
 #include <iostream>
 
 #include "Material.h"
+#include "GL/gl_types.h"
+
+USING_PART_OF_NAMESPACE_EIGEN
 
 namespace ggl {
 namespace ogl
 {
-
-USING_PART_OF_NAMESPACE_EIGEN
 
 
 template<typename T, typename Color_t>
@@ -74,6 +75,8 @@ private:
 	public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign)
 };
+
+typedef Vertex4_<Real, Color> Vertex4;
 
 }	// namespace ogl
 } // namespace ggl

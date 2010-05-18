@@ -9,12 +9,16 @@
 #define OPENGL_MATRICES_H_
 
 #include <Eigen/Core>
+#include "GL/gl_types.h"
 
 namespace ggl {
 namespace ogl {
 
+USING_PART_OF_NAMESPACE_EIGEN
+
 // TODO: lazy evaluation should be used for matrices,
 //       but it should be eventually taken care of by the libeigen library (especially by the upcoming 3 release)
+
 class OpenGL_matrices {
 
 public:

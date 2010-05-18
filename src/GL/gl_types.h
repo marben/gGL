@@ -18,10 +18,10 @@ namespace ogl
 {
 	typedef double Real;	// this is the default floating type, we will use in opengl
 
+	typedef ColorRGBA Color;
+
 	typedef Matrix<Real, 3, 1/*, Eigen::DontAlign*/> Point3d;
 	typedef Matrix<Real, 4, 1/*, Eigen::DontAlign*/> Point4d;
-
-	typedef ColorRGBA Color;
 
 	enum ActiveVertexList {NONE,
 		GL_POINTS, GL_LINES,
