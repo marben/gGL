@@ -351,7 +351,7 @@ const CanvasRGB* OpenGL::glFlush()
 void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 {
 	++_smoothTriangleVertexCounter;
-	Vertex4 transformedVertex = Vertex4(_state.getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled());
+	Vertex4 transformedVertex = Vertex4(_state.getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _state.getNormal(), _state.getActiveColor(), _state.getFrontMaterial(), _state.getBackMaterial(), _state.getLightingEnabled());
 
 	_trianglesVertexList_smooth.push_back(transformedVertex);
 
@@ -377,7 +377,7 @@ void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 {
 	++_flatTriangleVertexCounter;
-	_trianglesVertexList_flat.push_back(Vertex4(_state.getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
+	_trianglesVertexList_flat.push_back(Vertex4(_state.getWorldMatrix() * Matrix<double, 4, 1>(x, y, z, w), _state.getNormal(), _state.getActiveColor(), _state.getFrontMaterial(), _state.getBackMaterial(), _state.getLightingEnabled()));
 
 	if(_flatTriangleVertexCounter == 3)
 	{
@@ -400,6 +400,8 @@ void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 
 void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 {
+	_vertexOps.addVertex(x, y, z, w);
+	/*
 	assert(_initialized);
 	assert(_activeVertexList != NONE);
 
@@ -407,9 +409,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 	{
 	case GL_LINES:
 		if(_shadeModel == GL_SMOOTH)
-			_linesVertexList_smooth.push_back(Vertex4(_state.getWorldMatrix() * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
+			_linesVertexList_smooth.push_back(Vertex4(_state.getWorldMatrix() * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
 		else
-			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), /*_worldMatrix.corner<3,3>(Eigen::TopLeft) * */ _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
+			_linesVertexList_flat.push_back(Vertex4(_worldMatrix * Matrix<Real, 4, 1>(x, y, z, w), _normal, _activeColor, _materialFront, _materialBack, _state.getLightingEnabled()));
 		break;
 
 	case GL_POLYGON:
@@ -427,6 +429,7 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 		std::cerr<<"glVertex called while no active vertex list selected!"<<std::endl;
 		break;
 	}
+	*/
 }
 
 void OpenGL::enableCulling(bool b)
@@ -437,6 +440,7 @@ void OpenGL::enableCulling(bool b)
 	_state.setCullingEnabled(b);
 }
 
+/*
 void OpenGL::enableNormalsNormalization(bool b)
 {
 	if(inBetweenBeginEnd()){	// TODO: should throw some error
@@ -444,7 +448,7 @@ void OpenGL::enableNormalsNormalization(bool b)
 	}
 
 	_normalizeNormals = b;
-}
+}*/
 
 void OpenGL::enableLighting(bool b)
 {
@@ -487,9 +491,9 @@ bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vert
 	return false;
 }
 
-void OpenGL::glColor(float r, float g, float b, float alpha)
+void OpenGL::glColor(float r, float g, float b, float a)
 {
-	_activeColor= Color(r, g, b, alpha);
+	_state.setActiveColor(Color(r, g, b, a));
 }
 
 void OpenGL::glBegin(ActiveVertexList what)
@@ -926,6 +930,8 @@ void OpenGL::glLightModelAmbient(Real r, Real g, Real b, Real a)
 
 void OpenGL::glNormal(Real x, Real y, Real z)
 {
+	_state.setNormal(Point3d(x, y, z));
+	/*
 	_normal << x, y, z;
 	updateWorldMatrix();	// this is necessary, since _world matrix is recounted on lazy basis only on the Call of glBegin()
 								// while glNormal can be called outside glBegin glEnd, we need to recount _worldMatrix now
@@ -934,6 +940,7 @@ void OpenGL::glNormal(Real x, Real y, Real z)
 
 	if(_normalizeNormals)
 		_normal.normalize();
+		*/
 }
 
 void OpenGL::drawTriangle_wired(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -1105,7 +1112,7 @@ void OpenGL::glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real z
 }
 
 OpenGL::OpenGL() :
-		_vertexOps(_state)
+	_vertexOps(_state, _rasterizer)
 {
 	_initialized = false;
 	_colorBuffer = NULL;
@@ -1116,19 +1123,11 @@ void OpenGL::init(int x, int y)
 	_x = x;
 	_y = y;
 	_activeVertexList = NONE;
-//	_colorBuffer.resize(x, y);
-//	_colorBuffer = new Image2dRGB;
-//	_colorBuffer->resize(x, y);
-	_activeColor = Color(1, 1, 1, 1);
-//	_modelViewMatrix.setIdentity();
-//	_projectionMatrix.setIdentity();
-//	_textureMatrix.setIdentity();
+
 	updateWorldMatrix();
 	_shadeModel = GL_SMOOTH;
 	_frontFace = GL_CCW;
 	glViewport(0, 0, x, y);
-	_normal << 0.0, 0.0, 1.0;
-	_normalizeNormals = false;
 
 	_smoothTriangleVertexCounter = 0;
 	_flatTriangleVertexCounter = 0;

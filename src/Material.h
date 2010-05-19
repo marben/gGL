@@ -24,11 +24,13 @@ public:
 	void setDiffuse(const Color& color) {_diffuse = color;}
 	void setSpecular(const Color& color) {_specular = color;}
 	void setEmission(const Color& color) {_emission = color;}
+	void setShininess(float shininess) {_shininess = clamp <0, 128> (shininess);}
 
 	const Color& getAmbient() const {return _ambient;}
 	const Color& getDiffuse() const {return _diffuse;}
 	const Color& getSpecular() const {return _specular;}
 	const Color& getEmission() const {return _emission;}
+	float getShininess() const {return _shininess;}
 
 	Material operator-(const Material& mat) const;
 	Material operator/(const float f) const;

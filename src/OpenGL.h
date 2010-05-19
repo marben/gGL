@@ -18,6 +18,7 @@
 #include "Light.h"
 #include "OpenGL_state.h"
 #include "VertexOps.h"
+#include "Rasterizer.h"
 
 
 namespace ggl {
@@ -47,8 +48,7 @@ public:
 	void clearColorBuffer();
 	void clearZBuffer();
 	void enableCulling(bool b = true);
-	void enableNormalsNormalization(bool b = true);
-	void disableNormalsNormalization() {enableNormalsNormalization(false);}
+	void setNormalizeNormals(bool enable) {_state.setNormalizeNormals(enable);}
 	void disableCulling() {enableCulling(false);}
 	void enableLighting(bool b = true);
 	void disableLighting() {enableLighting(false);}
@@ -91,14 +91,16 @@ public:
 	void setLightSpecular(int light, float r, float g, float b, float a) {_lights[light].setSpecular(r, g, b, a);}
 	void setLightPosition(int light, const Point4d& position);
 	void setLightSpotDirection(int light, const Point3d& direction);
-	void setFrontMaterialAmbient(const Color& color) {_materialFront.setAmbient(color);}
-	void setFrontMaterialDiffuse(const Color& color) {_materialFront.setDiffuse(color);}
-	void setFrontMaterialSpecular(const Color& color) {_materialFront.setSpecular(color);}
-	void setFrontMaterialEmission(const Color& color) {_materialFront.setEmission(color);}
-	void setBackMaterialAmbient(const Color& color) {_materialBack.setAmbient(color);}
-	void setBackMaterialDiffuse(const Color& color) {_materialBack.setDiffuse(color);}
-	void setBackMaterialSpecular(const Color& color) {_materialBack.setSpecular(color);}
-	void setBackMaterialEmission(const Color& color) {_materialBack.setEmission(color);}
+
+	void setFrontMaterialAmbient(const Color& color) {_state.setFrontMaterialAmbient(color);}
+	void setFrontMaterialDiffuse(const Color& color) {_state.setFrontMaterialDiffuse(color);}
+	void setFrontMaterialSpecular(const Color& color) {_state.setFrontMaterialSpecular(color);}
+	void setFrontMaterialEmission(const Color& color) {_state.setFrontMaterialEmission(color);}
+
+	void setBackMaterialAmbient(const Color& color) {_state.setBackMaterialAmbient(color);}
+	void setBackMaterialDiffuse(const Color& color) {_state.setBackMaterialDiffuse(color);}
+	void setBackMaterialSpecular(const Color& color) {_state.setBackMaterialSpecular(color);}
+	void setBackMaterialEmission(const Color& color) {_state.setBackMaterialEmission(color);}
 
 private:
 	void drawLines();
@@ -139,7 +141,6 @@ private:
 private:
 	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
 	std::vector<Vertex4> _linesVertexList_smooth, _linesVertexList_flat, _trianglesVertexList_flat, _trianglesVertexList_smooth;
-	Color _activeColor;
 	CanvasRGB* _colorBuffer;
 	Matrix4d _worldMatrix;	// projectionMatrix * modelViewMatrix // TODO: change calls to _worldMatrix to worldMatrix() function and implement lazy evaluation
 	bool _worldMatrixDirty;
@@ -147,20 +148,18 @@ private:
 	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	struct {Real x; Real y; Real width; Real height;} _viewport;
-	bool _normalizeNormals;	// set with GL_NORMALIZE
 	FrontFace _frontFace;
-	Point3d _normal;	// the active normal
+	//Point3d _normal;	// FIXME: delete
 	std::vector<Light> _lights;
 	Light* _lightModelAmbient;	// TODO: make it possible to disable this light
 	DepthFunc _depthFunc;
-
-	Material _materialFront, _materialBack;	// the material we currently assign to each new vertex
 
 	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
 	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
 
 	OpenGL_state _state;	// the state -- TODO: most of OpenGL class private members should move here
 	VertexOps _vertexOps;	// operations on vertices are done here - coordinate transformations, lighting..
+	Rasterizer _rasterizer;
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

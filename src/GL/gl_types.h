@@ -23,6 +23,18 @@ namespace ogl
 	typedef Matrix<Real, 3, 1/*, Eigen::DontAlign*/> Point3d;
 	typedef Matrix<Real, 4, 1/*, Eigen::DontAlign*/> Point4d;
 
+	template<int begin, int end, typename T>	// TODO: put this function to some other header
+	T clamp(T value)
+	{
+		if (value > static_cast<T>(end))
+			return static_cast<T>(end);
+
+		if (value < static_cast<T>(begin))
+			return static_cast<T>(begin);
+
+		return value;
+	}
+
 	enum ActiveVertexList {NONE,
 		GL_POINTS, GL_LINES,
 		GL_POLYGON, GL_TRIANGLES,

@@ -11,6 +11,8 @@
 #include <Eigen/Core>
 #include "OpenGL_state.h"
 #include "Vertex4.h"
+#include "VertexBuffer.h"
+#include "Rasterizer.h"
 
 namespace ggl {
 namespace ogl {
@@ -22,14 +24,19 @@ namespace ogl {
 
 class VertexOps {
 public:
-	VertexOps(OpenGL_state &state);
-	void addVertex(Vertex4& vertex);
-
+	VertexOps(OpenGL_state& state, Rasterizer& rasterizer);
+	void glBegin(const ActiveVertexList& list);
+	void glEnd();
+	void addVertex(Real x, Real y, Real z, Real w);
 
 private:
-	OpenGL_state _glState;
+	Vertex4 generateVertex(Real x, Real y, Real z, Real w);
 
-	ActiveVertexList _activeVertexList;	// the active vertex list(set by glBegin())
+private:
+	OpenGL_state& _glState;
+
+	VertexBuffer _vertexBuffer;
+	Rasterizer _rasterizer;
 };
 
 }

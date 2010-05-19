@@ -270,7 +270,7 @@ void glEnable(GLenum cap)
 		opengl.enableCulling();
 		break;
 	case	::GL_NORMALIZE:
-		opengl.enableNormalsNormalization();
+		opengl.setNormalizeNormals(true);
 		break;
 	case	::GL_LIGHTING:
 		opengl.enableLighting();
@@ -323,7 +323,7 @@ void glDisable(GLenum cap)
 		opengl.disableCulling();
 		break;
 	case ::GL_NORMALIZE:
-		opengl.disableNormalsNormalization();
+		opengl.setNormalizeNormals(false);
 		break;
 	case	::GL_LIGHTING:
 		opengl.disableLighting();

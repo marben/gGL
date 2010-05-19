@@ -10,6 +10,7 @@
 
 #include "GL/gl_types.h"
 #include "OpenGL_matrices.h"
+#include "Material.h"
 
 namespace ggl
 { namespace ogl {
@@ -17,6 +18,7 @@ namespace ggl
 class OpenGL_state
 {
 public:
+	OpenGL_state();
 
 	const ColorRGBA& getClearColor() const {return _clearColor;}
 	void setClearColor(const ColorRGBA& clearColor) {_clearColor = clearColor;}
@@ -31,34 +33,66 @@ public:
 	void setLightingEnabled(bool enabled) {_lightingEnabled = enabled;}
 	bool getLightingEnabled() const {return _lightingEnabled;}
 
-	//  ----- Matrix stufff
+	//  ----- Matrix stuff
 	void setMatrixMode(MatrixMode mode) {_matrices.setMatrixMode(mode);}
 	const Matrix4d& getProjectionMatrix() const {return _matrices.getProjectionMatrix();}
 	const Matrix4d& getTextureMatrix() const {return _matrices.getTextureMatrix();}
 	const Matrix4d& getModelViewMatrix() const {return _matrices.getModelViewMatrix();}
 	void loadIdentity() {_matrices.loadIdentity();}
-	void multiplyActiveMatrix(const Matrix4d& transformation) {_matrices.multiplyActiveMatrix(transformation);}
+	void multiplyActiveMatrix(const Matrix4d& transformation) {assert(!insideBeginEnd()); _matrices.multiplyActiveMatrix(transformation);}
 
 
-	const Matrix4d& getWorldMatrix() {return _matrices.getWorldMatrix();}
+	const Matrix4d& getWorldMatrix() {return _matrices.getWorldMatrix();}	// TODO: get rid of this
+	const OpenGL_matrices getMatrices() const {return _matrices;}
 
-public:
-	OpenGL_state() :
-		_clearColor(0.0, 0.0, 0.0, 0.0),
-		_cullingEnabled(false),
-		_cullFace(GL_BACK),
-		_lightingEnabled(false)
-	{
+    const Point3d& getNormal() const {return _normal;}
+    void setNormal(const Point3d& normal) { this->_normal = _normal; if (_normalizeNormals) _normal.normalize();}
 
-	}
+    void setNormalizeNormals(bool normalize) {_normalizeNormals = normalize;}
+    bool getNormalizeNormals() const {return _normalizeNormals;}
+
+    void setActiveColor(const Color& color) {_activeColor = color;}
+    const Color& getActiveColor() const {return _activeColor;}
+
+    void setShadeModel(const ShadeModel& shadeModel) {assert(!insideBeginEnd()); _shadeModel = shadeModel;}
+    const ShadeModel& getShadeModel() {return _shadeModel;}
+
+    // ----- Materials
+    const Material& getFrontMaterial() const {return _frontMaterial;}
+    const Material& getBackMaterial() const {return _backMaterial;}
+
+    void setFrontMaterialAmbient(const Color& color) {_frontMaterial.setAmbient(color);}
+	void setFrontMaterialDiffuse(const Color& color) {_frontMaterial.setDiffuse(color);}
+	void setFrontMaterialSpecular(const Color& color) {_frontMaterial.setSpecular(color);}
+	void setFrontMaterialEmission(const Color& color) {_frontMaterial.setEmission(color);}
+	void setFrontMaterialShininess(float shininess) {_frontMaterial.setShininess(shininess);}
+    void setBackMaterialAmbient(const Color& color) {_backMaterial.setAmbient(color);}
+	void setBackMaterialDiffuse(const Color& color) {_backMaterial.setDiffuse(color);}
+	void setBackMaterialSpecular(const Color& color) {_backMaterial.setSpecular(color);}
+	void setBackMaterialEmission(const Color& color) {_backMaterial.setEmission(color);}
+	void setBackMaterialShininess(float shininess) {_backMaterial.setShininess(shininess);}
+
+	// and now for some not so kosher stuff:  (TODO get rid of these dirty hacks??)
+	void insideBeginEnd(bool inside) {_insideBeginEnd = inside;}
+	bool insideBeginEnd() {return _insideBeginEnd;}
+
+	void setActiveVertexList(const ActiveVertexList& activeList) {_activeVertexList = activeList;}
+	const ActiveVertexList& getActiveVertexList() const {return _activeVertexList;}
 
 private:
 	ColorRGBA _clearColor;
+	Color _activeColor;
 	bool _cullingEnabled;
 	CullFace _cullFace;
 	bool _lightingEnabled;
+	Point3d _normal;
+	bool _normalizeNormals;
+	Material _frontMaterial, _backMaterial;
+	ShadeModel _shadeModel;
 
 	OpenGL_matrices _matrices;
+	ActiveVertexList _activeVertexList;
+	bool _insideBeginEnd;
 };
 
 }
