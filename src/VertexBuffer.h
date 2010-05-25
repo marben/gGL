@@ -36,7 +36,7 @@ public:
 	void add(Vertex4& vertex);
 
 	size_t size() const {return _vertices.size();}
-	void popBack() {_vertices.pop_back();}
+	void popBack() {return _vertices.pop_back();}
 
 	void transformToEyeCoordinates();	// apply's the modelview matrix
 	void transformToClipCoordinates();	// apply's the projection matrix or both modelview and projection
@@ -45,6 +45,10 @@ public:
 
 	CoordinateType getCoordinateType() const {return _coordinateType;}
 	void setCoordinateType(CoordinateType type) {_coordinateType = type;}
+
+	const Vertex4& operator[] (size_t i) {return _vertices[i];}
+
+	void clear();
 
 private:
 	void transformVertices(const Matrix4d& matrix, CoordinateType newCoordinateType);

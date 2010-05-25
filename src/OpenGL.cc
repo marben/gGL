@@ -498,6 +498,7 @@ void OpenGL::glColor(float r, float g, float b, float a)
 
 void OpenGL::glBegin(ActiveVertexList what)
 {
+	/*
 	assert(_initialized);
 	assert(what != NONE);
 	_activeVertexList = what;
@@ -522,14 +523,16 @@ void OpenGL::glBegin(ActiveVertexList what)
 	default:
 		break;
 	}
+	*/
+	_vertexOps.glBegin(what);
 }
 
 void OpenGL::glEnd()
 {
-	assert(_initialized);
-	_activeVertexList = NONE;
+	//assert(_initialized);
+	//_activeVertexList = NONE;
 
-	// TODO: should check correct number of trinagles/etc vertices instead of checking in the place of rendering..
+	_vertexOps.glEnd();
 }
 
 void OpenGL::drawTriangles()
@@ -1139,6 +1142,9 @@ void OpenGL::init(int x, int y)
 	_depthFunc = GL_LESS;
 
 	initLights();
+
+	_rasterizer.setBuffers(_colorBuffer, _zBuffer);
+
 }
 
 void OpenGL::glClearColor(float red, float green, float blue, float alpha)

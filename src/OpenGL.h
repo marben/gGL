@@ -35,15 +35,13 @@ inline int round_quick(Real x){	// TODO:here should be some fast..not so precise
 
 USING_PART_OF_NAMESPACE_EIGEN	// some libeigen suff....
 
-typedef float ZBuffer_t;
-
 class OpenGL
 {
 public:
 	OpenGL();
 	void init(int x, int y);
 	virtual ~OpenGL();
-	void setColorBuffer(CanvasRGB* colorBuffer) {_colorBuffer = colorBuffer;}
+	void setColorBuffer(CanvasRGB* colorBuffer) {_colorBuffer = colorBuffer; _rasterizer.setBuffers(_colorBuffer, _zBuffer);}
 
 	void clearColorBuffer();
 	void clearZBuffer();

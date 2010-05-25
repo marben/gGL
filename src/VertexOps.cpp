@@ -14,7 +14,6 @@ namespace ogl
 
 VertexOps::VertexOps(OpenGL_state& state, Rasterizer& rasterizer) :
 	_glState(state),
-	//_insideBeginEnd(false),
 	_vertexBuffer(_glState.getMatrices()),
 	_rasterizer(rasterizer)
 {
@@ -45,7 +44,11 @@ void VertexOps::glEnd()
 {
 	assert(_glState.insideBeginEnd());
 
+	// rasterization must take place before activeVertexList is set to NONE
 	_rasterizer.rasterize(_glState, _vertexBuffer);
+
+	_vertexBuffer.clear();
+	_vertexBuffer.setCoordinateType(OBJECT);
 
 	_glState.setActiveVertexList(NONE);
 

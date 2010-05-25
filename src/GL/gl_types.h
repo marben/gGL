@@ -44,6 +44,8 @@ namespace ogl
 		GlViewport() : x(0), y(0), w(640), h(480) {};	// FIXME: w & h should be initialized according to the window resolution
 	};
 
+	typedef float ZBuffer_t;
+
 	struct GlDepthRange {
 		Real zNear, zFar;
 

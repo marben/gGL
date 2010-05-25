@@ -44,7 +44,7 @@ public:
 
 
 	const Matrix4d& getWorldMatrix() {return _matrices.getWorldMatrix();}	// TODO: get rid of this
-	const OpenGL_matrices getMatrices() const {return _matrices;}
+	const OpenGL_matrices& getMatrices() const {return _matrices;}
 
     const Point3d& getNormal() const {return _normal;}
     void setNormal(const Point3d& normal) { this->_normal = _normal; if (_normalizeNormals) _normal.normalize();}

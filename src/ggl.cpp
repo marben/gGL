@@ -230,7 +230,7 @@ void display4()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT1);
 	glDisable(GL_LIGHT0);
 	glTranslated(200, 200, 0);
@@ -344,7 +344,7 @@ int main()
 	//Loader_Obj loader("M1.obj");
 	//cube = loader.getObject("M1");
 	glutInit(640, 480);
-	glutDisplayFunc(display4);
+	glutDisplayFunc(displayTriangles);
 	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	glutMainLoop();

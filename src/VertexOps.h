@@ -36,7 +36,7 @@ private:
 	OpenGL_state& _glState;
 
 	VertexBuffer _vertexBuffer;
-	Rasterizer _rasterizer;
+	Rasterizer& _rasterizer;
 };
 
 }

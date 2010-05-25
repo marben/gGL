@@ -74,6 +74,11 @@ void VertexBuffer::transformVertices(const Matrix4d& matrix, CoordinateType newC
 	_coordinateType = newCoordinateType;
 }
 
+void VertexBuffer::clear()
+{
+	_vertices.clear();
+}
+
 void VertexBuffer::add(Vertex4& vertex)
 {
 	_vertices.push_back(vertex);
