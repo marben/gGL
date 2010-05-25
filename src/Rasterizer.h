@@ -16,9 +16,16 @@ namespace ogl {
 
 class Rasterizer {
 public:
-	Rasterizer();
+	Rasterizer();	// TODO: state and vertex buffer could be passed to the constructor
 
 	void rasterize(const OpenGL_state& state, VertexBuffer& vertexBuffer);
+
+private:
+	//remove extra vertices, if buffer.size() % 3 != 0
+	void removePendingVerticesFromTrianglesList(VertexBuffer& buffer);
+	void shadeVertices(VertexBuffer& buffer);
+
+	//void renderTrianglesSmooth(const OpenGL_state& state, VertexBuffer);
 };
 
 }

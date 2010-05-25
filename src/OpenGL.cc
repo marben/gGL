@@ -296,10 +296,10 @@ void OpenGL::applyProjectionMatrix(std::vector<Vertex4>& vertices)
 
 void OpenGL::applyViewportTransformation(Vertex4& vertex)
 {
-	//std::cout<<"Before VT: x = "<<vertex.x()<<"  y="<<vertex.y()<<std::endl;
+	/*
 	vertex.x() = (vertex.x() + 1)*(_viewport.width/2 + _viewport.x);
 	vertex.y() = (vertex.y() + 1)*(_viewport.height/2 + _viewport.y);
-	//std::cout<<"After VT: x = "<<vertex.x()<<"  y="<<vertex.y()<<std::endl;
+	*/
 }
 
 void OpenGL::applyViewportTransformation(std::vector<Vertex4>& vertices)

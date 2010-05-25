@@ -57,10 +57,15 @@ public:
 
 	const Matrix<T, 4, 1/*, Eigen::DontAlign*/>& getPosition() const {return _vertex;}
 
-	bool lightingEnabled() const {return _lightingEnabled;}
+	bool lightingEnabled() const {return _lightingEnabled;}	// FIXME: get rid of this
+
+	void applyPerspectiveDivision() {
+		assert(w() != 0.0);
+		_vertex /= w();	// TODO: is it faster to divide all 4 values, or just x, y, z ??
+	}
 
 private:
-	Matrix<T, 4, 1/*, Eigen::DontAlign*/> _vertex;	// TODO: figure out, how to make it possible to pass this class with aligned Eigen::Matrix to std::Vector..  (maybe write spcial copy constructor or define aligned allocator in the vector?..) .. maybe a cvs version of libeigen?
+	Matrix<T, 4, 1/*, Eigen::DontAlign*/> _vertex;
 
 	Matrix<T, 3, 1/*, Eigen::DontAlign*/> _normal;
 

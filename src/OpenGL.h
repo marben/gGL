@@ -68,7 +68,8 @@ public:
 	void glShadeModel(const ShadeModel& model);
 	void glMatrixMode(MatrixMode mode);
 	void glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real zFar);
-	void glViewport(Real x, Real y, Real width, Real height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
+	//void glViewport(Real x, Real y, Real width, Real height) { _viewport.x = x; _viewport.y = y; _viewport.width = width; _viewport.height = height;}
+	void glViewport(Real x, Real y, Real w, Real h) {_state.setViewport(x, y, w, h);}
 	void glCullFace(CullFace mode);
 	void glFrontFace(FrontFace mode);
 	void glScale(Real x, Real y, Real z);
@@ -147,7 +148,7 @@ private:
 	ShadeModel _shadeModel;
 	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
-	struct {Real x; Real y; Real width; Real height;} _viewport;
+	//struct {Real x; Real y; Real width; Real height;} _viewport;
 	FrontFace _frontFace;
 	//Point3d _normal;	// FIXME: delete
 	std::vector<Light> _lights;

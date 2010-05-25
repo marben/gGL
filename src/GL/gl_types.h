@@ -20,8 +20,8 @@ namespace ogl
 
 	typedef ColorRGBA Color;
 
-	typedef Matrix<Real, 3, 1/*, Eigen::DontAlign*/> Point3d;
-	typedef Matrix<Real, 4, 1/*, Eigen::DontAlign*/> Point4d;
+	typedef Matrix<Real, 3, 1> Point3d;
+	typedef Matrix<Real, 4, 1> Point4d;
 
 	template<int begin, int end, typename T>	// TODO: put this function to some other header
 	T clamp(T value)
@@ -34,6 +34,21 @@ namespace ogl
 
 		return value;
 	}
+
+
+	struct GlViewport
+	{
+		int x, y;
+		unsigned w, h;
+
+		GlViewport() : x(0), y(0), w(640), h(480) {};	// FIXME: w & h should be initialized according to the window resolution
+	};
+
+	struct GlDepthRange {
+		Real zNear, zFar;
+
+		GlDepthRange() : zNear(0), zFar(1) {};
+	};
 
 	enum ActiveVertexList {NONE,
 		GL_POINTS, GL_LINES,

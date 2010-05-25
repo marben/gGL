@@ -22,11 +22,13 @@ VertexOps::VertexOps(OpenGL_state& state, Rasterizer& rasterizer) :
 
 void VertexOps::addVertex(Real x, Real y, Real z, Real w)
 {
-	assert(_glState.getActiveVertexList() != NONE);	// TODO these should be handled correctly, not witch asserts
+	assert(_glState.getActiveVertexList() != NONE);	// TODO these should be handled correctly, not with asserts
 	assert(_glState.insideBeginEnd());
 
 	Vertex4 vertex = generateVertex(x, y, z, w);
 
+
+	assert(_vertexBuffer.getCoordinateType() == OBJECT);
 	_vertexBuffer.add(vertex);
 }
 

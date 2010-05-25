@@ -15,6 +15,7 @@
 namespace ggl
 { namespace ogl {
 
+
 class OpenGL_state
 {
 public:
@@ -55,7 +56,7 @@ public:
     const Color& getActiveColor() const {return _activeColor;}
 
     void setShadeModel(const ShadeModel& shadeModel) {assert(!insideBeginEnd()); _shadeModel = shadeModel;}
-    const ShadeModel& getShadeModel() {return _shadeModel;}
+    const ShadeModel& getShadeModel() const {return _shadeModel;}
 
     // ----- Materials
     const Material& getFrontMaterial() const {return _frontMaterial;}
@@ -71,6 +72,13 @@ public:
 	void setBackMaterialSpecular(const Color& color) {_backMaterial.setSpecular(color);}
 	void setBackMaterialEmission(const Color& color) {_backMaterial.setEmission(color);}
 	void setBackMaterialShininess(float shininess) {_backMaterial.setShininess(shininess);}
+
+
+	void setViewport(int x, int y, unsigned w, unsigned h)	{_viewport.x = x; _viewport.y = y; _viewport.w = w; _viewport.h = h;}
+	const GlViewport& getViewport()const {return _viewport;}
+
+	void setDepthRange(Real zNear, Real zFar) {_depthRange.zNear = zNear; _depthRange.zFar = zFar;}
+	const GlDepthRange& getDepthRange() const {return _depthRange;}
 
 	// and now for some not so kosher stuff:  (TODO get rid of these dirty hacks??)
 	void insideBeginEnd(bool inside) {_insideBeginEnd = inside;}
@@ -89,6 +97,8 @@ private:
 	bool _normalizeNormals;
 	Material _frontMaterial, _backMaterial;
 	ShadeModel _shadeModel;
+	GlViewport _viewport;
+	GlDepthRange _depthRange;
 
 	OpenGL_matrices _matrices;
 	ActiveVertexList _activeVertexList;
