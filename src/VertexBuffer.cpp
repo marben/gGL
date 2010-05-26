@@ -31,7 +31,7 @@ void VertexBuffer::transformToWindowCoordinates(const GlViewport& viewport, cons
 		// z is mapped to zNear -> zFar
 		// http://www.songho.ca/opengl/gl_transform.html
 		// TODO: uncomment and test
-		//vertex.z() = ((depthRange.zFar - depthRange.zNear)/2) * vertex.z() + (depthRange.zFar + depthRange.zNear) / 2;
+		vertex.z() = ((depthRange.zFar - depthRange.zNear)/2) * vertex.z() + (depthRange.zFar + depthRange.zNear) / 2;
 	}
 }
 

@@ -21,7 +21,8 @@ OpenGL_state::OpenGL_state() :
 	_normal(0,0,1),
 	_normalizeNormals(false),
 	_activeVertexList(NONE),
-	_insideBeginEnd(false)
+	_insideBeginEnd(false),
+	_frontFace(GL_CCW)
 {
 	// --- Initial material state
 	setFrontMaterialAmbient(Color(0.2, 0.2, 0.2, 1.0));

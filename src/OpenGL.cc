@@ -434,9 +434,9 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 
 void OpenGL::enableCulling(bool b)
 {
-	if(inBetweenBeginEnd()){	// TODO: should throw some error
+/*	if(inBetweenBeginEnd()){	// TODO: should throw some error
 		return;
-	}
+	}*/
 	_state.setCullingEnabled(b);
 }
 
@@ -1155,17 +1155,12 @@ void OpenGL::glClearColor(float red, float green, float blue, float alpha)
 
 void OpenGL::glCullFace(CullFace mode)
 {
-	if(inBetweenBeginEnd())	// TODO: throw some error (see man page)
-		return;
-
 	_state.setCullFace(mode);
 }
 
 void OpenGL::glFrontFace(FrontFace mode)
 {
-	if(inBetweenBeginEnd())	// TODO: throw some error (see man page)
-		return;
-	_frontFace = mode;
+	_state.setFrontFace(mode);
 }
 
 void OpenGL::putPixel(int x, int y, double z, const ggl::ColorRGB& color)

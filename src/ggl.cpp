@@ -269,7 +269,7 @@ void displayTriangles()
 
 	//glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
 	GLfloat lightPosition[] = {3.0, 7.0, 0.0, 1.0};
@@ -305,6 +305,7 @@ void displayTriangles()
 	glEnd();
 
 
+	//glRotatef(angle, 0 ,0, 1);
 	glColor3f(0,0.3,0.77);
 	glBegin(GL_TRIANGLES);
 		glVertex3f(1, -1, -9);

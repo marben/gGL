@@ -25,10 +25,13 @@ Rasterizer::Rasterizer() {
 	// TODO Auto-generated constructor stub
 }
 
+// This is basically what is known as "Primitive Assembly"
 void Rasterizer::rasterize(const OpenGL_state& state, VertexBuffer& vertexBuffer)
 {
 	assert(state.getActiveVertexList() != NONE);
 	assert(vertexBuffer.getCoordinateType() == OBJECT);
+
+	_state = &state;	//TODO: this whole concept of OpenGL_state, VertexOps, VertexBuffer is wrong...need to redesign and make objects passing more sane
 
 	switch(state.getActiveVertexList())
 	{
@@ -61,6 +64,28 @@ void Rasterizer::rasterize(const OpenGL_state& state, VertexBuffer& vertexBuffer
 		assert(0);	// not supported yet
 		break;
 	}
+}
+
+bool Rasterizer::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
+{
+	if(_state->getCullingEnabled() == false)
+		return false;
+
+	Matrix<Real, 3, 1> v1(vertex2.x() - vertex1.x(), vertex2.y() - vertex1.y(), vertex2.z() - vertex1.z());
+	Matrix<Real, 3, 1> v2(vertex3.x() - vertex1.x(), vertex3.y() - vertex1.y(), vertex3.z() - vertex1.z());
+	v1.normalize();
+	v2.normalize();
+	Matrix<Real, 3, 1> n = (_state->getFrontFace() == GL_CW)?v1.cross(v2):v2.cross(v1);
+	Matrix<Real, 3, 1> eye(0.0,0.0,-1.0);
+	double angle = eye.dot(n);
+
+	if(angle <= 0 && (_state->getCullFace() == GL_BACK || _state->getCullFace() == GL_FRONT_AND_BACK))
+		return true;
+
+	if(angle >= 0 && (_state->getCullFace() == GL_FRONT || _state->getCullFace() == GL_FRONT_AND_BACK))
+		return true;
+
+	return false;
 }
 
 void Rasterizer::drawSmoothTriangle(const Vertex4 & v1, const Vertex4 & v2, const Vertex4 & v3)
@@ -203,7 +228,12 @@ void Rasterizer::drawSmoothTriangles(const OpenGL_state& state, VertexBuffer& ve
 
 	for (size_t i = 0; i < vertexBuffer.size(); i += 3)
 	{
-		drawSmoothTriangle(vertexBuffer[i+0], vertexBuffer[i+1], vertexBuffer[i+2]);
+		const Vertex4& v1 = vertexBuffer[i + 0];
+		const Vertex4& v2 = vertexBuffer[i + 1];
+		const Vertex4& v3 = vertexBuffer[i + 2];
+
+		if (!cullFace(v1, v2, v3))
+			drawSmoothTriangle(v1, v2, v3);
 	}
 }
 

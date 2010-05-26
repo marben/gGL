@@ -29,7 +29,7 @@ public:
 	bool getCullingEnabled() const {return _cullingEnabled;}
 
 	const CullFace& getCullFace() const {return _cullFace;}
-	void setCullFace(const CullFace& cullFace) {_cullFace = cullFace;}
+	void setCullFace(const CullFace& cullFace) {assert(!insideBeginEnd()); _cullFace = cullFace;}
 
 	void setLightingEnabled(bool enabled) {_lightingEnabled = enabled;}
 	bool getLightingEnabled() const {return _lightingEnabled;}
@@ -57,6 +57,9 @@ public:
 
     void setShadeModel(const ShadeModel& shadeModel) {assert(!insideBeginEnd()); _shadeModel = shadeModel;}
     const ShadeModel& getShadeModel() const {return _shadeModel;}
+
+    void setFrontFace(FrontFace frontFace) {assert(!insideBeginEnd()); _frontFace = frontFace;}
+    const FrontFace& getFrontFace() const {return _frontFace;}
 
     // ----- Materials
     const Material& getFrontMaterial() const {return _frontMaterial;}
@@ -99,6 +102,7 @@ private:
 	ShadeModel _shadeModel;
 	GlViewport _viewport;
 	GlDepthRange _depthRange;
+	FrontFace _frontFace;
 
 	OpenGL_matrices _matrices;
 	ActiveVertexList _activeVertexList;
