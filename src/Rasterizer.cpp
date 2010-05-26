@@ -16,6 +16,7 @@
 	 */
 
 #include "Rasterizer.h"
+#include <Eigen/Geometry>
 
 namespace ggl {
 

@@ -8,6 +8,8 @@
 #ifndef RASTERIZER_H_
 #define RASTERIZER_H_
 
+#include <Eigen/Core>
+
 #include "OpenGL_state.h"
 #include "VertexBuffer.h"
 
@@ -38,6 +40,9 @@ private:
 	CanvasRGB* _colorBuffer;
 	ZBuffer_t* _zBuffer;
 	const OpenGL_state *_state;
+
+public:
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 }

@@ -147,7 +147,7 @@ private:
 	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	//struct {Real x; Real y; Real width; Real height;} _viewport;
-	FrontFace _frontFace;
+	//FrontFace _frontFace;
 	//Point3d _normal;	// FIXME: delete
 	std::vector<Light> _lights;
 	Light* _lightModelAmbient;	// TODO: make it possible to disable this light

@@ -305,7 +305,7 @@ void displayTriangles()
 	glEnd();
 
 
-	//glRotatef(angle, 0 ,0, 1);
+	glRotatef(angle, 0 ,0, 1);
 	glColor3f(0,0.3,0.77);
 	glBegin(GL_TRIANGLES);
 		glVertex3f(1, -1, -9);

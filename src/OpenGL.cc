@@ -348,6 +348,7 @@ const CanvasRGB* OpenGL::glFlush()
 	return _colorBuffer;
 }
 
+/*
 void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 {
 	++_smoothTriangleVertexCounter;
@@ -373,7 +374,10 @@ void OpenGL::addTriangleVertex_smooth(Real x, Real y, Real z, Real w)
 		_smoothTriangleVertexCounter = 0;
 	}
 }
+*/
 
+
+/*
 void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 {
 	++_flatTriangleVertexCounter;
@@ -397,6 +401,7 @@ void OpenGL::addTriangleVertex_flat(Real x, Real y, Real z, Real w)
 		_flatTriangleVertexCounter = 0;
 	}
 }
+*/
 
 void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 {
@@ -434,9 +439,6 @@ void OpenGL::glVertex4(Real x, Real y, Real z, Real w)
 
 void OpenGL::enableCulling(bool b)
 {
-/*	if(inBetweenBeginEnd()){	// TODO: should throw some error
-		return;
-	}*/
 	_state.setCullingEnabled(b);
 }
 
@@ -469,6 +471,7 @@ void OpenGL::enableLight(int n, bool enabled)
 	_lights[n].enable(enabled);
 }
 
+/*
 bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
 {
 	if(_state.getCullingEnabled() == false)
@@ -489,7 +492,8 @@ bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vert
 		return true;
 
 	return false;
-}
+}*/
+
 
 void OpenGL::glColor(float r, float g, float b, float a)
 {
@@ -1129,7 +1133,7 @@ void OpenGL::init(int x, int y)
 
 	updateWorldMatrix();
 	_shadeModel = GL_SMOOTH;
-	_frontFace = GL_CCW;
+//	_frontFace = GL_CCW;
 	glViewport(0, 0, x, y);
 
 	_smoothTriangleVertexCounter = 0;
