@@ -11,6 +11,7 @@
 #include "GL/gl_types.h"
 #include "OpenGL_matrices.h"
 #include "Material.h"
+#include "Lights.h"
 
 namespace ggl
 { namespace ogl {
@@ -77,6 +78,17 @@ public:
 	void setBackMaterialShininess(float shininess) {_backMaterial.setShininess(shininess);}
 
 
+	// ------ Lights
+	void setLightAmbient(unsigned lightNumber, float r, float g, float b, float a);// {_lights.setAmbient(lightNumber, r, g, b, a);}
+	void setLightDiffuse(unsigned lightNumber, float r, float g, float b, float a);// {_lights.setDiffuse(lightNumber, r, g, b, a);}
+	void setLightSpecular(unsigned lightNumber, float r, float g, float b, float a);// {_lights.setSpecular(lightNumber, r, g, b, a);}
+	void setLightPosition(unsigned lightNumber, const Point4d& position);// {_lights.setPosition(lightNumber, position);}
+	void setLightSpotDirection(unsigned lightNumber, const Point3d& direction);// {_lights.setSpotDirection(lightNumber, direction);}
+	void enableLight(unsigned lightNumber);// {_lights.enableLight(lightNumber);}
+	void disableLight(unsigned lightNumber);// {_lights.disableLight(lightNumber);}
+	void setGlobalAmbientLight(float r, float g, float b, float a);// {_lights.setGlobalAmbientLight(r,g,b,a);}
+	const Lights& getLights() const {return _lights;}
+
 	void setViewport(int x, int y, unsigned w, unsigned h)	{_viewport.x = x; _viewport.y = y; _viewport.w = w; _viewport.h = h;}
 	const GlViewport& getViewport()const {return _viewport;}
 
@@ -102,10 +114,11 @@ private:
 	ShadeModel _shadeModel;
 	GlViewport _viewport;
 	GlDepthRange _depthRange;
-	FrontFace _frontFace;
-
-	OpenGL_matrices _matrices;
 	ActiveVertexList _activeVertexList;
+	FrontFace _frontFace;
+	Lights _lights;
+	OpenGL_matrices _matrices;
+
 	bool _insideBeginEnd;
 };
 

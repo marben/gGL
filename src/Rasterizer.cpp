@@ -241,6 +241,50 @@ void Rasterizer::drawSmoothTriangles(const OpenGL_state& state, VertexBuffer& ve
 void Rasterizer::shadeVertices(VertexBuffer& buffer)
 {
 	assert(buffer.getCoordinateType() == EYE);
+
+	for (size_t i = 0; i < buffer.size(); ++i)
+	{
+		shadeVertex(buffer[i]);
+	}
+}
+
+void Rasterizer::shadeVertex(Vertex4& vertex)
+{
+	Color color(Black);
+	const Lights& lights = _state->getLights();
+
+	// TODO: select between front and back materials
+	const Material& material = vertex.getMaterialFront();
+
+	for (unsigned i = 0; i < lights.numberOfLights(); ++i)
+	{
+		const Light& light = lights[i];
+
+		if (!light.isEnabled())
+			continue;
+
+		Vector3d vLight;
+
+		if(light.isDirectional())	// TODO: wtf am I doing here?? (old stuff...need to re-think)
+			vLight = light.getPosition().start<3>();
+		else
+			vLight = light.getPosition().start<3>() - vertex.getPosition().start<3>();
+
+		vLight.normalize();
+
+		// TODO: front/back material!!!
+		double angle_cos(vertex.getNormal().dot(vLight));
+		if(angle_cos <= 0)
+			//return Black;
+			//angle_cos *= -1;	// FIXME:::: !!!!! read the papers
+			color = Black;
+
+		color += (material.getAmbient()*light.getAmbient()) + ((material.getDiffuse() * light.getDiffuse()) * angle_cos);
+	}
+
+	color += material.getAmbient() * lights.getGlobalAmbientLight();
+
+	vertex.setColor(color);
 }
 
 void Rasterizer::putPixel(int x, int y, float z, const ggl::ColorRGB& color)

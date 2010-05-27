@@ -577,7 +577,7 @@ void glClearColor(float red, float green, float blue, float alpha){
 
 void glLightfv(GLenum light, GLenum pname, const GLfloat* params)
 {
-	int light_n;
+	unsigned light_n;
 	switch(light)
 	{
 	case ::GL_LIGHT0:

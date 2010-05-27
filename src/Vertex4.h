@@ -27,7 +27,6 @@ template<typename T, typename Color_t>
 class Vertex4_
 {
 public:
-	//Vertex4_(T x, T y, T z, T w, const Color_t& color):_vertex(Matrix<T, 4, 1>(x, y, z, w)), _color(color){}
 	Vertex4_(const Matrix<T, 4, 1>& vector, const Matrix<T, 3, 1>& normal, const Color_t& color, const Material& frontMaterial, const Material& backMaterial, bool lightingEnabled):
 		_vertex(vector), _normal(normal), _color(color),
 		_materialFront(frontMaterial), _materialBack(backMaterial), _lightingEnabled(lightingEnabled){}
@@ -42,8 +41,8 @@ public:
 	T& z(){return _vertex[2];}
 	T& w(){return _vertex[3];}
 
-	//const Color_t& color()const {return _color;}
 	const Color_t& getColor()const {return _color;}
+	void setColor(const Color_t color) {_color = color;}
 
 	const Material& getMaterialFront()const {return _materialFront;}
 

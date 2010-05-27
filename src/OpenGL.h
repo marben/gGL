@@ -15,10 +15,11 @@
 #include "ColorRGBA.h"
 #include "Image.h"
 #include "Vertex4.h"
-#include "Light.h"
+#include "Light.h"	// TODO: remove include
 #include "OpenGL_state.h"
 #include "VertexOps.h"
 #include "Rasterizer.h"
+//#include "Lights.h"
 
 
 namespace ggl {
@@ -50,8 +51,9 @@ public:
 	void disableCulling() {enableCulling(false);}
 	void enableLighting(bool b = true);
 	void disableLighting() {enableLighting(false);}
-	void enableLight(int n, bool enabled = true);
-	void disableLight(int n) {enableLight(n, false);}
+
+	void enableLight(int n) {_state.enableLight(n);}
+	void disableLight(int n) {_state.disableLight(n);}
 
 public:
 	void glClearColor(float red, float green, float blue, float alpha);
@@ -85,11 +87,12 @@ public:
 	void applyViewportTransformation(Vertex4& vertex);
 	void applyViewportTransformation(std::vector<Vertex4>& vertices);
 	void applyPerspectiveDivision(std::vector<Vertex4>& vertices);
-	void setLightAmbient(int light, float r, float g, float b, float a) {_lights[light].setAmbient(r, g, b, a);}
-	void setLightDiffuse(int light, float r, float g, float b, float a) {_lights[light].setDiffuse(r, g, b, a);}
-	void setLightSpecular(int light, float r, float g, float b, float a) {_lights[light].setSpecular(r, g, b, a);}
-	void setLightPosition(int light, const Point4d& position);
-	void setLightSpotDirection(int light, const Point3d& direction);
+
+	void setLightAmbient(unsigned lightNumber, float r, float g, float b, float a) {_state.setLightAmbient(lightNumber, r, g, b, a);}
+	void setLightDiffuse(unsigned lightNumber, float r, float g, float b, float a) {_state.setLightDiffuse(lightNumber, r, g, b, a);}
+	void setLightSpecular(unsigned lightNumber, float r, float g, float b, float a) {_state.setLightSpecular(lightNumber, r, g, b, a);}
+	void setLightPosition(unsigned lightNumber, const Point4d& position) {_state.setLightPosition(lightNumber, position);}
+	void setLightSpotDirection(unsigned lightNumber, const Point3d& direction) {_state.setLightSpotDirection(lightNumber, direction);}
 
 	void setFrontMaterialAmbient(const Color& color) {_state.setFrontMaterialAmbient(color);}
 	void setFrontMaterialDiffuse(const Color& color) {_state.setFrontMaterialDiffuse(color);}
@@ -130,7 +133,7 @@ private:
 	void addTriangleVertex_smooth(Real x, Real y, Real z, Real w);
 	void addTriangleVertex_flat(Real x, Real y, Real z, Real w);
 	void updateWorldMatrix() {_worldMatrixDirty = true;}	// sets the flag so that we know to recount the world matrix
-	void initLights();	// sets lights to default state according to opengl specification
+	//void initLights();	// sets lights to default state according to opengl specification
 
 private:
 
@@ -143,22 +146,23 @@ private:
 	CanvasRGB* _colorBuffer;
 	Matrix4d _worldMatrix;	// projectionMatrix * modelViewMatrix // TODO: change calls to _worldMatrix to worldMatrix() function and implement lazy evaluation
 	bool _worldMatrixDirty;
-	ShadeModel _shadeModel;
+	//ShadeModel _shadeModel;
 	ZBuffer_t* _zBuffer;
 	int _x, _y;	// resolution we are working with
 	//struct {Real x; Real y; Real width; Real height;} _viewport;
 	//FrontFace _frontFace;
 	//Point3d _normal;	// FIXME: delete
-	std::vector<Light> _lights;
+	//std::vector<Light> _lights;
 	Light* _lightModelAmbient;	// TODO: make it possible to disable this light
 	DepthFunc _depthFunc;
 
-	int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
-	int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
+	//int _smoothTriangleVertexCounter;	// only for use by addTrianglVertex_smooth
+	//int _flatTriangleVertexCounter;	// only for use by addTrianglVertex_flat
 
 	OpenGL_state _state;	// the state -- TODO: most of OpenGL class private members should move here
 	VertexOps _vertexOps;	// operations on vertices are done here - coordinate transformations, lighting..
 	Rasterizer _rasterizer;
+	//Lights _lights;
 
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

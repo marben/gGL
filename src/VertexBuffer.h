@@ -46,7 +46,7 @@ public:
 	CoordinateType getCoordinateType() const {return _coordinateType;}
 	void setCoordinateType(CoordinateType type) {_coordinateType = type;}
 
-	const Vertex4& operator[] (size_t i) {return _vertices[i];}
+	Vertex4& operator[] (size_t i) {return _vertices[i];}
 
 	void clear();
 

@@ -461,15 +461,21 @@ void OpenGL::enableLighting(bool b)
 	_state.setLightingEnabled(b);
 }
 
-void OpenGL::enableLight(int n, bool enabled)
+/*
+void OpenGL::enableLight(int n, bool enable)
 {
 	if(n < 0 || n > (int)available_lights_number - 1) {
 		std::cerr<<"enabling unavailable light number: "<<n<<std::endl;
 		return;
 	}
 
+
 	_lights[n].enable(enabled);
+
+
+	(enable)?_lights.enableLight(n):_lights.disableLight(n);
 }
+*/
 
 /*
 bool OpenGL::cullFace(const Vertex4& vertex1, const Vertex4& vertex2, const Vertex4& vertex3)
@@ -896,6 +902,8 @@ void OpenGL::drawTriangle_smooth(const Vertex4 & v1, const Vertex4 & v2, const V
 
 Color OpenGL::shade(const Vertex4& vertex) const
 {
+	/*
+
 	Color color(Black);
 	const Material* material;
 
@@ -928,6 +936,9 @@ Color OpenGL::shade(const Vertex4& vertex) const
 		}
 	}
 	return color;
+
+	*/
+	return Cyan;
 }
 
 void OpenGL::glLightModelAmbient(Real r, Real g, Real b, Real a)
@@ -1069,9 +1080,10 @@ void OpenGL::line(int x0, int y0, int x1, int y1, const Color& color)
 
 void OpenGL::glShadeModel(const ShadeModel& model)
 {
-		if(inBetweenBeginEnd())
-			return;	// TODO: should return some error
-		_shadeModel = model;
+		//if(inBetweenBeginEnd())
+		//	return;	// TODO: should return some error
+		//_shadeModel = model;
+	_state.setShadeModel(model);
 }
 
 void OpenGL::glMatrixMode(MatrixMode mode)
@@ -1120,6 +1132,7 @@ void OpenGL::glOrtho(Real left,Real right,Real bottom,Real top,Real zNear,Real z
 
 OpenGL::OpenGL() :
 	_vertexOps(_state, _rasterizer)
+	//_lights(_state.getMatrices())
 {
 	_initialized = false;
 	_colorBuffer = NULL;
@@ -1132,12 +1145,12 @@ void OpenGL::init(int x, int y)
 	_activeVertexList = NONE;
 
 	updateWorldMatrix();
-	_shadeModel = GL_SMOOTH;
+//	_shadeModel = GL_SMOOTH;
 //	_frontFace = GL_CCW;
 	glViewport(0, 0, x, y);
 
-	_smoothTriangleVertexCounter = 0;
-	_flatTriangleVertexCounter = 0;
+//	_smoothTriangleVertexCounter = 0;
+//	_flatTriangleVertexCounter = 0;
 	_zBuffer = new ZBuffer_t[x*y];
 
 	_initialized = true;
@@ -1145,7 +1158,7 @@ void OpenGL::init(int x, int y)
 
 	_depthFunc = GL_LESS;
 
-	initLights();
+//	initLights();
 
 	_rasterizer.setBuffers(_colorBuffer, _zBuffer);
 
@@ -1281,8 +1294,6 @@ void OpenGL::gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar)
 
 void OpenGL::glScale(Real x, Real y, Real z)
 {
-	if(inBetweenBeginEnd())
-			return;
 	Matrix4d matrix;
 	matrix <<	x, 0, 0, 0,
 					0, y, 0, 0,
@@ -1295,16 +1306,21 @@ void OpenGL::glScale(Real x, Real y, Real z)
 	_state.multiplyActiveMatrix(matrix);
 }
 
+/*
 void OpenGL::setLightPosition(int light, const Point4d& position)
 {
 	_lights[light].setPosition(_state.getModelViewMatrix() * position);
 }
+*/
 
+/*
 void OpenGL::setLightSpotDirection(int light, const Point3d& direction)
 {
 	_lights[light].setSpotDirection(_state.getModelViewMatrix().block<3,3>(0,0) * direction);
 }
+*/
 
+/*
 void OpenGL::initLights()
 {
 	for (unsigned i = 0; i < available_lights_number; ++i)
@@ -1331,6 +1347,7 @@ void OpenGL::initLights()
 	setLightSpecular(0, 1, 1, 1, 1);
 	//enableLight(0, true);	// LIGHT0 seems to be enabled by default	-- no, it doesn't
 }
+*/
 
 OpenGL::~OpenGL()
 {
