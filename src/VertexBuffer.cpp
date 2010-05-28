@@ -68,6 +68,7 @@ void VertexBuffer::transformVertices(const Matrix4d& matrix, CoordinateType newC
 
 	for (vertexIterator = _vertices.begin(), end = _vertices.end(); vertexIterator != end; ++vertexIterator)
 	{
+		// this only transforms vertex coordinates, NOT it's NORMAL
 		(*vertexIterator) *= matrix;
 	}
 

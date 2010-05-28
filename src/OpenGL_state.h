@@ -48,7 +48,7 @@ public:
 	const OpenGL_matrices& getMatrices() const {return _matrices;}
 
     const Point3d& getNormal() const {return _normal;}
-    void setNormal(const Point3d& normal) { this->_normal = _normal; if (_normalizeNormals) _normal.normalize();}
+    void setNormal(const Point3d& normal) { this->_normal = _normal;}
 
     void setNormalizeNormals(bool normalize) {_normalizeNormals = normalize;}
     bool getNormalizeNormals() const {return _normalizeNormals;}

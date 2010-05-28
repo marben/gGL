@@ -26,7 +26,6 @@ void VertexOps::addVertex(Real x, Real y, Real z, Real w)
 
 	Vertex4 vertex = generateVertex(x, y, z, w);
 
-
 	assert(_vertexBuffer.getCoordinateType() == OBJECT);
 	_vertexBuffer.add(vertex);
 }

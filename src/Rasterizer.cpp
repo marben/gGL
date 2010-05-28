@@ -250,11 +250,14 @@ void Rasterizer::shadeVertices(VertexBuffer& buffer)
 
 void Rasterizer::shadeVertex(Vertex4& vertex)
 {
-	Color color(Black);
+	Color color(0.0, 0.0, 0.0, 0.0);
 	const Lights& lights = _state->getLights();
 
 	// TODO: select between front and back materials
 	const Material& material = vertex.getMaterialFront();
+
+	if (_state->getNormalizeNormals())
+		vertex.normalizeNormal();
 
 	for (unsigned i = 0; i < lights.numberOfLights(); ++i)
 	{
@@ -265,7 +268,7 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 
 		Vector3d vLight;
 
-		if(light.isDirectional())	// TODO: wtf am I doing here?? (old stuff...need to re-think)
+		if(light.isDirectional())	// directional light doesn't have a position, just a direction given by .getPosition()
 			vLight = light.getPosition().start<3>();
 		else
 			vLight = light.getPosition().start<3>() - vertex.getPosition().start<3>();
@@ -276,10 +279,13 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 		double angle_cos(vertex.getNormal().dot(vLight));
 		if(angle_cos <= 0)
 			//return Black;
-			//angle_cos *= -1;	// FIXME:::: !!!!! read the papers
-			color = Black;
+			angle_cos *= -1;	// FIXME:::: !!!!! read the papers
 
-		color += (material.getAmbient()*light.getAmbient()) + ((material.getDiffuse() * light.getDiffuse()) * angle_cos);
+		// TODO adding colors is somehow complicated - needs thorough testing
+		// also the light's alpha value doesn't make sense to me..
+		//color += (material.getAmbient()*light.getAmbient()) + ((material.getDiffuse() * light.getDiffuse()) * angle_cos);
+		//TODO incorporate this mathematics into ColorRGBA somehow..
+		color += Color(material.getDiffuse().getR() * light.getDiffuse().getR() * angle_cos, material.getDiffuse().getG() * light.getDiffuse().getG() * angle_cos, material.getDiffuse().getB() * light.getDiffuse().getB() * angle_cos, material.getDiffuse().getA());
 	}
 
 	color += material.getAmbient() * lights.getGlobalAmbientLight();

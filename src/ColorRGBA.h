@@ -32,6 +32,8 @@ public:
 	virtual void clear(const float & value = 0) {_alpha = value; ColorRGB::clear(value);}
 	virtual void set(float r, float g, float b, float a) {setR(r);setG(g);setB(b);setA(a);}
 
+
+	//FIXME: following color-mixing may not make sense, but is used somewhere...re-think..
 	virtual ColorRGBA operator-(const ColorRGBA& p2)const {return ColorRGBA(this->r() - p2.r(), this->g() - p2.g(), this->b() - p2.b(), this->a() - p2.a());}
 	virtual ColorRGBA& operator+=(const ColorRGBA& p2) {_r += p2.r(); _g += p2.g(); _b += p2.b(); _alpha += p2.a();return *this;}
 	virtual ColorRGBA& operator-=(const ColorRGBA& p2) {_r -= p2.r(); _g -= p2.g(); _b -= p2.b(); _alpha -= p2.a();return *this;}
@@ -52,6 +54,8 @@ inline ColorRGBA operator*(const ColorRGBA& p, const float f) {	// we don't mult
 inline ColorRGBA operator +(const ColorRGBA& a, const ColorRGBA& b) {
 	return ColorRGBA(a.getR() + b.getR(), a.getG() + b.getG(), a.getB() + b.getB(), a.getA() + b.getA());
 }
+
+
 
 inline ColorRGBA operator *(const ColorRGBA& a, const ColorRGBA& b) {
 	return ColorRGBA(a.getR() * b.getR(), a.getG() * b.getG(), a.getB() * b.getB(), a.getA() * b.getA());

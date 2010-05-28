@@ -48,13 +48,15 @@ public:
 
 	const Material& getMaterialBack()const {return _materialBack;}
 
-	const Matrix<T, 3, 1/*, Eigen::DontAlign*/> getNormal()const {return _normal;}
+	const Matrix<T, 3, 1> getNormal()const {return _normal;}
 
-	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; return *this;}
+	void normalizeNormal() {_normal.normalize();}
 
-	const Matrix<T, 4, 1/*, Eigen::DontAlign*/>& getCoordinates() const {return _vertex;}
+	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; _normal = matrix.corner<3,3>(Eigen::TopLeft) * _normal; return *this;}
 
-	const Matrix<T, 4, 1/*, Eigen::DontAlign*/>& getPosition() const {return _vertex;}
+	const Matrix<T, 4, 1>& getCoordinates() const {return _vertex;}
+
+	const Matrix<T, 4, 1>& getPosition() const {return _vertex;}
 
 	bool lightingEnabled() const {return _lightingEnabled;}	// FIXME: get rid of this
 
@@ -64,9 +66,9 @@ public:
 	}
 
 private:
-	Matrix<T, 4, 1/*, Eigen::DontAlign*/> _vertex;
+	Matrix<T, 4, 1> _vertex;
 
-	Matrix<T, 3, 1/*, Eigen::DontAlign*/> _normal;
+	Matrix<T, 3, 1> _normal;
 
 	Color_t _color;
 
