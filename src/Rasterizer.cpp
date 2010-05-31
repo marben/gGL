@@ -256,8 +256,8 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 	// TODO: select between front and back materials
 	const Material& material = vertex.getMaterialFront();
 
-	if (_state->getNormalizeNormals())
-		vertex.normalizeNormal();
+	//if (_state->getNormalizeNormals())	// doesn't belong here. delete this!
+	//	vertex.normalizeNormal();
 
 	for (unsigned i = 0; i < lights.numberOfLights(); ++i)
 	{
@@ -266,7 +266,7 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 		if (!light.isEnabled())
 			continue;
 
-		Vector3d vLight;
+		Vector3 vLight;
 
 		if(light.isDirectional())	// directional light doesn't have a position, just a direction given by .getPosition()
 			vLight = light.getPosition().start<3>();
@@ -275,8 +275,11 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 
 		vLight.normalize();
 
+
 		// TODO: front/back material!!!
-		double angle_cos(vertex.getNormal().dot(vLight));
+		const Vector3 normal = vertex.getNormal().start<3>();
+		//double angle_cos(vertex.getNormal().start<3>().dot(vLight));
+		double angle_cos(normal.dot(vLight));
 		if(angle_cos <= 0)
 			//return Black;
 			angle_cos *= -1;	// FIXME:::: !!!!! read the papers

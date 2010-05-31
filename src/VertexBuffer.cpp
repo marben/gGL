@@ -5,6 +5,7 @@
  *      Author: gix
  */
 
+#include <Eigen/LU>
 #include "VertexBuffer.h"
 
 namespace ggl
@@ -14,9 +15,27 @@ namespace ogl
 
 void VertexBuffer::transformToEyeCoordinates()
 {
+	// TODO: normals should be transformed in one run along with the vertex bases .. probably better for cache memory
+
 	assert(_coordinateType == OBJECT);
 
 	transformVertices(_matrices.getModelViewMatrix(), EYE);
+
+	// now we need to transform the normals
+	// Nice explanation of the the way to transform normals can be found here:
+	// http://www.songho.ca/opengl/gl_normaltransform.html
+	Matrix4 modelviewInverseTransposed;
+
+	_matrices.getModelViewMatrix().computeInverse(&modelviewInverseTransposed);
+	modelviewInverseTransposed.transposeInPlace();
+
+	for (size_t i = 0; i < _vertices.size(); ++i)
+	{
+		Vertex4& vert = _vertices[i];
+
+
+		vert.multiplyNormal(modelviewInverseTransposed);	// vec * Matrix == Matrix(Transposed) * vec
+	}
 }
 
 void VertexBuffer::transformToWindowCoordinates(const GlViewport& viewport, const GlDepthRange& depthRange)

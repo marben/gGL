@@ -33,9 +33,9 @@ public:
 		_worldMatrixDirty = true;
 	}
 
-	const Matrix4d& getTextureMatrix() const {return _textureMatrix;}
-	const Matrix4d& getModelViewMatrix() const {return _modelViewMatrix;}
-	const Matrix4d& getProjectionMatrix() const {return _projectionMatrix;}
+	const Matrix4& getTextureMatrix() const {return _textureMatrix;}
+	const Matrix4& getModelViewMatrix() const {return _modelViewMatrix;}
+	const Matrix4& getProjectionMatrix() const {return _projectionMatrix;}
 
 	void setMatrixMode(MatrixMode mode) {
 		_matrixMode = mode;
@@ -59,19 +59,19 @@ public:
 	void multiplyActiveMatrix(const Matrix4d& transformation) {*_activeMatrix *= transformation; _worldMatrixDirty = true;}
 
 private:
-	Matrix4d _projectionMatrix;
-	Matrix4d _modelViewMatrix;
-	Matrix4d _textureMatrix;
+	Matrix4 _projectionMatrix;
+	Matrix4 _modelViewMatrix;
+	Matrix4 _textureMatrix;
 	MatrixMode _matrixMode;
 
-	Matrix4d* _activeMatrix;
+	Matrix4* _activeMatrix;
 
 public:
 	// following is just temporary -- until the transition to the sane side is finished..
 	bool _worldMatrixDirty;
-	Matrix4d _worldMatrix;
+	Matrix4 _worldMatrix;
 
-	const Matrix4d& getWorldMatrix() {
+	const Matrix4& getWorldMatrix() {
 		if (_worldMatrixDirty)
 		{
 			_worldMatrix = _projectionMatrix * _modelViewMatrix;

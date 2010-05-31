@@ -21,7 +21,11 @@ namespace ogl
 	typedef ColorRGBA Color;
 
 	typedef Matrix<Real, 3, 1> Point3d;
+	typedef Matrix<Real, 3, 1> Vector3;
+	typedef Matrix<Real, 4, 1> Vector4;
 	typedef Matrix<Real, 4, 1> Point4d;
+	//typedef Matrix<Real, 4, 1> Matrix4;
+	typedef Matrix4d Matrix4;
 
 	template<int begin, int end, typename T>	// TODO: put this function to some other header
 	T clamp(T value)

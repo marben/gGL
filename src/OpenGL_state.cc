@@ -18,7 +18,7 @@ OpenGL_state::OpenGL_state() :
 	_cullingEnabled(false),
 	_cullFace(GL_BACK),
 	_lightingEnabled(false),
-	_normal(0,0,1),
+	_normal(0, 0, 1, 1),
 	_normalizeNormals(false),
 	_activeVertexList(NONE),
 	_frontFace(GL_CCW),
@@ -91,6 +91,15 @@ void OpenGL_state::setGlobalAmbientLight(float r, float g, float b, float a)
 	assert(!insideBeginEnd());
 
 	_lights.setGlobalAmbientLight(r,g,b,a);
+}
+
+void OpenGL_state::setNormal(const Vector4& normal)
+{
+	/*
+	this->_normal = _normal;
+	if (getNormalizeNormals())
+		_normal.normalize();
+		*/
 }
 
 }
