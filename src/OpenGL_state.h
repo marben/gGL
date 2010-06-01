@@ -47,8 +47,8 @@ public:
 	const Matrix4d& getWorldMatrix() {return _matrices.getWorldMatrix();}	// TODO: get rid of this
 	const OpenGL_matrices& getMatrices() const {return _matrices;}
 
-    const Vector4& getNormal() const {return _normal;}
-    void setNormal(const Vector4& normal);
+    const Vector3& getNormal() const {return _normal;}
+    void setNormal(const Vector3& normal);
 
     void setNormalizeNormals(bool normalize) {_normalizeNormals = normalize;}
     bool getNormalizeNormals() const {return _normalizeNormals;}
@@ -108,7 +108,7 @@ private:
 	bool _cullingEnabled;
 	CullFace _cullFace;
 	bool _lightingEnabled;
-	Vector4 _normal;
+	Vector3 _normal;
 	bool _normalizeNormals;
 	Material _frontMaterial, _backMaterial;
 	ShadeModel _shadeModel;

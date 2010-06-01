@@ -38,7 +38,7 @@ public:
 	size_t size() const {return _vertices.size();}
 	void popBack() {return _vertices.pop_back();}
 
-	void transformToEyeCoordinates();	// apply's the modelview matrix
+	void transformToEyeCoordinates(bool normalizeNormals);	// apply's the modelview matrix
 	void transformToClipCoordinates();	// apply's the projection matrix or both modelview and projection
 	void transformToNormalizedDeviceCoordinates();	// apply's the perspective division
 	void transformToWindowCoordinates(const GlViewport& viewport, const GlDepthRange& depthRange);

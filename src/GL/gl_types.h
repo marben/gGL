@@ -26,6 +26,7 @@ namespace ogl
 	typedef Matrix<Real, 4, 1> Point4d;
 	//typedef Matrix<Real, 4, 1> Matrix4;
 	typedef Matrix4d Matrix4;
+	typedef Matrix<Real, 3, 3> Matrix3;
 
 	template<int begin, int end, typename T>	// TODO: put this function to some other header
 	T clamp(T value)

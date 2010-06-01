@@ -56,7 +56,7 @@ void VertexOps::glEnd()
 
 Vertex4 VertexOps::generateVertex(Real x, Real y, Real z, Real w)
 {
-	return Vertex4(Vertex4(Matrix<Real, 4, 1>(x, y, z, w), _glState.getNormal(), _glState.getActiveColor(), _glState.getFrontMaterial(), _glState.getBackMaterial(), _glState.getLightingEnabled()));
+	return Vertex4(Matrix<Real, 4, 1>(x, y, z, w), _glState.getNormal(), _glState.getActiveColor(), _glState.getFrontMaterial(), _glState.getBackMaterial(), _glState.getLightingEnabled());
 }
 
 }	// namespace ogl

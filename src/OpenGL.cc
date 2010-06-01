@@ -948,7 +948,7 @@ void OpenGL::glLightModelAmbient(Real r, Real g, Real b, Real a)
 
 void OpenGL::glNormal(Real x, Real y, Real z)
 {
-	_state.setNormal(Vector4(x, y, z, 1));
+	_state.setNormal(Vector3(x, y, z));
 	/*
 	_normal << x, y, z;
 	updateWorldMatrix();	// this is necessary, since _world matrix is recounted on lazy basis only on the Call of glBegin()

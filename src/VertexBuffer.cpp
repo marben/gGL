@@ -13,7 +13,7 @@ namespace ggl
 namespace ogl
 {
 
-void VertexBuffer::transformToEyeCoordinates()
+void VertexBuffer::transformToEyeCoordinates(bool normalizeNormals)
 {
 	// TODO: normals should be transformed in one run along with the vertex bases .. probably better for cache memory
 
@@ -24,17 +24,24 @@ void VertexBuffer::transformToEyeCoordinates()
 	// now we need to transform the normals
 	// Nice explanation of the the way to transform normals can be found here:
 	// http://www.songho.ca/opengl/gl_normaltransform.html
-	Matrix4 modelviewInverseTransposed;
+	// and here:
+	// http://www.opengl.org/documentation/specs/version1.1/glspec1.1/node26.html
 
-	_matrices.getModelViewMatrix().computeInverse(&modelviewInverseTransposed);
+
+	Matrix3 modelviewInverseTransposed;
+	//modelviewInverseTransposed = _matrices.getModelViewMatrix().corner<3,3>(Eigen::TopLeft);
+	_matrices.getModelViewMatrix().corner<3,3>(Eigen::TopLeft).computeInverse(&modelviewInverseTransposed);
 	modelviewInverseTransposed.transposeInPlace();
+
 
 	for (size_t i = 0; i < _vertices.size(); ++i)
 	{
 		Vertex4& vert = _vertices[i];
 
+		vert.multiplyNormal(modelviewInverseTransposed);	// vec(transposed) * Matrix == Matrix(transposed) * vec
 
-		vert.multiplyNormal(modelviewInverseTransposed);	// vec * Matrix == Matrix(Transposed) * vec
+		if (normalizeNormals)
+			vert.normalizeNormal();
 	}
 }
 
@@ -87,7 +94,6 @@ void VertexBuffer::transformVertices(const Matrix4d& matrix, CoordinateType newC
 
 	for (vertexIterator = _vertices.begin(), end = _vertices.end(); vertexIterator != end; ++vertexIterator)
 	{
-		// this only transforms vertex coordinates, NOT it's NORMAL
 		(*vertexIterator) *= matrix;
 	}
 

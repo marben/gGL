@@ -41,7 +41,7 @@ void Rasterizer::rasterize(const OpenGL_state& state, VertexBuffer& vertexBuffer
 
 		if (state.getLightingEnabled() == true)
 		{
-			vertexBuffer.transformToEyeCoordinates();
+			vertexBuffer.transformToEyeCoordinates(_state->getNormalizeNormals());
 			shadeVertices(vertexBuffer);
 		}
 

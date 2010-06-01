@@ -27,7 +27,7 @@ template<typename T, typename Color_t>
 class Vertex4_
 {
 public:
-	Vertex4_(const Matrix<T, 4, 1>& vector, const Matrix<T, 4, 1>& normal, const Color_t& color, const Material& frontMaterial, const Material& backMaterial, bool lightingEnabled):
+	Vertex4_(const Matrix<T, 4, 1>& vector, const Matrix<T, 3, 1>& normal, const Color_t& color, const Material& frontMaterial, const Material& backMaterial, bool lightingEnabled):
 		_vertex(vector), _normal(normal), _color(color),
 		_materialFront(frontMaterial), _materialBack(backMaterial), _lightingEnabled(lightingEnabled){}
 
@@ -48,14 +48,17 @@ public:
 
 	const Material& getMaterialBack()const {return _materialBack;}
 
-	const Matrix<T, 4, 1> getNormal()const {return _normal;}
+	const Matrix<T, 3, 1>& getNormal()const {return _normal;}
 
-	void normalizeNormal() {_normal.normalize();}
+	void normalizeNormal() {_normal.normalize();}	// FIXME: delete
 
 	//Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; _normal = matrix.corner<3,3>(Eigen::TopLeft) * _normal; return *this;}
 	Vertex4_<T, Color_t>& operator*=(const Matrix4d& matrix) { _vertex = matrix * _vertex; return *this;}
 
-	void multiplyNormal(const Matrix<T, 4, 4>& matrix) { _normal = matrix * _normal;}
+	void multiplyNormal(const Matrix<T, 3, 3>& matrix)
+	{
+		_normal = matrix * _normal;
+	}
 
 	const Matrix<T, 4, 1>& getCoordinates() const {return _vertex;}
 
@@ -71,7 +74,7 @@ public:
 private:
 	Matrix<T, 4, 1> _vertex;
 
-	Matrix<T, 4, 1> _normal;
+	Matrix<T, 3, 1> _normal;
 
 	Color_t _color;
 
