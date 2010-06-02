@@ -240,9 +240,10 @@ void display4()
 	//glNormal3f(0,0,1);
 
 	glShadeModel(GL_SMOOTH);
+	/*
 	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, glWhite);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);*/
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glRotatef(angle, 1, 1, 0);
 	//glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
@@ -256,7 +257,7 @@ void display4()
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glWhite);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glBlack);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glRed);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
 
 	glEnable(GL_NORMALIZE);
@@ -275,24 +276,24 @@ void displayTriangles()
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
 	GLfloat lightPosition[] = {0.0, 0.0, 2.0, 1.0};
-	GLfloat lightColor[] = {1.0, 1.0, 1.0, 1.0};
+	GLfloat lightColor[] = {1.0, 0.5, 1.0, 1.0};
 
 	GLfloat material1[]={1.0, 0.0, 0.0, 1.0};
 	GLfloat material2[]={0.0, 1.0, 0.0, 1.0};
 
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material1);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glBlack);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material1);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glBlack);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
 
-	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+//	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+//	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);
+//	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
 	// just a test
 
@@ -325,13 +326,18 @@ void displayTriangles()
 
 
 	//glRotatef(angle, 0 ,0, 1);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material2);
-	glColor3f(0,0.3,0.77);
+
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material2);
+//	glColor3f(0,0.3,0.77);
+
 	glBegin(GL_TRIANGLES);
+		//glMaterialfv(GL_FRONT, GL_SPECULAR, material3);
 		glVertex3f(1, -1, -9);
-		glVertex3f(1, 1, -9);
+		//glMaterialfv(GL_FRONT, GL_SPECULAR, material2);
 		glVertex3f(-1, 1, -9);
+		glVertex3f(1, 1, -9);
 	glEnd();
+
 
 
 	glFlush();
@@ -367,7 +373,8 @@ int main()
 	glutInit(640, 480);
 	glutDisplayFunc(display4);
 	glutTimerFunc(delay, timerCallback, 0);
-	glClearColor(0.07, 0.1, 0, 1);
+	//glClearColor(0.07, 0.1, 0, 1);
+	glClearColor(0.0, 0.0, 1.0, 1.0);
 	glutMainLoop();
 
 	return 0;

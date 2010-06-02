@@ -53,6 +53,9 @@ public:
     void setNormalizeNormals(bool normalize) {_normalizeNormals = normalize;}
     bool getNormalizeNormals() const {return _normalizeNormals;}
 
+    bool getBlendingEnabled() const {return _blendingEnabled;}
+    void setBlendingEnabled(bool enabled) {_blendingEnabled = enabled;}
+
     void setActiveColor(const Color& color) {_activeColor = color;}
     const Color& getActiveColor() const {return _activeColor;}
 
@@ -118,6 +121,7 @@ private:
 	FrontFace _frontFace;
 	Lights _lights;
 	OpenGL_matrices _matrices;
+	bool _blendingEnabled;
 
 	bool _insideBeginEnd;
 };

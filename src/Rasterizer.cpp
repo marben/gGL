@@ -54,7 +54,7 @@ void Rasterizer::rasterize(const OpenGL_state& state, VertexBuffer& vertexBuffer
 		switch (state.getShadeModel())
 		{
 		case GL_SMOOTH:
-			drawSmoothTriangles(state, vertexBuffer);
+			drawSmoothTriangles(vertexBuffer);
 			break;
 		case GL_FLAT:
 			break;
@@ -223,7 +223,7 @@ void Rasterizer::drawSmoothHLine(int x0, int y, double z0, int x1, double z1, co
 	}
 }
 
-void Rasterizer::drawSmoothTriangles(const OpenGL_state& state, VertexBuffer& vertexBuffer)
+void Rasterizer::drawSmoothTriangles(VertexBuffer& vertexBuffer)
 {
 	assert(vertexBuffer.size() % 3 == 0);
 
@@ -250,11 +250,16 @@ void Rasterizer::shadeVertices(VertexBuffer& buffer)
 
 void Rasterizer::shadeVertex(Vertex4& vertex)
 {
+	// By default, OpenGL is using Blinn-Phong shading model...
+	// explained here: http://wiki.gamedev.net/index.php/D3DBook:%28Lighting%29_Blinn-Phong
+	// which btw, seems to be more accurate, than phong: http://people.csail.mit.edu/wojciech/BRDFValidation/index.html
+
 	Color color(0.0, 0.0, 0.0, 0.0);
 	const Lights& lights = _state->getLights();
 
 	// TODO: select between front and back materials
 	const Material& material = vertex.getMaterialFront();
+	const Vector3& vNormal = vertex.getNormal();
 
 	//if (_state->getNormalizeNormals())	// doesn't belong here. delete this!
 	//	vertex.normalizeNormal();
@@ -275,20 +280,33 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 
 		vLight.normalize();
 
+		Vector3 vViewer = Vector3(0,0,0) - vertex.getPosition().start<3>();	// TODO: just multiple by -1 ??
+		vViewer.normalize();
 
-		// TODO: front/back material!!!
-		const Vector3 normal = vertex.getNormal().start<3>();
-		//double angle_cos(vertex.getNormal().start<3>().dot(vLight));
-		double angle_cos(normal.dot(vLight));
-		if(angle_cos <= 0)
-			//return Black;
-			angle_cos *= -1;	// FIXME:::: !!!!! read the papers
+		Vector3 halfVector = vLight + vViewer;
+		halfVector.normalize();
+
+		float halfVectorDotNormal = halfVector.dot(vNormal);
+
+		if (halfVectorDotNormal > 0.0f)
+		{
+			float specularCoefficient = pow(halfVectorDotNormal, material.getShininess());
+			color += (material.getSpecular() * light.getSpecular()) * specularCoefficient;
+		}
+
+		const Vector3& normal = vertex.getNormal().start<3>();
+
+		float diffuse_cos(normal.dot(vLight));
+		if(diffuse_cos <= 0.0)
+			continue;	// TODO: is this ok?
+
+		//Vector3
 
 		// TODO adding colors is somehow complicated - needs thorough testing
 		// also the light's alpha value doesn't make sense to me..
 		//color += (material.getAmbient()*light.getAmbient()) + ((material.getDiffuse() * light.getDiffuse()) * angle_cos);
-		//TODO incorporate this mathematics into ColorRGBA somehow..
-		color += Color(material.getDiffuse().getR() * light.getDiffuse().getR() * angle_cos, material.getDiffuse().getG() * light.getDiffuse().getG() * angle_cos, material.getDiffuse().getB() * light.getDiffuse().getB() * angle_cos, material.getDiffuse().getA());
+		color += material.getAmbient() * light.getAmbient();
+		color += (material.getDiffuse() * light.getDiffuse()) * diffuse_cos;
 	}
 
 	color += material.getAmbient() * lights.getGlobalAmbientLight();
@@ -314,8 +332,15 @@ void Rasterizer::putPixel(int x, int y, float z, const ggl::ColorRGB& color)
 
 	if (z_passed)
 	{
-		_zBuffer[buffer_offset] = z;
-		_colorBuffer->putPixel(x, _colorBuffer->height() - y - 1, color);	//need to reverse y
+		if (!_state->getBlendingEnabled())
+		{
+			_zBuffer[buffer_offset] = z;
+			_colorBuffer->putPixel(x, _colorBuffer->height() - y - 1, color);	//need to reverse y
+		}
+		else	// blending is enabled
+		{
+			assert(0);	// TODO: write blending
+		}
 	}
 }
 

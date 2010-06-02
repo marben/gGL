@@ -78,7 +78,7 @@ private:
 
 	Color_t _color;
 
-	Material _materialFront, _materialBack;
+	Material _materialFront, _materialBack;	// TODO: material should probably be property of the state, not of the vertex
 
 	bool _lightingEnabled;
 

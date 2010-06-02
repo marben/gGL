@@ -55,8 +55,6 @@ inline ColorRGBA operator +(const ColorRGBA& a, const ColorRGBA& b) {
 	return ColorRGBA(a.getR() + b.getR(), a.getG() + b.getG(), a.getB() + b.getB(), a.getA() + b.getA());
 }
 
-
-
 inline ColorRGBA operator *(const ColorRGBA& a, const ColorRGBA& b) {
 	return ColorRGBA(a.getR() * b.getR(), a.getG() * b.getG(), a.getB() * b.getB(), a.getA() * b.getA());
 }

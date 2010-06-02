@@ -23,6 +23,7 @@ OpenGL_state::OpenGL_state() :
 	_activeVertexList(NONE),
 	_frontFace(GL_CCW),
 	_lights(_matrices),
+	_blendingEnabled(false),
 	_insideBeginEnd(false)
 {
 	// --- Initial material state
