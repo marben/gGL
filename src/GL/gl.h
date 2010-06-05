@@ -102,6 +102,10 @@ void glutPostRedisplay();
 
 void glLightModelfv(GLenum pname, GLfloat param);
 
+void glPushMatrix();
+
+void glPopMatrix();
+
 void glClear(GLbitfield bufferMask);
 
 void glShadeModel(GLenum mode);

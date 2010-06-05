@@ -10,6 +10,7 @@
 
 #include <Eigen/Core>
 #include "GL/gl_types.h"
+#include <vector>
 
 namespace ggl {
 namespace ogl {
@@ -43,20 +44,36 @@ public:
 
 		case GL_MODELVIEW:
 			_activeMatrix = &_modelViewMatrix;
+			_activeMatrixStack = &_modelviewMatrixStack;
 			break;
 
 		case GL_PROJECTION:
 			_activeMatrix = &_projectionMatrix;
+			_activeMatrixStack = &_projectionMatrixStack;
 			break;
 
 		case GL_TEXTURE:
 			_activeMatrix = &_textureMatrix;
+			_activeMatrixStack = &_textureMatrixStack;
 			break;
 		}
 	}
 
 	void loadIdentity() {_activeMatrix->setIdentity();}
-	void multiplyActiveMatrix(const Matrix4d& transformation) {*_activeMatrix *= transformation; _worldMatrixDirty = true;}
+	void multiplyActiveMatrix(const Matrix4d& transformation) {
+		*_activeMatrix *= transformation;
+		_worldMatrixDirty = true;
+	}
+
+	void pushMatrix() {
+		_activeMatrixStack->push_back(*_activeMatrix);
+	}
+
+	void popMatrix() {
+		assert(_activeMatrixStack->size() > 0);
+		*_activeMatrix = _activeMatrixStack->back();
+		_activeMatrixStack->pop_back();
+	}
 
 private:
 	Matrix4 _projectionMatrix;
@@ -64,7 +81,14 @@ private:
 	Matrix4 _textureMatrix;
 	MatrixMode _matrixMode;
 
+	// TODO: the top of the stack could/should act as a 'current' matrix
+
+	std::vector<Matrix4> _projectionMatrixStack;
+	std::vector<Matrix4> _modelviewMatrixStack;
+	std::vector<Matrix4> _textureMatrixStack;
+
 	Matrix4* _activeMatrix;
+	std::vector<Matrix4>* _activeMatrixStack;
 
 public:
 	// following is just temporary -- until the transition to the sane side is finished..

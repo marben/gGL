@@ -43,6 +43,8 @@ public:
 	void loadIdentity() {_matrices.loadIdentity();}
 	void multiplyActiveMatrix(const Matrix4d& transformation) {assert(!insideBeginEnd()); _matrices.multiplyActiveMatrix(transformation);}
 
+	void pushMatrix() {assert(!insideBeginEnd()); _matrices.pushMatrix();}
+	void popMatrix() {assert(!insideBeginEnd()); _matrices.popMatrix();}
 
 	const Matrix4d& getWorldMatrix() {return _matrices.getWorldMatrix();}	// TODO: get rid of this
 	const OpenGL_matrices& getMatrices() const {return _matrices;}

@@ -179,6 +179,16 @@ void glLightModelfv(GLenum pname, GLfloat* params)
 	}
 }
 
+void glPushMatrix()
+{
+	opengl.glPushMatrix();
+}
+
+void glPopMatrix()
+{
+	opengl.glPopMatrix();
+}
+
 void glutDisplayFunc(void (*func)(void))
 {
 	glutDisplayFunction = func;

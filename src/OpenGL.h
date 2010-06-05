@@ -76,6 +76,8 @@ public:
 	void glNormal(Real x, Real y, Real z);
 	void glLightModelAmbient(Real r, Real g, Real b, Real a);
 	void glDepthFunc(DepthFunc function) {_depthFunc = function;}
+	void glPushMatrix() {_state.pushMatrix();}
+	void glPopMatrix() {_state.popMatrix();}
 
 	void gluPerspective(Real fovy, Real aspect, Real zNear, Real zFar);
 

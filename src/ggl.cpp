@@ -27,7 +27,7 @@ int width = 640, height = 480;
 int nearPlane = 1, farPlane = 1000;
 
 int angle = 0;
-int delay = 100;
+int delay = 30;
 
 //GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
 
@@ -221,54 +221,6 @@ void display5()
 	glFlush();
 }
 
-void display4()
-{
-	glViewport(0, 0, 640, 480);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, 640, 0, 480, -500, 500);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glEnable(GL_NORMALIZE);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-	glTranslated(200, 200, 0);
-	//glNormal3f(0,0,1);
-
-	glShadeModel(GL_SMOOTH);
-	/*
-	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, glWhite);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);*/
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glRotatef(angle, 1, 1, 0);
-	//glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
-	/*
-	glBegin(GL_TRIANGLES);
-		glVertex3f(0.0, 0.0, 0.0);
-		glVertex3f(100.0, 0.0, 0.0);
-		glVertex3f(0.0, 150.0, 0.0);
-	glEnd();
-	*/
-
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glWhite);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glRed);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
-
-	glEnable(GL_NORMALIZE);
-	glShadeModel(GL_SMOOTH);
-
-	glScalef(100, 100, 100);
-	drawIcosahedron();
-
-	glFlush();
-}
-
 void display4_1()
 {
 	glViewport(0, 0, 640, 480);
@@ -299,6 +251,94 @@ void display4_1()
 	glRotatef(angle, 1, 1, 0);
 	glScalef(2, 2, 2);
 	drawIcosahedron();
+
+	glFlush();
+}
+
+void displayPushPopTest()
+{
+	glViewport(0, 0, 640, 480);
+	setSanePerspective();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_LIGHT0);
+
+	/*
+	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, glWhite);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);*/
+	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glWhite);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glGreen);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
+
+	glTranslatef(0, 0, -10);	// move everything to z == -10
+
+	glPushMatrix();
+	glRotatef(-angle*2, 1, 1, 1);
+	drawIcosahedron();	// center
+	glPopMatrix();
+
+	glRotatef(angle, 1, 1, 1);
+
+	glPushMatrix();
+	glTranslatef(3, 0, 0);
+	glScalef(0.5, 0.5, 0.5);
+	glRotatef(angle, 0, 0, 1);
+
+	glPushMatrix();
+	glTranslatef(2, 0, 0);
+	glScalef(0.3, 0.3, 0.3);
+	drawIcosahedron();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-2, 0, 0);
+	glScalef(0.3, 0.3, 0.3);
+	drawIcosahedron();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, 2, 0);
+	glScalef(0.3, 0.3, 0.3);
+	drawIcosahedron();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, -2, 0);
+	glScalef(0.3, 0.3, 0.3);
+	drawIcosahedron();
+	glPopMatrix();
+
+	drawIcosahedron();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-3, 0, 0);
+	glScalef(0.5, 0.5, 0.5);
+	glRotatef(angle, 0, 0, 1);
+	drawIcosahedron();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, -3, 0);
+	glScalef(0.5, 0.5, 0.5);
+	glRotatef(angle, 0, 0, 1);
+	drawIcosahedron();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 3, 0);
+	glScalef(0.5, 0.5, 0.5);
+	glRotatef(angle, 0, 0, 1);
+	drawIcosahedron();
+	glPopMatrix();
 
 	glFlush();
 }
@@ -455,10 +495,10 @@ int main()
 	//Loader_Obj loader("M1.obj");
 	//cube = loader.getObject("M1");
 	glutInit(640, 480);
-	glutDisplayFunc(display4_1);
+	glutDisplayFunc(displayPushPopTest);
 	glutTimerFunc(delay, timerCallback, 0);
-	//glClearColor(0.07, 0.1, 0, 1);
-	glClearColor(0.0, 0.0, 1.0, 1.0);
+	glClearColor(0.07, 0.1, 0, 1);
+	//glClearColor(0.0, 0.0, 1.0, 1.0);
 	glutMainLoop();
 
 	return 0;
