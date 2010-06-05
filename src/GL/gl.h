@@ -128,6 +128,8 @@ void glutTimerFunc(unsigned int msec, void (*func)(int data), int data);
 
 void glutMainLoop(void);
 
+void glutSwapBuffers();
+
 void glVertex2f(GLfloat x, GLfloat y);
 
 void glVertex2d(GLdouble x, GLdouble y);
