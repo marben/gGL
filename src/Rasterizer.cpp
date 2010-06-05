@@ -280,7 +280,7 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 
 		vLight.normalize();
 
-		Vector3 vViewer = Vector3(0,0,0) - vertex.getPosition().start<3>();	// TODO: just multiple by -1 ??
+		Vector3 vViewer = Vector3(0,0,0) - vertex.getPosition().start<3>();	// TODO: just multiply by -1 ??
 		vViewer.normalize();
 
 		Vector3 halfVector = vLight + vViewer;
@@ -290,13 +290,15 @@ void Rasterizer::shadeVertex(Vertex4& vertex)
 
 		if (halfVectorDotNormal > 0.0f)
 		{
+			assert(material.getShininess() >= 0.0 && material.getShininess() <= 128.0);
+
 			float specularCoefficient = pow(halfVectorDotNormal, material.getShininess());
 			color += (material.getSpecular() * light.getSpecular()) * specularCoefficient;
 		}
 
-		const Vector3& normal = vertex.getNormal().start<3>();
+		//const Vector3& normal = vertex.getNormal().start<3>();
 
-		float diffuse_cos(normal.dot(vLight));
+		float diffuse_cos(vNormal.dot(vLight));
 		if(diffuse_cos <= 0.0)
 			continue;	// TODO: is this ok?
 

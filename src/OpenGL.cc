@@ -46,8 +46,6 @@ void OpenGL::glLoadIdentity()
 
 void OpenGL::glTranslate(Real x, Real y, Real z)
 {
-	// TODO: check, whether we are not between glBegin glEnd, otherwise set some error
-
 	Matrix4d trMatrix;
 	trMatrix	<<	1, 0, 0, x,
 					0, 1, 0, y,

@@ -173,6 +173,7 @@ void glLightModelfv(GLenum pname, GLfloat* params)
 	case (::GL_LIGHT_MODEL_AMBIENT):
 		opengl.glLightModelAmbient(params[0], params[1], params[2], params[3]);
 
+
 	default:
 		std::cerr<<"unimplemented glLightModel call..";
 	}
@@ -772,5 +773,29 @@ void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params)
 	default:
 		return;
 
+	}
+}
+
+void glMaterialf(GLenum face, GLenum pname, GLfloat param)
+{
+	assert(pname == GL_SHININESS);
+
+	if (pname != GL_SHININESS)
+		return; 	// TODO: some error?
+
+	switch(face)
+	{
+	case ::GL_FRONT:
+		opengl.setFrontMaterialShininess(param);
+		return;
+	case ::GL_BACK:
+		opengl.setBackMaterialShininess(param);
+		return;
+	case ::GL_FRONT_AND_BACK:
+		opengl.setFrontMaterialShininess(param);
+		opengl.setBackMaterialShininess(param);
+		return;
+	default:
+		return;
 	}
 }

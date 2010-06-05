@@ -26,8 +26,8 @@ int width = 640, height = 480;
 
 int nearPlane = 1, farPlane = 1000;
 
-int angle = 100;
-int delay = 20;
+int angle = 0;
+int delay = 100;
 
 //GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
 
@@ -269,21 +269,58 @@ void display4()
 	glFlush();
 }
 
+void display4_1()
+{
+	glViewport(0, 0, 640, 480);
+	setSanePerspective();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_LIGHT0);
+
+	/*
+	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, glWhite);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);*/
+	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glWhite);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glGreen);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
+
+	glTranslatef(0, 0, -10);
+	glRotatef(angle, 1, 1, 0);
+	glScalef(2, 2, 2);
+	drawIcosahedron();
+
+	glFlush();
+}
+
 void displayTriangles()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	setSanePerspective();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	GLfloat lightPosition[] = {0.0, 0.0, 2.0, 1.0};
-	GLfloat lightColor[] = {1.0, 0.5, 1.0, 1.0};
+	GLfloat lightPosition[] = {1.0, 2.0, 7.0, 0.0};
+	GLfloat lightColor[] = {1.0, 0.5, 1.0, 0.1};
 
 	GLfloat material1[]={1.0, 0.0, 0.0, 1.0};
-	GLfloat material2[]={0.0, 1.0, 0.0, 1.0};
+	GLfloat material2[]={0.8, 0.8, 0.8, 1.0};
+	GLfloat material3[]={0.0, 1.0, 0.0, 1.0};
 
 //	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
 //	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material1);
@@ -293,7 +330,7 @@ void displayTriangles()
 //	glLightfv(GL_LIGHT0, GL_AMBIENT, glBlack);
 //	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 //	glLightfv(GL_LIGHT0, GL_SPECULAR, glBlack);
-//	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
 	// just a test
 
@@ -319,7 +356,9 @@ void displayTriangles()
 
 	glColor3f(1,1,0);
 	glBegin(GL_TRIANGLES);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, material1);
 		glVertex3f(-1, -1, -10);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, material2);
 		glVertex3f(1, 1, -10);
 		glVertex3f(-1, 1, -10);
 	glEnd();
@@ -338,8 +377,6 @@ void displayTriangles()
 		glVertex3f(1, 1, -9);
 	glEnd();
 
-
-
 	glFlush();
 }
 
@@ -354,6 +391,53 @@ void timerCallback(int data)
 
 	glutPostRedisplay();
 	glutTimerFunc(delay, timerCallback, 0);
+}
+
+void displayTriangle()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	setSanePerspective();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+
+	//GLfloat lightPosition[] = {-1.0, -1.0, 1.0, 1.0};
+	GLfloat lightPosition[] = {0.0, 0.0, 7.0, 1.0};
+	GLfloat lightColor[] = {1.0, 1.0, 1.0, 1.0};
+
+	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, glBlack);
+
+	GLfloat materialBlack[]={0.0, 0.0, 0.0, 1.0};
+	GLfloat materialRed[]={1.0, 0.0, 0.0, 1.0};
+	GLfloat materialGreen[]={0.0, 1.0, 0.0, 1.0};
+	GLfloat materialWhite[]={1.0, 1.0, 1.0, 1.0};
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, materialBlack);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialBlack);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, materialRed);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, materialBlack);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 2);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, materialBlack);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, materialBlack);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
+
+	glTranslated(0, 0, -10);
+	glRotated(10, 1.0, 0.0, 0.0);
+	glBegin(GL_TRIANGLES);
+		//glVertex3f(-1, -1, 0);
+		glVertex3f(0, 0, 0);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, materialBlack);
+		glVertex3f(1, 1, 0);
+		glVertex3f(-1, 1, 0);
+	glEnd();
+
+	glFlush();
 }
 
 int main()
@@ -371,7 +455,7 @@ int main()
 	//Loader_Obj loader("M1.obj");
 	//cube = loader.getObject("M1");
 	glutInit(640, 480);
-	glutDisplayFunc(display4);
+	glutDisplayFunc(display4_1);
 	glutTimerFunc(delay, timerCallback, 0);
 	//glClearColor(0.07, 0.1, 0, 1);
 	glClearColor(0.0, 0.0, 1.0, 1.0);

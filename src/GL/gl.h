@@ -156,6 +156,8 @@ void glNormal3fv(const GLfloat *v);
 
 void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params);
 
+void glMaterialf(GLenum face, GLenum pname, GLfloat param);
+
 /*
  * glFlush — force execution of GL commands in finite time
  */

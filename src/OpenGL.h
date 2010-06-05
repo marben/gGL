@@ -98,11 +98,13 @@ public:
 	void setFrontMaterialDiffuse(const Color& color) {_state.setFrontMaterialDiffuse(color);}
 	void setFrontMaterialSpecular(const Color& color) {_state.setFrontMaterialSpecular(color);}
 	void setFrontMaterialEmission(const Color& color) {_state.setFrontMaterialEmission(color);}
+	void setFrontMaterialShininess(float val) {_state.setFrontMaterialShininess(val);}
 
 	void setBackMaterialAmbient(const Color& color) {_state.setBackMaterialAmbient(color);}
 	void setBackMaterialDiffuse(const Color& color) {_state.setBackMaterialDiffuse(color);}
 	void setBackMaterialSpecular(const Color& color) {_state.setBackMaterialSpecular(color);}
 	void setBackMaterialEmission(const Color& color) {_state.setBackMaterialEmission(color);}
+	void setBackMaterialShininess(float val) {_state.setBackMaterialShininess(val);}
 
 private:
 	void drawLines();
