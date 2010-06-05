@@ -194,6 +194,11 @@ void glutDisplayFunc(void (*func)(void))
 	glutDisplayFunction = func;
 }
 
+void glutSwapBuffers()
+{
+	// nothing to do here so far -- first need to implement single buffer mode, double buffer is automatic
+}
+
 void glutMainLoop(void)
 {
 	bool done = false;
