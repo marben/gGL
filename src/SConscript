@@ -1,0 +1,22 @@
+#import('env')
+
+Import('env')
+env = env.Clone()
+
+env.Append(CPPPATH = ['/usr/include/eigen2'])
+
+source_files = Split("""ColorRGB.cc
+		Lights.cc
+		Loader_Obj.cc
+		Material.cc
+		Object3d.cc
+		OpenGL.cc
+		OpenGL_state.cc
+		PngWriter.cc
+		Rasterizer.cc
+		SDL_Display.cc
+		VertexBuffer.cc
+		VertexOps.cc
+		""")
+
+env.Library('ggl', source_files)

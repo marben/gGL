@@ -26,6 +26,7 @@
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.361887962" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.1888898854" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="/usr/include/eigen2"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ggl/src}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.optimization.flags.1019124620" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.48619101" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -50,6 +51,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
+<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test/src"/>
 <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 </sourceEntries>
 </configuration>
@@ -555,6 +557,7 @@
 </profile>
 </scannerConfigBuildInfo>
 </storageModule>
+<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cconfiguration>
 <cconfiguration id="cdt.managedbuild.config.gnu.exe.release.468747402">
 <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.468747402" moduleId="org.eclipse.cdt.core.settings" name="Release">
@@ -602,6 +605,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
+<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="test/src"/>
 <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 </sourceEntries>
 </configuration>
@@ -1107,6 +1111,7 @@
 </profile>
 </scannerConfigBuildInfo>
 </storageModule>
+<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cconfiguration>
 </storageModule>
 <storageModule moduleId="cdtBuildSystem" version="4.0.0">
