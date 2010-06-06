@@ -1,0 +1,8 @@
+Import('env', 'BIN_DIR')
+import os.path
+
+env = env.Clone()
+
+test1_sources = ['oglTest/oglTest.cc']
+
+env.Program(target = os.path.join(BIN_DIR, 'oglTest'), source = test1_sources)

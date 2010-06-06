@@ -1,9 +1,7 @@
-#import('env')
+Import('env', 'LIB_DIR')
+import os.path
 
-Import('env')
 env = env.Clone()
-
-env.Append(CPPPATH = ['/usr/include/eigen2'])
 
 source_files = Split("""ColorRGB.cc
 		Lights.cc
@@ -17,6 +15,7 @@ source_files = Split("""ColorRGB.cc
 		SDL_Display.cc
 		VertexBuffer.cc
 		VertexOps.cc
+		GL/gl.cc
 		""")
 
-env.Library('ggl', source_files)
+env.Library(target = os.path.join(LIB_DIR, 'ggl'), source = source_files)
