@@ -494,7 +494,8 @@ int main()
 	*/
 	//Loader_Obj loader("M1.obj");
 	//cube = loader.getObject("M1");
-	glutInit(640, 480);
+	glutInit(NULL, NULL);
+	glutInitWindowSize(800, 600);
 	glutDisplayFunc(displayPushPopTest);
 	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);

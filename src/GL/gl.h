@@ -10,7 +10,7 @@
 
 #include "gl_types.h"
 #include "../SDL_Display.h"
-#include "../Image.h"
+//#include "../Image.h"
 
 typedef unsigned int GLenum;
 typedef bool GLboolean;
@@ -92,6 +92,25 @@ const GLenum GL_GREATER = 55;
 const GLenum GL_NOTEQUAL = 56;
 const GLenum GL_GEQUAL = 57;
 const GLenum GL_ALWAYS = 58;
+const GLenum GL_TEXTURE_2D = 59;
+
+const GLenum GLUT_RGBA = 60;
+const GLenum GLUT_DOUBLE = 61;
+const GLenum GLUT_DEPTH = 62;
+const GLenum GL_UNPACK_ALIGNMENT = 63;
+const GLenum GL_TEXTURE_WRAP_S = 64;
+const GLenum GL_REPEAT = 65;
+const GLenum GL_TEXTURE_WRAP_T = 66;
+const GLenum GL_TEXTURE_MAG_FILTER = 67;
+const GLenum GL_NEAREST = 68;
+const GLenum GL_TEXTURE_MIN_FILTER = 69;
+const GLenum GL_RGBA = 70;
+const GLenum GL_UNSIGNED_BYTE = 71;
+const GLenum GL_PERSPECTIVE_CORRECTION_HINT = 72;
+const GLenum GL_NICEST = 73;
+const GLenum GL_DEPTH_TEST = 74;
+const GLenum GL_FILL = 75;
+
 
 /*
  * specify the value used for depth buffer comparisons
@@ -120,7 +139,10 @@ void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
 
 void glRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
 
-void glutInit(int x, int y);	// TODO: allright, this shouldn't be here and should have different prototype
+//void glutInit(int x, int y);	// TODO: allright, this shouldn't be here and should have different prototype
+void glutInit(int *argcp, char **argv);	// TODO: allright, this shouldn't be here and should have different prototype
+
+void glutInitWindowSize(int width, int height);
 
 void glutDisplayFunc(void (*func)(void));
 
@@ -133,6 +155,8 @@ void glutSwapBuffers();
 void glVertex2f(GLfloat x, GLfloat y);
 
 void glVertex2d(GLdouble x, GLdouble y);
+
+void glVertex3i(GLint x, GLint y, GLint z);
 
 void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
 
@@ -154,6 +178,8 @@ void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
 
+void glNormal3i(GLint x, GLint y, GLint z);
+
 void glNormal3f(GLfloat x, GLfloat y, GLfloat z);
 
 void glNormal3d(GLdouble x, GLdouble y, GLdouble z);
@@ -163,6 +189,8 @@ void glNormal3fv(const GLfloat *v);
 void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params);
 
 void glMaterialf(GLenum face, GLenum pname, GLfloat param);
+
+void glTexCoord2f(GLfloat s, GLfloat t);
 
 /*
  * glFlush — force execution of GL commands in finite time
@@ -198,5 +226,39 @@ void glScalef(GLfloat x, GLfloat y, GLfloat z);
 void glScaled(GLdouble x, GLdouble y, GLdouble z);
 
 void glLightfv(GLenum light, GLenum pname, const GLfloat* params);
+
+void glPolygonMode(	GLenum face, GLenum mode);
+
+void glHint(GLenum target, GLenum mode);
+
+void glTexImage2D(GLenum target,
+ 	GLint  	level,
+ 	GLint  	internalFormat,
+ 	GLsizei  	width,
+ 	GLsizei  	height,
+ 	GLint  	border,
+ 	GLenum  	format,
+ 	GLenum  	type,
+ 	const GLvoid *  	data);
+
+void glTexParameteri(
+    GLenum target,
+    GLenum pname,
+    GLint param
+);
+
+void glPixelStorei(	GLenum pname,
+ 	GLint param);
+
+void glutKeyboardFunc(void (*func)(unsigned char key,
+                                   int x, int y));
+
+void glutReshapeFunc(void (*func)(int width, int height));
+
+int glutCreateWindow(char *name);
+
+void glutInitDisplayMode(unsigned int mode);
+
+void gluLookAt	(	GLdouble eyeX , GLdouble eyeY , GLdouble eyeZ , GLdouble centerX , GLdouble centerY , GLdouble centerZ , GLdouble upX , GLdouble upY , GLdouble upZ );
 
 #endif /* GL_H_ */

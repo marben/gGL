@@ -1352,5 +1352,69 @@ OpenGL::~OpenGL()
 	delete _zBuffer;
 }
 
+
+/// --- STOLEN-FROM-MESA3D
+void
+OpenGL::gluLookAt(double eyex, double eyey, double eyez, double centerx,
+	  double centery, double centerz, double upx, double upy,
+	  double upz)
+{
+    float forward[3], side[3], up[3];
+    //float m[4][4];
+
+    forward[0] = centerx - eyex;
+    forward[1] = centery - eyey;
+    forward[2] = centerz - eyez;
+
+    Vector3 forward_(forward[0], forward[1], forward[2]);
+
+    up[0] = upx;
+    up[1] = upy;
+    up[2] = upz;
+
+    Vector3 up_(up[0], up[1], up[2]);
+
+    //normalize(forward);
+    forward_.normalize();
+
+    /* Side = forward x up */
+    //cross(forward, up, side);
+    Vector3 side_ = forward_.cross(up_);
+    side_.normalize();
+
+    //normalize(side);
+
+    /* Recompute up as: up = side x forward */
+    //cross(side, forward, up);
+    up_ = side_.cross(forward_);
+
+    Matrix4 m_;
+    m_.setIdentity();
+
+    //__gluMakeIdentityf(&m[0][0]);
+    /*
+    m[0][0] = side[0];
+    m[1][0] = side[1];
+    m[2][0] = side[2];
+    */
+
+    m_(0,0) = side_[0];
+    m_(1,0) = side_[1];
+    m_(2,0) = side_[2];
+
+    m_(0,1) = up_[0];
+    m_(1,1) = up_[1];
+    m_(2,1) = up_[2];
+
+    m_(0,2) = -forward_[0];
+    m_(1,2) = -forward_[1];
+    m_(2,2) = -forward_[2];
+
+    //glMultMatrixf(&m[0][0]);
+    _state.multiplyActiveMatrix(m_);
+    glTranslate(-eyex, -eyey, -eyez);
+}
+
+
 }
 }

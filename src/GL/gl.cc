@@ -151,7 +151,18 @@ void glRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
 	opengl.glRotate(static_cast<Real>(angle), static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
-void glutInit(int x, int y)	// TODO: allright, this shouldn't be here and should have different prototype
+void glutInit(int *argcp, char **argv)	// TODO: allright, this shouldn't be here and should have different prototype
+{
+	//opengl.init(x, y);
+	/*
+	display.init(x, y);
+	colorBuffer.resize(x, y);
+	opengl.setColorBuffer(display.getRGBCanvas());
+	SDL_InitSubSystem(SDL_INIT_TIMER);	// whe should already have SDL initialized..
+	*/
+}
+
+void glutInitWindowSize(int x, int y)
 {
 	opengl.init(x, y);
 	display.init(x, y);
@@ -231,6 +242,11 @@ void glVertex2f(GLfloat x, GLfloat y)
 void glVertex2d(GLdouble x, GLdouble y)
 {
 	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y));
+}
+
+void glVertex3i(GLint x, GLint y, GLint z)
+{
+	opengl.glVertex4(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
 }
 
 void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
@@ -408,6 +424,16 @@ void glNormal3d(GLdouble x, GLdouble y, GLdouble z)
 void glNormal3fv(const GLfloat *v)
 {
 	opengl.glNormal(static_cast<Real>(v[0]), static_cast<Real>(v[1]), static_cast<Real>(v[2]));
+}
+
+void glNormal3i(GLint x, GLint y, GLint z)
+{
+	opengl.glNormal(static_cast<Real>(x), static_cast<Real>(y), static_cast<Real>(z));
+}
+
+void glTexCoord2f(GLfloat s, GLfloat t)
+{
+	// nothing here so far
 }
 
 /*
@@ -813,4 +839,41 @@ void glMaterialf(GLenum face, GLenum pname, GLfloat param)
 	default:
 		return;
 	}
+}
+
+void glPolygonMode(	GLenum face, GLenum mode) {}
+
+void glHint(GLenum target, GLenum mode) {}
+
+void glTexImage2D(GLenum target,
+ 	GLint  	level,
+ 	GLint  	internalFormat,
+ 	GLsizei  	width,
+ 	GLsizei  	height,
+ 	GLint  	border,
+ 	GLenum  	format,
+ 	GLenum  	type,
+ 	const GLvoid *  	data) {}
+
+void glTexParameteri(
+    GLenum target,
+    GLenum pname,
+    GLint param
+)	{}
+
+void glPixelStorei(	GLenum pname,
+ 	GLint param) {}
+
+void glutKeyboardFunc(void (*func)(unsigned char key,
+                                   int x, int y)) {}
+
+void glutReshapeFunc(void (*func)(int width, int height)) {}
+
+int glutCreateWindow(char *name) { return 0;}
+
+void glutInitDisplayMode(unsigned int mode) {}
+
+void gluLookAt	(	GLdouble eyeX , GLdouble eyeY , GLdouble eyeZ , GLdouble centerX , GLdouble centerY , GLdouble centerZ , GLdouble upX , GLdouble upY , GLdouble upZ )
+{
+
 }

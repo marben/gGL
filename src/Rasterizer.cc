@@ -62,7 +62,8 @@ void Rasterizer::rasterize(const OpenGL_state& state, VertexBuffer& vertexBuffer
 
 		break;
 	default:
-		assert(0);	// not supported yet
+		vertexBuffer.clear();
+		//assert(0);	// not supported yet
 		break;
 	}
 }
@@ -168,7 +169,6 @@ void Rasterizer::drawSmoothTriangle(const Vertex4 & v1, const Vertex4 & v2, cons
 	startColor2 = middleColor;
 	colorDy2 = (topColor - middleColor) / dy3;
 	dz2 = (top->z() - middle->z()) / dy3;
-
 
 	while(y <= top->y())
 	{

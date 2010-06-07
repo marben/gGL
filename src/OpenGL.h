@@ -139,6 +139,8 @@ private:
 	void updateWorldMatrix() {_worldMatrixDirty = true;}	// sets the flag so that we know to recount the world matrix
 	//void initLights();	// sets lights to default state according to opengl specification
 
+	void gluLookAt	(	double eyeX , double eyeY , double eyeZ , double centerX , double centerY , double centerZ , double upX , double upY , double upZ );
+
 private:
 
 private:

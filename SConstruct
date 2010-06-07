@@ -12,10 +12,10 @@ env = Environment()
 
 release = ARGUMENTS.get('release', 0)
 
-env.Append(CCFLAGS = '-O3')
-env.Append(CCFLAGS = '-msse')
-env.Append(CCFLAGS = '-ffast-math')
-env.Append(CCFLAGS = '-Wall')
+env.Append(CCFLAGS = ['-O3', '-msse', '-ffast-math', '-Wall'])
+#env.Append(CCFLAGS = '-msse')
+#env.Append(CCFLAGS = '-ffast-math')
+#env.Append(CCFLAGS = '-Wall')
 
 #env['CC'] = 'clang'
 #env['CXX'] = 'clang'
