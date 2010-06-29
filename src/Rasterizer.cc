@@ -350,12 +350,12 @@ void Rasterizer::removePendingVerticesFromTrianglesList(VertexBuffer& buffer)
 {
 	// we work with GL_TRIANGLES list => vertices must be in triples
 	size_t i = buffer.size() % 3;
-	if (i > 0)
+	if (i > 1)
+	{
 		buffer.popBack();
-
-	//--i;
-
-	if (i > 0)
+		buffer.popBack();
+	}
+	else if (i > 0)
 		buffer.popBack();
 }
 
