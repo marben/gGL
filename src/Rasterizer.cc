@@ -353,7 +353,7 @@ void Rasterizer::removePendingVerticesFromTrianglesList(VertexBuffer& buffer)
 	if (i > 0)
 		buffer.popBack();
 
-	--i;
+	//--i;
 
 	if (i > 0)
 		buffer.popBack();
