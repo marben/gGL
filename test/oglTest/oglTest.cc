@@ -31,6 +31,13 @@ int delay = 30;
 
 //GLfloat lightPosition[] = {0.0, 7.0, 0.0, 1.0}; // smerove svetlo - nula na konci (v pripade jednicky by to bylo bodove svetlo)
 
+GLfloat materialBlack[]={0.0, 0.0, 0.0, 1.0};
+GLfloat materialRed[]={1.0, 0.0, 0.0, 1.0};
+GLfloat materialGreen[]={0.0, 1.0, 0.0, 1.0};
+GLfloat materialWhite[]={1.0, 1.0, 1.0, 1.0};
+GLfloat materialBlue[]={0.0, 0.0, 1.0, 1.0};
+GLfloat materialPink[]={1.0, 1.0, 0.0, 1.0};
+
 GLfloat robotAmbient[]={0.4, 0.4, 0.8, 1.0};
 GLfloat robotDiffuse[]={0.8, 0.4, 0.4, 1.0};
 GLfloat robotSpecular[]={0.0, 1.0, 1.0, 1.0};
@@ -277,14 +284,16 @@ void displayPushPopTest()
 
 //	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glBlack);
 //	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glWhite);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glGreen);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, materialRed);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0);
+	// glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialWhite);
 //	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glBlack);
 
 	glTranslatef(0, 0, -10);	// move everything to z == -10
 
 	glPushMatrix();
 	glRotatef(-angle*2, 1, 1, 1);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialWhite);
 	drawIcosahedron();	// center
 	glPopMatrix();
 
@@ -298,16 +307,19 @@ void displayPushPopTest()
 	glPushMatrix();
 	glTranslatef(2, 0, 0);
 	glScalef(0.3, 0.3, 0.3);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialGreen);
 	drawIcosahedron();
 	glPopMatrix();
 	glPushMatrix();
 	glTranslatef(-2, 0, 0);
 	glScalef(0.3, 0.3, 0.3);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialBlack);
 	drawIcosahedron();
 	glPopMatrix();
 	glPushMatrix();
 	glTranslatef(0, 2, 0);
 	glScalef(0.3, 0.3, 0.3);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialBlue);
 	drawIcosahedron();
 	glPopMatrix();
 	glPushMatrix();
@@ -323,6 +335,7 @@ void displayPushPopTest()
 	glTranslatef(-3, 0, 0);
 	glScalef(0.5, 0.5, 0.5);
 	glRotatef(angle, 0, 0, 1);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialPink);
 	drawIcosahedron();
 	glPopMatrix();
 
@@ -472,7 +485,7 @@ void displayTriangle()
 	glBegin(GL_TRIANGLES);
 		//glVertex3f(-1, -1, 0);
 		glVertex3f(0, 0, 0);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, materialBlack);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, materialBlack);
 		glVertex3f(1, 1, 0);
 		glVertex3f(-1, 1, 0);
 	glEnd();
@@ -497,6 +510,7 @@ int main()
 	glutInit(NULL, NULL);
 	glutInitWindowSize(800, 600);
 	glutDisplayFunc(displayPushPopTest);
+	// glutDisplayFunc(displayTriangle);
 	glutTimerFunc(delay, timerCallback, 0);
 	glClearColor(0.07, 0.1, 0, 1);
 	//glClearColor(0.0, 0.0, 1.0, 1.0);
